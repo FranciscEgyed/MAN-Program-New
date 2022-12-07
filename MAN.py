@@ -3,6 +3,7 @@ from PIL import ImageTk, Image
 from functii_input import *
 from diverse import structura_directoare, file_checker
 from functii_prelucrare import *
+from functii_prelucrare_ksk import *
 
 
 def statusbusy():
@@ -44,9 +45,9 @@ submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
 menu1.configure(menu=submenu1)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-menu2 = tk.Menubutton(menu_frame, text="Fisiere Input")
+menu2 = tk.Menubutton(menu_frame, text="Fisiere Input", background="gray", font=("Arial", 10))
 menu2.grid(row=0, column=1)
-submenu2 = tk.Menu(menu2, tearoff=0)
+submenu2 = tk.Menu(menu2, tearoff=0, background="grey", font=("Arial", 10))
 submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), sortare_jit(), statusidle()])
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
@@ -61,8 +62,34 @@ submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
 submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
                      command=lambda: [statusbusy(), wires_leoni(), statusidle()])
 menu2.configure(menu=submenu2)
-
-
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+menu3 = tk.Menubutton(menu_frame, text="Prelucrare KSK", background="grey", font=("Arial", 10))
+menu3.grid(row=0, column=2)
+submenu3 = tk.Menu(menu3, tearoff=0, background="grey", font=("Arial", 10))
+submenu3.add_command(label="Wirelist individual",
+                     command=lambda: [statusbusy(), wirelist_individual(), statusidle()])
+submenu3.add_command(label="Wirelist toate", command=lambda: [statusbusy(), wirelist_director(), statusidle()])
+submenu3.add_separator()
+submenu3.add_command(label="BOM individual", command=lambda: [statusbusy(), prelucrare_individuala_bom(), statusidle()])
+submenu3.add_command(label="BOM toate", command=lambda: [statusbusy(), bom_director(), statusidle()])
+menu3.configure(menu=submenu3)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+menu4 = tk.Menubutton(menu_frame, text="Rapoarte", background="grey", font=("Arial", 10))
+menu4.grid(row=0, column=3)
+submenu4 = tk.Menu(menu4, tearoff=0, background="grey", font=("Arial", 10))
+submenu4.add_command(label="Raport", command=lambda: [statusbusy(), creare_raport(), statusidle()])
+submenu4.add_command(label="Rapoarte din director",
+                     command=lambda: [statusbusy(), creare_raport_director(), statusidle()])
+submenu4.add_command(label="Rapoarte toate", command=lambda: [statusbusy(), creare_raport_all(), statusidle()])
+submenu4.add_separator()
+submenu4.add_command(label="Extragere lungimi KSK",
+                     command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
+submenu4.add_separator()
+submenu4.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
+submenu4.add_separator()
+submenu4.add_command(label="Extragere Variatii de lungimi",
+                     command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
+menu4.configure(menu=submenu4)
 
 
 

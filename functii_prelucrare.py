@@ -83,7 +83,7 @@ def sortare_jit():
                     [ws.cell(row=row.row, column=1).value[1:], ws.cell(row=row.row, column=2).value,
                      ws.cell(row=row.row, column=3).value, qty, ws.cell(row=row.row, column=5).value,
                      ws.cell(row=row.row, column=12).value, ws.cell(row=row.row, column=13).value,
-                     ws.cell(row=row.row, column=16).value, ws.cell(row=row.row, column=16).value])
+                     ws.cell(row=row.row, column=16).value, ws.cell(row=row.row, column=14).value])
                 array_temporar_module.append(ws.cell(row=row.row, column=2).value.replace('PM.', '81.').replace('VM.', '81.'))
         for i in range(len(array_temporar)):
             if "PM." in array_temporar[i][1]:
@@ -138,8 +138,8 @@ def sortare_jit():
                     harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
         harnesstype = list(set(harnesstype))
         # Write to database
-        array_database.append([os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light, array_temporar[1][8], data_download,
-                               element[1:], array_temporar[1][7], ';'.join(array_temporar_module)])
+        array_database.append([os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light, array_temporar[1][8],
+                               data_download, element[1:], array_temporar[1][7], ';'.join(array_temporar_module)])
         conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         cursor = conn.cursor()
         # create a table
@@ -214,7 +214,7 @@ def sortare_jit_dir():
             c8023 = 0
             cnec = 0
             tip = ""
-            data_download = os.path.basename(fisier_calloff)[11:21]
+            data_download = os.path.basename(file_all)[11:21]
             fisier_calloff = os.path.join(dir_Jit, file_all)
             print(data_download)
             try:
@@ -261,7 +261,7 @@ def sortare_jit_dir():
                             [ws.cell(row=row.row, column=1).value[1:], ws.cell(row=row.row, column=2).value,
                              ws.cell(row=row.row, column=3).value, qty, ws.cell(row=row.row, column=5).value,
                              ws.cell(row=row.row, column=12).value, ws.cell(row=row.row, column=13).value,
-                             ws.cell(row=row.row, column=16).value])
+                             ws.cell(row=row.row, column=16).value, ws.cell(row=row.row, column=14).value])
                         array_temporar_module.append(
                             ws.cell(row=row.row, column=2).value.replace('PM.', '81.').replace('VM.', '81.'))
                 for i in range(len(array_temporar)):
@@ -311,8 +311,7 @@ def sortare_jit_dir():
                 harnesstype = []
                 for m in range(len(array_temporar_module)):
                     for n in range(len(array_module_active)):
-                        if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][
-                            3] != "XXXX":
+                        if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
                 # Write to database
