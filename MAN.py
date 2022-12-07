@@ -53,13 +53,13 @@ submenu2.add_command(label="Sortare JIT(SAP) din director",
 submenu2.add_command(label="Golire directoare LHD si RHD",
                      command=lambda: [statusbusy(), golire_directoare_comparati(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms_director(), statusidle()])
-submenu2.add_command(label="Prelucrare WIRELIST-uri", command=lambda: [statusbusy(), WIREs_director(), statusidle()])
+submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
+submenu2.add_command(label="Prelucrare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
-                     command=lambda: [statusbusy(), BOMs_director_complete_leoni(), statusidle()])
+                     command=lambda: [statusbusy(), boms_leoni(), statusidle()])
 submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
-                     command=lambda: [statusbusy(), WIREs_director_complete_leoni(), statusidle()])
+                     command=lambda: [statusbusy(), wires_leoni(), statusidle()])
 menu2.configure(menu=submenu2)
 
 
