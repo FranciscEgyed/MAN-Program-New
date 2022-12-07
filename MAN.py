@@ -60,9 +60,6 @@ submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
                      command=lambda: [statusbusy(), BOMs_director_complete_leoni(), statusidle()])
 submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
                      command=lambda: [statusbusy(), WIREs_director_complete_leoni(), statusidle()])
-submenu2.add_separator()
-submenu2.add_command(label="Wirelist All In One Complet",
-                     command=lambda: [statusbusy(), all_filesinone_wires_complete(), statusidle()])
 menu2.configure(menu=submenu2)
 
 

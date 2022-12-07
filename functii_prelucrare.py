@@ -16,7 +16,7 @@ def sortare_jit():
     statuslabel = Label(pbargui, text="Waiting . . .")
     timelabel = Label(pbargui, text="Time . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2)
     timelabel.grid(row=2, column=2)
     c8000 = 0
     c8011 = 0
@@ -137,10 +137,8 @@ def sortare_jit():
                 if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
                     harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
         harnesstype = list(set(harnesstype))
-        print(harnesstype)
-
         # Write to database
-        array_database.append([fisier_calloff, ';'.join(harnesstype), is_light, array_temporar[1][8], data_download,
+        array_database.append([os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light, array_temporar[1][8], data_download,
                                element[1:], array_temporar[1][7], ';'.join(array_temporar_module)])
         conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         cursor = conn.cursor()
@@ -322,3 +320,19 @@ def sortare_jit_dir():
     pbar.destroy()
     pbargui.destroy()
     messagebox.showinfo('Finalizat!', str(file_progres) + " fisiere din " + str(file_counter))
+
+
+def golire_directoare_comparati():
+    dir_input1 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/LHD/"
+    dir_input2 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/RHD/"
+    for file_all in os.listdir(dir_input1):
+        try:
+            os.remove(dir_input1 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_input2):
+        try:
+            os.remove(dir_input2 + file_all)
+        except:
+            continue
+    messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
