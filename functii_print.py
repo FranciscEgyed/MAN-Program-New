@@ -1,5 +1,6 @@
 import datetime
 import os
+import time
 from tkinter import messagebox
 from openpyxl import Workbook
 from openpyxl.styles import Border, Side, PatternFill, Alignment, Font
@@ -9,6 +10,7 @@ from diverse import istsoll, log_file
 
 
 def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, sheet8):
+    start = time.time()
     thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'),
                          bottom=Side(style='thin'))
     dir_salvare_default = ""
@@ -186,6 +188,7 @@ def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, shee
             log_file("Eroare scriere. Nu am salvat " + sheet1[1][0] + ".xlsx")
             messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
             return None
+
     return None
 
 
