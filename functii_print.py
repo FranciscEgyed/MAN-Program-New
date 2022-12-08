@@ -721,3 +721,158 @@ def prn_excel_compare_ksk_rhd(sheet1, sheet2):
         log_file("Eroare salvare. Nu am salvat Comparatie KSK LHD.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Comparatie KSK RHD este read-only!")
         return None
+
+
+def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, sheet8):
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'),
+                         bottom=Side(style='thin'))
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = sheet1[1][0]
+    ws2 = wb.create_sheet(sheet2[1][0])
+    ws3 = wb.create_sheet(sheet3[1][0])
+    ws4 = wb.create_sheet("Variatie Lungimi")
+    ws5 = wb.create_sheet("Erori")
+    ws6 = wb.create_sheet("Bracket")
+    ws7 = wb.create_sheet("Same Wire")
+    ws8 = wb.create_sheet("X6616X6490")
+    ws9 = wb.create_sheet("Variatie Lungimi IST SOLL")
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            if "E-" in sheet1[i][x]:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            else:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            if x == 2:
+                ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
+            else:
+                try:
+                    ws2.cell(column=x + 1, row=i + 1, value=float(sheet2[i][x]))
+                except:
+                    ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
+    for i in range(len(sheet3)):
+        for x in range(len(sheet3[i])):
+            if x == 2:
+                ws3.cell(column=x + 1, row=i + 1, value=str(sheet3[i][x]))
+            else:
+                try:
+                    ws3.cell(column=x + 1, row=i + 1, value=float(sheet3[i][x]))
+                except:
+                    ws3.cell(column=x + 1, row=i + 1, value=sheet3[i][x])
+    for i in range(len(sheet4)):
+        for x in range(len(sheet4[i])):
+            try:
+                ws4.cell(column=x + 1, row=i + 1, value=float(sheet4[i][x]))
+            except:
+                ws4.cell(column=x + 1, row=i + 1, value=sheet4[i][x])
+    for i in range(len(sheet5)):
+        for x in range(len(sheet5[i])):
+            if x == 2:
+                ws5.cell(column=x + 1, row=i + 1, value=str(sheet5[i][x]))
+            else:
+                try:
+                    ws5.cell(column=x + 1, row=i + 1, value=float(sheet5[i][x]))
+                except:
+                    ws5.cell(column=x + 1, row=i + 1, value=sheet5[i][x])
+    for i in range(len(sheet6)):
+        for x in range(len(sheet6[i])):
+            try:
+                ws6.cell(column=x + 1, row=i + 1, value=float(sheet6[i][x]))
+            except:
+                ws6.cell(column=x + 1, row=i + 1, value=sheet6[i][x])
+    """Cosmetica"""
+    colorsgray = PatternFill(start_color='aabbcc', end_color='aabbcc', fill_type='solid')
+    colorsdoi = PatternFill(start_color='7EF1EA', end_color='7EF1EA', fill_type='solid')
+    for i in range(1, 7):
+        for x in range(1, len(ws6['A']) + 1):
+            ws6.cell(column=i, row=x).border = thin_border
+            ws6.cell(column=i, row=x).alignment = Alignment(horizontal='center')
+    for row in ws6['C']:
+        if row.value == "RHD":
+            for i in range(1, 7):
+                ws6.cell(column=i, row=row.row).fill = colorsgray
+        elif row.value == "LHD":
+            for i in range(1, 7):
+                ws6.cell(column=i, row=row.row).fill = colorsdoi
+    for cells in ws1['1']:
+        ws1.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws2['1']:
+        ws2.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws3['1']:
+        ws3.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws4['1']:
+        ws4.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws5['1']:
+        ws5.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws6['1']:
+        ws6.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws7['1']:
+        ws7.cell(column=cells.column, row=1).font = Font(bold=True)
+    """Cosmetica"""
+    for i in range(len(sheet7)):
+        for x in range(len(sheet7[i])):
+            if x == 2:
+                ws7.cell(column=x + 1, row=i + 1, value=str(sheet7[i][x]))
+            else:
+                try:
+                    ws7.cell(column=x + 1, row=i + 1, value=float(sheet7[i][x]))
+                except:
+                    ws7.cell(column=x + 1, row=i + 1, value=sheet7[i][x])
+    for x in range(len(sheet8[0])):
+        try:
+            ws8.cell(column=1, row=x + 1, value=float(sheet8[0][x][0]))
+            ws8.cell(column=2, row=x + 1, value=float(sheet8[0][x][1]))
+        except:
+            ws8.cell(column=1, row=x + 1, value=sheet8[0][x][0])
+            ws8.cell(column=2, row=x + 1, value=sheet8[0][x][1])
+    for x in range(len(sheet8[1])):
+        try:
+            ws8.cell(column=4, row=x + 1, value=float(sheet8[1][x][0]))
+            ws8.cell(column=5, row=x + 1, value=float(sheet8[1][x][1]))
+        except:
+            ws8.cell(column=4, row=x + 1, value=sheet8[1][x][0])
+            ws8.cell(column=5, row=x + 1, value=sheet8[1][x][1])
+    for x in range(len(sheet8[2])):
+        try:
+            ws8.cell(column=7, row=x + 1, value=float(sheet8[2][x][0]))
+            ws8.cell(column=8, row=x + 1, value=float(sheet8[2][x][1]))
+        except:
+            ws8.cell(column=7, row=x + 1, value=sheet8[2][x][0])
+            ws8.cell(column=8, row=x + 1, value=sheet8[2][x][1])
+    for x in range(len(sheet8[3])):
+        try:
+            ws8.cell(column=10, row=x + 1, value=float(sheet8[3][x][0]))
+            ws8.cell(column=11, row=x + 1, value=float(sheet8[3][x][1]))
+        except:
+            ws8.cell(column=10, row=x + 1, value=sheet8[3][x][0])
+            ws8.cell(column=11, row=x + 1, value=sheet8[3][x][1])
+    for i in range(len(sheet4)):
+        ws9.cell(column=1, row=i + 1, value="IST")
+        for x in range(len(sheet4[i])):
+            try:
+                ws9.cell(column=x + 2, row=i + 1, value=float(sheet4[i][x]))
+            except:
+                ws9.cell(column=x + 2, row=i + 1, value=sheet4[i][x])
+    ws9.cell(column=1, row=1, value="IST / SOLL")
+    ws9.insert_cols(5)
+    ws9.cell(column=5, row=1, value="Description")
+    istsoll(ws6, ws9)
+
+
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/" + sheet1[1][0] + ".xlsx")
+        log_file("Creat Light" + sheet1[1][0] + ".xlsx")
+    except PermissionError:
+        log_file("Eroare scriere. Nu am salvat Light" + sheet1[1][0] + ".xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
+        return None
+    return None
+

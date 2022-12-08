@@ -1,4 +1,5 @@
 import csv
+import datetime
 import itertools
 import math
 import os
@@ -416,7 +417,6 @@ def raport_light():
     # Create your connection.
     cnx = sqlite3.connect("F:\Python Projects\MAN 2022\MAN/Input/Others/database.db")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
-    print(df.columns.values.tolist())
     def scankey(event):
         val = event.widget.get()
         if val == '':
@@ -473,7 +473,7 @@ def raport_light():
         for item in data:
             indexe.insert('end', item)
 
-    list3 = df.columns.values.tolist()[1:]
+    list3 = df.columns.values.tolist()[2:]
 
     def update4(data):
         coloane.delete(0, 'end')
@@ -481,30 +481,31 @@ def raport_light():
         for item in data:
             coloane.insert('end', item)
 
-    list4 = df.columns.values.tolist()[1:]
+    list4 = df.columns.values.tolist()[2:]
 
     def run():
-
+        save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
         valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
         valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
         xxx = df.query('datalivrare in @valuesdatalivrare_lb')
         yyy = xxx.query('datajit in @valuesdatajit_lb')
         indexlist = [indexe.get(idx) for idx in indexe.curselection()]
         columnlist = [coloane.get(idx) for idx in coloane.curselection()]
-        if len(indexlist) + len(columnlist) == 0 or len(valuesdatalivrare_lb) + len(valuesdatajit_lb):
+        if len(indexlist) + len(columnlist) == 0 or len(valuesdatalivrare_lb) + len(valuesdatajit_lb) == 0:
             messagebox.showerror("Valori gresite", "Nu ati selectat nimic")
-
-        try:
-            pivot = yyy.pivot_table(index=indexlist, columns=columnlist, values="primarykey", fill_value=0,
-                                    aggfunc='count')
-            print(pivot.to_string())
-        except ValueError:
-            messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
-
+        else:
+            try:
+                pivot = yyy.pivot_table(index=indexlist, columns=columnlist, values="primarykey", fill_value=0,
+                                        aggfunc='count')
+                print(pivot.to_string())
+                pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport" + save_time + ".xlsx")
+            except ValueError:
+                messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
 
 
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")
+    ws.geometry("+570+50")
     l1 = Label(ws, text="Data JIT")
     l2 = Label(ws, text="Data livrare")
     l3 = Label(ws, text="Index pentru pivot")
@@ -539,13 +540,10 @@ def raport_light():
     datajit_lb.grid(row=2, column=1)
     indexe.grid(row=2, column=2)
     coloane.grid(row=2, column=3)
-
     update(list1)
     update2(list2)
     update3(list3)
     update4(list4)
-
-
     ws.mainloop()
 
 

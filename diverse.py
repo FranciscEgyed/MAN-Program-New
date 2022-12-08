@@ -35,8 +35,9 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/LDorado/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/"]
+                        #os.path.abspath(os.curdir) + "/MAN/Output/LDorado/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)
@@ -393,6 +394,7 @@ def golire_directoare():
     dir_outputr = os.path.abspath(os.curdir) + "/MAN/Output/Report Files/"
     dir_output_separare = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/"
     dir_output_separare2 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_output_separare3 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"
     dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
     dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
     dir_ldorado = os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"
@@ -470,6 +472,11 @@ def golire_directoare():
     for file_all in os.listdir(dir_output_separare2):
         try:
             os.remove(dir_output_separare2 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare3):
+        try:
+            os.remove(dir_output_separare3 + file_all)
         except:
             continue
     messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")

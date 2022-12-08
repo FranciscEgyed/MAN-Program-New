@@ -3,4 +3,4 @@ director_salvare = ""
 selected_dir_wire = ""
 counter_var_curent = 0
 counter_var_all = 0
-
+is_light_save = "0"

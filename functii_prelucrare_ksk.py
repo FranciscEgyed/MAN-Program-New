@@ -1,14 +1,12 @@
 import csv
 import os
-import sqlite3
 import time
 from tkinter import filedialog, messagebox, Tk, ttk, Label, HORIZONTAL
 from collections import Counter
 
-import pandas as pd
-
+import globale
 from diverse import skip_file, pivotare
-from functii_print import prn_excel_bom, prn_excel_wires
+from functii_print import prn_excel_bom, prn_excel_wires, prn_excel_wires_light
 
 
 # WIRES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -19,13 +17,18 @@ def wirelist_individual():
     wire_file = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
     selected_dir_wire = os.path.dirname(os.path.realpath(wire_file)) + "/"
     start = time.time()
+    globale.is_light_save = "0"
     with open(wire_file, newline='') as csvfile:
         array_module_file = list(csv.reader(csvfile, delimiter=';'))
     if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
         return
-    cnx = sqlite3.connect("F:\Python Projects\MAN 2022\MAN/Input/Others/database.db")
-    df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
+        array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
+    array_temporar_module = [array_module_file[i][1] for i in range(1, len(array_module_file))]
+    if set(array_temporar_module).issubset(array_sortare_light[0]):
+        globale.is_light_save = "1"
+
     prelucrare_wirelist_faza1(array_module_file)
     end = time.time()
     messagebox.showinfo('Finalizat!', array_module_file[1][0] + "  " + str(end - start)[:6] + " secunde.")
@@ -716,8 +719,8 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     sheet6[0].append(x6616)
     sheet6[2].append("Status X6490")
     sheet6[2].append(x6490)
-    print(sheet1[1][0])
-
+    if globale.is_light_save == "1":
+        prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
 
 
@@ -836,6 +839,8 @@ def wirelist_director():
     timelabel.grid(row=2, column=2)
     dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
     dir_output = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
+        array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
     counter = 0
     start = time.time()
     file_counter = 0
@@ -847,6 +852,7 @@ def wirelist_director():
     start0 = time.time()
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".csv"):
+            globale.is_light_save = "0"
             file_progres = file_progres + 1
             statuslabel["text"] = "8000 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
             pbar['value'] += 1
@@ -857,6 +863,9 @@ def wirelist_director():
                 messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
                 return
             counter = counter + 1
+            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+            if set(array_temporar_module).issubset(array_sortare_light[0]):
+                globale.is_light_save = "1"
             prelucrare_wirelist_faza1(array_modul)
             end0 = time.time()
             timelabel["text"] = "Estimated time to complete : " + \
@@ -875,6 +884,7 @@ def wirelist_director():
     start1 = time.time()
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".csv"):
+            globale.is_light_save = "0"
             file_progres = file_progres + 1
             statuslabel["text"] = "8011 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
             pbar['value'] += 1
@@ -885,6 +895,9 @@ def wirelist_director():
                 messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
                 return
             counter = counter + 1
+            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+            if set(array_temporar_module).issubset(array_sortare_light[0]):
+                globale.is_light_save = "1"
             prelucrare_wirelist_faza1(array_modul)
             end1 = time.time()
             timelabel["text"] = "Estimated time to complete : " + \
@@ -903,6 +916,7 @@ def wirelist_director():
     start2 = time.time()
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".csv"):
+            globale.is_light_save = "0"
             file_progres = file_progres + 1
             statuslabel["text"] = "8023 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
             pbar['value'] += 1
@@ -913,6 +927,9 @@ def wirelist_director():
                 messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
                 return
             counter = counter + 1
+            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+            if set(array_temporar_module).issubset(array_sortare_light[0]):
+                globale.is_light_save = "1"
             prelucrare_wirelist_faza1(array_modul)
             end2 = time.time()
             timelabel["text"] = "Estimated time to complete : " + \
@@ -932,6 +949,7 @@ def wirelist_director():
     start3 = time.time()
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".csv"):
+            globale.is_light_save = "0"
             file_progres = file_progres + 1
             statuslabel["text"] = "Necunoscut = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
             pbar['value'] += 1
@@ -942,6 +960,9 @@ def wirelist_director():
                 messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
                 return
             counter = counter + 1
+            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+            if set(array_temporar_module).issubset(array_sortare_light[0]):
+                globale.is_light_save = "1"
             prelucrare_wirelist_faza1(array_modul)
             end3 = time.time()
             timelabel["text"] = "Estimated time to complete : " + \
