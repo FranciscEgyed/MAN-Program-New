@@ -34,7 +34,7 @@ def wirelist_individual():
     messagebox.showinfo('Finalizat!', array_module_file[1][0] + "  " + str(end - start)[:6] + " secunde.")
     # except:
     #    return
-    print(end -start)
+
 
 def prelucrare_wirelist_faza1(array_prelucrare):
     # arr_module_file = [["Harness", "Module", "Module", "Drawing Number", "Module Check", "Comments", "Implemented",

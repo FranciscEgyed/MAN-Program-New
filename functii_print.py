@@ -871,7 +871,7 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
 
 
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/" + sheet1[1][0] + ".xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/" + sheet1[1][0] + ".xlsx")
         log_file("Creat Light" + sheet1[1][0] + ".xlsx")
     except PermissionError:
         log_file("Eroare scriere. Nu am salvat Light" + sheet1[1][0] + ".xlsx")

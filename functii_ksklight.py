@@ -415,7 +415,7 @@ def compare_ksk_light():
 
 def raport_light():
     # Create your connection.
-    cnx = sqlite3.connect("F:\Python Projects\MAN 2022\MAN/Input/Others/database.db")
+    cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
     def scankey(event):
         val = event.widget.get()

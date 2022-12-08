@@ -5,8 +5,7 @@ from functii_input import *
 from diverse import *
 from functii_ksklight import *
 from functii_prelucrare import *
-from functii_prelucrare_ksk import wirelist_individual, wirelist_director, prelucrare_individuala_bom, bom_director
-
+from functii_prelucrare_ksk import *
 from functii_rapoarte import *
 
 
