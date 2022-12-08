@@ -1,8 +1,11 @@
 import csv
 import os
+import sqlite3
 import time
 from tkinter import filedialog, messagebox, Tk, ttk, Label, HORIZONTAL
 from collections import Counter
+
+import pandas as pd
 
 from diverse import skip_file, pivotare
 from functii_print import prn_excel_bom, prn_excel_wires
@@ -21,6 +24,8 @@ def wirelist_individual():
     if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
         return
+    cnx = sqlite3.connect("F:\Python Projects\MAN 2022\MAN/Input/Others/database.db")
+    df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
     prelucrare_wirelist_faza1(array_module_file)
     end = time.time()
     messagebox.showinfo('Finalizat!', array_module_file[1][0] + "  " + str(end - start)[:6] + " secunde.")
@@ -711,6 +716,8 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     sheet6[0].append(x6616)
     sheet6[2].append("Status X6490")
     sheet6[2].append(x6490)
+    print(sheet1[1][0])
+
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
 
 

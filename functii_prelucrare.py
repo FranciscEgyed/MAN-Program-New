@@ -138,18 +138,18 @@ def sortare_jit():
                     harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
         harnesstype = list(set(harnesstype))
         # Write to database
-        array_database.append([os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light, array_temporar[1][8],
-                               data_download, element[1:], array_temporar[1][7], ';'.join(array_temporar_module)])
+        primarykey = os.path.basename(fisier_calloff) + element[1:]
+        array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
+                               array_temporar[1][8], data_download, element[1:], array_temporar[1][7],
+                               ';'.join(array_temporar_module)])
         conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         cursor = conn.cursor()
         # create a table
         cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
-                          (numejit text, tip text, light text, datalivrare text, datajit text,harness text, 
-                           trailerno text, listamodule text) 
-                       """)
+                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
+                          harness text, trailerno text, listamodule text) """)
         # insert multiple records using the more secure "?" method
-        albums = []
-        cursor.executemany("INSERT INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?)", array_database)
+        cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", array_database)
         conn.commit()
         conn.close()
 
@@ -207,6 +207,8 @@ def sortare_jit_dir():
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
         return None
+    conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+    cursor = conn.cursor()
     for file_all in os.listdir(dir_Jit):
         if file_all.endswith(".xlsx") and file_all.startswith("JIT"):
             c8000 = 0
@@ -216,7 +218,6 @@ def sortare_jit_dir():
             tip = ""
             data_download = os.path.basename(file_all)[11:21]
             fisier_calloff = os.path.join(dir_Jit, file_all)
-            print(data_download)
             try:
                 wb = load_workbook(fisier_calloff)
             except:
@@ -291,6 +292,7 @@ def sortare_jit_dir():
                 # Chech KSK if part of KSK Light project
                 if set(array_temporar_module).issubset(array_sortare_light[0]):
                     prn_excel_separare_ksk(array_temporar_module, element[1:])
+                    is_light = "YES"
                 # Create LHD and RHD files for each KSK from JIT
                 stanga = []
                 dreapta = []
@@ -315,21 +317,19 @@ def sortare_jit_dir():
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
                 # Write to database
-                array_database.append([os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
+                primarykey = os.path.basename(fisier_calloff) + element[1:]
+                array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
                                        array_temporar[1][8], data_download, element[1:], array_temporar[1][7],
                                        ';'.join(array_temporar_module)])
-                conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
-                cursor = conn.cursor()
+
                 # create a table
                 cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
-                                  (numejit text, tip text, light text, datalivrare text, datajit text,harness text, 
-                                   trailerno text, listamodule text) 
-                               """)
+                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
+                          harness text, trailerno text, listamodule text) """)
                 # insert multiple records using the more secure "?" method
-                albums = []
-                cursor.executemany("INSERT INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?)", array_database)
+                cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", array_database)
                 conn.commit()
-                conn.close()
+
                 with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/" + tip + "/"
                           + element[1:] + ".csv", 'w', newline='') as myfile:
                     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
@@ -343,6 +343,7 @@ def sortare_jit_dir():
             statuslabel["text"] = str(file_progres) + " / " + str(file_counter) + " : " + file_all
             pbar['value'] += 2
             pbargui.update_idletasks()
+    conn.close()
     pbar.destroy()
     pbargui.destroy()
     messagebox.showinfo('Finalizat!', str(file_progres) + " fisiere din " + str(file_counter))
