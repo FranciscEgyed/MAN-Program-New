@@ -173,9 +173,9 @@ def cutting_ksklight():
     pbargui.update_idletasks()
     prn_excel_cutting(lista_cutting, lista_cutting_unice, lista_wire_no)
     end = time.time()
-    messagebox.showinfo('Finalizat!', str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
+    messagebox.showinfo('Finalizat!', str(end - start)[:6] + " secunde.")
 
 
 def ss_ksklight():

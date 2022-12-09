@@ -104,7 +104,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end0 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8000: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8000: " + str(file_progres) + "/" + str(file_counter) \
+                                      + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end0 - start0))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -146,7 +147,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end1 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8011: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8011: " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end1 - start1))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -188,7 +190,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end2 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8023: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8023: " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end2 - start2))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -264,7 +267,8 @@ def creare_raport_director():
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 file_progres = file_progres + 1
-                statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                statuslabel["text"] = "                 " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all
                 pbar['value'] += 2
                 pbargui.update_idletasks()
         except PermissionError:
