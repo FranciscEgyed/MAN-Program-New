@@ -9,7 +9,6 @@ from functii_prelucrare_ksk import *
 from functii_rapoarte import *
 
 
-
 def statusbusy():
     statuslabel["text"] = "Working on it . . . "
 
@@ -117,11 +116,9 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
-
+submenu7.add_separator()
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 
 menu_frame.grid(row=0, column=0)
@@ -130,8 +127,5 @@ label.grid(row=2, column=0)
 statuslabel.grid(row=12, column=0)
 structura_directoare()
 file_checker()
+databesemerge()
 root.mainloop()
-
-
-
-

@@ -663,7 +663,10 @@ def kswr(sheet):
     else:
         output_ksw = ""
         for i in range(len(array_ksw_unice)):
-            output_ksw = output_ksw + "/" + array_ksw_unice[i]
+            if len(output_ksw) == 0:
+                output_ksw = array_ksw_unice[i]
+            else:
+                output_ksw = output_ksw + "/" + array_ksw_unice[i]
         return output_ksw
 
 

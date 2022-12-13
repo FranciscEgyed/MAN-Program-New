@@ -471,7 +471,6 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             if array_scriere_sheet6[i][5] == "X" and not array_scriere_sheet6[i][1] in arr_module_absente:
                 if array_scriere_sheet6[i][1] not in arr_module_existente_ver:
                     arr_module_absente.append(array_scriere_sheet6[i][1])
-    print(array_scriere_sheet6)
     array_scriere_sheet6[0].append("Side bracket")
     array_scriere_sheet6[1].append(sidebracket)
     for i in range(2, len(array_scriere_sheet6)):
@@ -725,7 +724,6 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     if globale.is_light_save == "1":
         prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
-    print("stuff")
 
 # BOM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def prelucrare_individuala_bom():

@@ -42,6 +42,7 @@ def sortare_jit():
         wb = load_workbook(fisier_calloff)
     except:
         pbar.destroy()
+        pbar.destroy()
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", fisier_calloff + " extensie incompatibila!")
         return None
@@ -142,7 +143,12 @@ def sortare_jit():
         array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
                                array_temporar[1][8], data_download, element[1:], array_temporar[1][7],
                                ';'.join(array_temporar_module)])
-        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        # conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        try:
+            conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+        except sqlite3.OperationalError:
+            conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+
         cursor = conn.cursor()
         # create a table
         cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
@@ -207,7 +213,10 @@ def sortare_jit_dir():
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
         return None
-    conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
     cursor = conn.cursor()
     for file_all in os.listdir(dir_Jit):
         if file_all.endswith(".xlsx") and file_all.startswith("JIT"):
@@ -362,6 +371,7 @@ def golire_directoare_comparati():
         except:
             continue
     messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
+
 
 def boms():
     pbargui = Tk()
