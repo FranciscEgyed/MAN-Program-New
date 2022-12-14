@@ -415,8 +415,13 @@ def compare_ksk_light():
 
 def raport_light():
     # Create your connection.
-    cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+    try:
+        cnx = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+
     def scankey(event):
         val = event.widget.get()
         if val == '':
@@ -430,7 +435,6 @@ def raport_light():
 
     def update(data):
         datalivrare_lb.delete(0, 'end')
-        # put new data
         for item in data:
             datalivrare_lb.insert('end', item)
 
@@ -440,7 +444,7 @@ def raport_light():
     def deselect_all():
         datalivrare_lb.selection_clear(0, END)
 
-    list1 = df.datalivrare.unique()
+    list1 = df.DataLivrare.unique()
 
     def scankey2(event):
         val = event.widget.get()
@@ -455,7 +459,6 @@ def raport_light():
 
     def update2(data):
         datajit_lb.delete(0, 'end')
-        # put new data
         for item in data:
             datajit_lb.insert('end', item)
 
@@ -465,7 +468,7 @@ def raport_light():
     def deselect_all2():
         datajit_lb.selection_clear(0, END)
 
-    list2 = df.datajit.unique()
+    list2 = df.DataJIT.unique()
 
     def update3(data):
         indexe.delete(0, 'end')
@@ -477,7 +480,6 @@ def raport_light():
 
     def update4(data):
         coloane.delete(0, 'end')
-        # put new data
         for item in data:
             coloane.insert('end', item)
 
@@ -487,8 +489,8 @@ def raport_light():
         save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
         valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
         valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
-        xxx = df.query('datalivrare in @valuesdatalivrare_lb')
-        yyy = xxx.query('datajit in @valuesdatajit_lb')
+        xxx = df.query('DataLivrare in @valuesdatalivrare_lb')
+        yyy = xxx.query('DataJIT in @valuesdatajit_lb')
         indexlist = [indexe.get(idx) for idx in indexe.curselection()]
         columnlist = [coloane.get(idx) for idx in coloane.curselection()]
         if len(indexlist) + len(columnlist) == 0 or len(valuesdatalivrare_lb) + len(valuesdatajit_lb) == 0:
@@ -497,11 +499,13 @@ def raport_light():
             try:
                 pivot = yyy.pivot_table(index=indexlist, columns=columnlist, values="primarykey", fill_value=0,
                                         aggfunc='count')
-                print(pivot.to_string())
-                pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport" + save_time + ".xlsx")
+                #print(pivot.to_string())
+                pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport -" + indexlist[0] +
+                               "-" + save_time + ".xlsx")
+                ws.destroy()
             except ValueError:
+                ws.destroy()
                 messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
-
 
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")
@@ -510,8 +514,8 @@ def raport_light():
     l2 = Label(ws, text="Data livrare")
     l3 = Label(ws, text="Index pentru pivot")
     l4 = Label(ws, text="Coloane pentru pivot")
-    l1.grid(row=0, column=0)
-    l2.grid(row=0, column=1)
+    l1.grid(row=0, column=1)
+    l2.grid(row=0, column=0)
     l3.grid(row=0, column=2)
     l4.grid(row=0, column=3)
     entry = Entry(ws)

@@ -30,6 +30,10 @@ def sortare_jit():
         array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
         array_module_active = list(csv.reader(csvfile, delimiter=';'))
+    normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
+              "81.25484-5272", "81.25484-5267", "81.25484-5268"]
+    ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
+           "81.25484-5274", "81.25484-5271", "81.25484-5270"]
     # Open JIT file
     fisier_calloff = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                                 title="Incarcati fisierul care necesita sortare")
@@ -138,12 +142,20 @@ def sortare_jit():
                 if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
                     harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
         harnesstype = list(set(harnesstype))
+        # Check ss type
+        sstype = "None"
+        for x in range(len(array_temporar_module)):
+            if array_temporar_module[x] in normal:
+                sstype = "NON ADR"
+                break
+            elif array_temporar_module[x] in ADR:
+                sstype = "ADR"
+                break
         # Write to database
         primarykey = os.path.basename(fisier_calloff) + element[1:]
         array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
-                               array_temporar[1][8], data_download, element[1:], array_temporar[1][7],
+                               array_temporar[1][8], data_download, element[1:], array_temporar[1][7], sstype,
                                ';'.join(array_temporar_module)])
-        # conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         try:
             conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
         except sqlite3.OperationalError:
@@ -152,12 +164,12 @@ def sortare_jit():
         cursor = conn.cursor()
         # create a table
         cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
-                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
-                          harness text, trailerno text, listamodule text) """)
+                          (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                          DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
         # insert multiple records using the more secure "?" method
-        cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", array_database)
+        cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
         conn.commit()
-        conn.close()
+
 
 
         # Write to disk
@@ -175,7 +187,7 @@ def sortare_jit():
                             str(((file_counter * 0.15) - (end - start)) / 60)[:5] + " minutes."
         pbar['value'] += 2
         pbargui.update_idletasks()
-
+    conn.close()
     pbar.destroy()
     pbargui.destroy()
     log_file("Sortate  8000 = " + str(c8000) + ", 8011 = " + str(c8011) + ", 8023 = " + str(c8023) +
@@ -201,8 +213,17 @@ def sortare_jit_dir():
         array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
         array_module_active = list(csv.reader(csvfile, delimiter=';'))
+    normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
+              "81.25484-5272", "81.25484-5267", "81.25484-5268"]
+    ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
+           "81.25484-5274", "81.25484-5271", "81.25484-5270"]
     dir_Jit = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                       title="Selectati directorul cu fisiere JIT:")
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+    cursor = conn.cursor()
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_Jit):
@@ -213,11 +234,6 @@ def sortare_jit_dir():
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
         return None
-    try:
-        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
-    except sqlite3.OperationalError:
-        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
-    cursor = conn.cursor()
     for file_all in os.listdir(dir_Jit):
         if file_all.endswith(".xlsx") and file_all.startswith("JIT"):
             c8000 = 0
@@ -325,18 +341,27 @@ def sortare_jit_dir():
                         if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
+                # Check ss type
+                sstype = "None"
+                for x in range(len(array_temporar_module)):
+                    if array_temporar_module[x] in normal:
+                        sstype = "NON ADR"
+                        break
+                    elif array_temporar_module[x] in ADR:
+                        sstype = "ADR"
+                        break
                 # Write to database
                 primarykey = os.path.basename(fisier_calloff) + element[1:]
                 array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
-                                       array_temporar[1][8], data_download, element[1:], array_temporar[1][7],
+                                       array_temporar[1][8], data_download, element[1:], array_temporar[1][7], sstype,
                                        ';'.join(array_temporar_module)])
 
                 # create a table
                 cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
-                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
-                          harness text, trailerno text, listamodule text) """)
+                                  (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                                  DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
                 # insert multiple records using the more secure "?" method
-                cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", array_database)
+                cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
                 conn.commit()
 
                 with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/" + tip + "/"
