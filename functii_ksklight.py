@@ -26,13 +26,13 @@ def cutting_ksklight():
             control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='') as csvfile:
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
-
     except FileNotFoundError:
         pbar.destroy()
         pbargui.destroy()
         messagebox.showerror('Eroare fisier', 'Lipsa fisier Control_Matrix din INPUT')
         return None
-
+    # Liste excludere si inlocuire
+    excluderecst = ["81.25482-6147", "81.25482-6148", "81.25480-5681"]
     for i in range(len(control_matrix_csl)):
         if control_matrix_csl[i][1] != "":
             control_matrix.append(control_matrix_csl[i])
@@ -85,7 +85,7 @@ def cutting_ksklight():
             lista_module = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
             for q in range(len(array_wires_all)):
                 for x in range(len(lista_module)):
-                    if array_wires_all[q][0] == lista_module[x]:
+                    if array_wires_all[q][0] == lista_module[x] and array_wires_all[q][0] not in excluderecst:
                         array_fire_ksk.append([file_all.split(".")[0], array_wires_all[q][0],
                                                array_wires_all[q][1].lower(),
                                                array_wires_all[q][2], array_wires_all[q][3], array_wires_all[q][4],

@@ -283,7 +283,7 @@ def cmcsr():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-
+    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
     fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                            title="Incarcati fisierul control matrix")
     if fisier_cm[-3:] == "csv":
@@ -310,11 +310,18 @@ def cmcsr():
                                             array_sortare[i][46], "OPERATIE", array_sortare[i][13],
                                             array_sortare[i][91],
                                             array_sortare[i][92], array_sortare[i][93], array_sortare[i][94]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" and array_sortare[i][11] not in listatwist:
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][47].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][46], "COMPONENT", array_sortare[i][13],
+                                            array_sortare[i][91], array_sortare[i][92], array_sortare[i][93],
+                                            array_sortare[i][94]])
+                    elif array_sortare[i][x] == "S" and array_sortare[i][11] in listatwist:
+                        array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
+                                            array_sortare[i+4][47].replace("U", "W"),
+                                            array_sortare[i][11].lower(), array_sortare[i+4][9], array_sortare[3][x],
+                                            array_sortare[i][46], "FIR", array_sortare[i][13],
                                             array_sortare[i][91], array_sortare[i][92], array_sortare[i][93],
                                             array_sortare[i][94]])
 

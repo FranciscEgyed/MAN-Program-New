@@ -50,7 +50,10 @@ def sortare_jit():
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", fisier_calloff + " extensie incompatibila!")
         return None
-
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
     statuslabel["text"] = "Sortare fisier JIT"
     timelabel["text"] = "0.15 secunde / KSK"
     pbar['value'] += 2
@@ -156,11 +159,6 @@ def sortare_jit():
         array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
                                array_temporar[1][8], data_download, element[1:], array_temporar[1][7], sstype,
                                ';'.join(array_temporar_module)])
-        try:
-            conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
-        except sqlite3.OperationalError:
-            conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
-
         cursor = conn.cursor()
         # create a table
         cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
@@ -169,8 +167,6 @@ def sortare_jit():
         # insert multiple records using the more secure "?" method
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
         conn.commit()
-
-
 
         # Write to disk
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/" + tip + "/"
