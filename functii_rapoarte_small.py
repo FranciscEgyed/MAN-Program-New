@@ -34,27 +34,39 @@ def klappschaller(sheet, sheet1):
         check = "Check LR "
     else:
         check = "Error "
-    "Verificare kalppschalle"
-    for row in sheet["J"]:
-        if row.value != "Module" and row.value is not None:
-            module_prezente[0].append(row.value)
+    # Verificare kalppschalle new
+    lista_erori = []
     for row in sheet["K"]:
         if row.value != "Drawing" and row.value is not None:
-            module_prezente[1].append(row.value)
-    for row in sheet["C"]:
-        if row.value == steering_side:
-            rand = row.row
-            if sheet.cell(row=rand, column=2).value in module_prezente[0]:
-                for i in range(len(lista_selectie)):
-                    if lista_selectie[i][1] == sheet.cell(row=rand, column=4).value:
-                        verificare_side_module.append([sheet.cell(row=rand, column=2).value, lista_selectie[i][0]])
-    for i in range(len(module_prezente[0])):
-        for x in range(len(verificare_side_module)):
-            if module_prezente[0][i] == verificare_side_module[x][0]:
-                if module_prezente[1][i] == verificare_side_module[x][1]:
-                    klappschalle1 = ""
-                else:
-                    klappschalle1 = module_prezente[0][i] + " wrong side"
+            print(row.value == sheet.cell(row=row.row, column=13).value)
+            if row.value != sheet.cell(row=row.row, column=13).value:
+                lista_erori.append(sheet.cell(row=row.row, column=10).value)
+    if len(lista_erori) > 0:
+        for i in range(len(lista_erori)):
+            klappschalle1 = klappschalle1 + lista_erori[i]
+    klappschalle1 = klappschalle1 + " wrong side"
+
+    #"Verificare kalppschalle old"
+    #for row in sheet["J"]:
+    #    if row.value != "Module" and row.value is not None:
+    #        module_prezente[0].append(row.value)
+    #for row in sheet["K"]:
+    #    if row.value != "Drawing" and row.value is not None:
+    #        module_prezente[1].append(row.value)
+    #for row in sheet["C"]:
+    #    if row.value == steering_side:
+    #        rand = row.row
+    #        if sheet.cell(row=rand, column=2).value in module_prezente[0]:
+    #           for i in range(len(lista_selectie)):
+    #                if lista_selectie[i][1] == sheet.cell(row=rand, column=4).value:
+    #                    verificare_side_module.append([sheet.cell(row=rand, column=2).value, lista_selectie[i][0]])
+    #for i in range(len(module_prezente[0])):
+    #    for x in range(len(verificare_side_module)):
+    #        if module_prezente[0][i] == verificare_side_module[x][0]:
+    #            if module_prezente[1][i] == verificare_side_module[x][1]:
+    #                klappschalle1 = ""
+    #            else:
+    #               klappschalle1 = module_prezente[0][i] + " wrong side"
     "Module dublate"
     duplicat0315 = ""
     duplicat0316 = ""

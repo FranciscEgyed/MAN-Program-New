@@ -442,9 +442,11 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
     for i in range(len(array_scriere_sheet6)):
         array_scriere_sheet6[i].append("")
     arr_module_existente = [["Module", "Drawing", "Quantity"]]
+    lista_klappschale = []
     for i in range(1, len(sheet1)):
         if "Klapp" in sheet1[i][4]:
             arr_module_existente.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
+            lista_klappschale.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
     'Bracket side'
     sidebracket = "Error"
     for i in range(len(arr_bracket_side[0])):
@@ -490,6 +492,26 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         array_scriere_sheet6[i + 1].append(arr_module_absente[i])
     for i in range(len(arr_module_absente) + 1, len(array_scriere_sheet6)):
         array_scriere_sheet6[i].append("")
+
+    for x in range(len(lista_klappschale)):
+        for i in range(len(array_scriere_sheet6)):
+            if lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
+                    and array_scriere_sheet6[i][4] == "X":
+                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][4]
+            elif lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
+                    and array_scriere_sheet6[i][5] == "X":
+                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][5]
+
+    lista_rl_klappschale = [["8011", "BODYL"], ["8012", "BODYL"], ["8013", "BODYR"], ["8014", "BODYR"], ["8014", "BODYR"], ["8023", "BODYL"],
+     ["8024", "BODYR"], ["8025", "BODYL"], ["8026", "BODYR"], ["8030", "BODYR"], ["8001", "BODYR"], ["8000", "BODYL"],
+     ["8001", "BODYR"], ["8022", "BODYR"], ["8023", "BODYL"], ["8026", "BODYL"], ["8027", "BODYR"], ["8027", "BODYR"],
+     ["8030", "BODYR"], ["8031", "BODYL"], ["8032", "BODYR"], ["8032", "BODYR"], ["8033", "BODYL"], ["8044", "BODYR"],
+     ["8057", "BODYL"], ["8000", "BODYL"]]
+
+    for i in range(len(array_scriere_sheet6)):
+        for x in range(len(lista_rl_klappschale)):
+           if array_scriere_sheet6[i][12] == lista_rl_klappschale[x][0]:
+               array_scriere_sheet6[i][12] = lista_rl_klappschale[x][1]
 
     'integritate'
     ch = 0

@@ -99,7 +99,7 @@ def cutting_ksklight():
                                       array_fire_ksk[i][6], array_fire_ksk[i][7], array_fire_ksk[i][8],
                                       array_fire_ksk[i][9], array_fire_ksk[i][10], array_fire_ksk[i][11]])
     pbar['value'] += 2
-    statuslabel["text"] = "Searching Control matrix"
+    statuslabel["text"] = "Searching Control matrix        "
     pbargui.update_idletasks()
     for i in range(1, len(lista_cutting)):
         for x in range(len(control_matrix)):
@@ -169,7 +169,7 @@ def cutting_ksklight():
                 continue
         lista_wire_no[i].append(counter)
     pbar['value'] += 2
-    statuslabel["text"] = "Printing file"
+    statuslabel["text"] = "Printing file                     "
     pbargui.update_idletasks()
     prn_excel_cutting(lista_cutting, lista_cutting_unice, lista_wire_no)
     end = time.time()
