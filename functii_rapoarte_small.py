@@ -38,13 +38,13 @@ def klappschaller(sheet, sheet1):
     lista_erori = []
     for row in sheet["K"]:
         if row.value != "Drawing" and row.value is not None:
-            print(row.value == sheet.cell(row=row.row, column=13).value)
             if row.value != sheet.cell(row=row.row, column=13).value:
                 lista_erori.append(sheet.cell(row=row.row, column=10).value)
     if len(lista_erori) > 0:
+        print(lista_erori)
         for i in range(len(lista_erori)):
-            klappschalle1 = klappschalle1 + lista_erori[i]
-    klappschalle1 = klappschalle1 + " wrong side"
+            klappschalle1 = klappschalle1 + "/" + lista_erori[i]
+        klappschalle1 = klappschalle1 + " wrong side"
 
     #"Verificare kalppschalle old"
     #for row in sheet["J"]:

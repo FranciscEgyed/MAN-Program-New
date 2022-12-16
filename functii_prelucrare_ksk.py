@@ -447,7 +447,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         if "Klapp" in sheet1[i][4]:
             arr_module_existente.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
             lista_klappschale.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
-    'Bracket side'
+    # Verificare bracket side
     sidebracket = "Error"
     for i in range(len(arr_bracket_side[0])):
         for x in range(1, len(sheet1)):
@@ -459,6 +459,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             if sheet1[u][1] == arr_bracket_side[1][y]:
                 sidebracket = "RHD"
                 break
+    # Verificare module klappschale lipsa
     arr_module_absente = []
     arr_module_existente_ver = []
     for x in range(1, len(arr_module_existente)):
@@ -492,7 +493,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         array_scriere_sheet6[i + 1].append(arr_module_absente[i])
     for i in range(len(arr_module_absente) + 1, len(array_scriere_sheet6)):
         array_scriere_sheet6[i].append("")
-
+    # Verificare desen klappschale (lhd sau rhd)
     for x in range(len(lista_klappschale)):
         for i in range(len(array_scriere_sheet6)):
             if lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
@@ -513,7 +514,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
            if array_scriere_sheet6[i][12] == lista_rl_klappschale[x][0]:
                array_scriere_sheet6[i][12] = lista_rl_klappschale[x][1]
 
-    'integritate'
+    # Verificare integritate(sa nu fie platforme combinate)
     ch = 0
     st = 0
     tg = 0

@@ -35,7 +35,7 @@ statuslabel = tk.Label(root, text="Waiting . . .")
 menu1 = tk.Menubutton(menu_frame, text="Fisiere Sursa", background="DarkSeaGreen1", font="Arial 10 bold")
 menu1.grid(row=0, column=0)
 submenu1 = tk.Menu(menu1, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
-submenu1.add_command(label="Incarcare Input File", command=lambda: [statusbusy(), load_source(), statusidle()])
+submenu1.add_command(label="Incarcare Fisier Sursa", command=lambda: [statusbusy(), load_source(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix CSR", command=lambda: [statusbusy(), cmcsr(), statusidle()])
 submenu1.add_command(label="Control Matrix CSL", command=lambda: [statusbusy(), cmcsl(), statusidle()])
@@ -54,7 +54,7 @@ submenu2 = tk.Menu(menu2, tearoff=0, background="DarkSeaGreen1", font="Arial 10 
 submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), sortare_jit(), statusidle()])
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
-submenu2.add_command(label="Golire directoare LHD si RHD",
+submenu2.add_command(label="Golire directoare comparatie LHD si RHD",
                      command=lambda: [statusbusy(), golire_directoare_comparati(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
@@ -63,6 +63,11 @@ submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
                      command=lambda: [statusbusy(), boms_leoni(), statusidle()])
 submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
+                     command=lambda: [statusbusy(), wires_leoni(), statusidle()])
+submenu2.add_separator()
+submenu2.add_command(label="Creare wirelist toate platformele simplu",
+                     command=lambda: [statusbusy(), wirelist_all_simplu(), statusidle()])
+submenu2.add_command(label="Creare wirelist toate platformele complet",
                      command=lambda: [statusbusy(), wires_leoni(), statusidle()])
 menu2.configure(menu=submenu2)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

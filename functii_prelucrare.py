@@ -2,9 +2,12 @@ import csv
 import os
 import time
 from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
+
+import pandas as pd
 from openpyxl import load_workbook
 from diverse import log_file
-from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni
+from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni, \
+    prn_excel_wirelistsallinone
 import sqlite3
 
 
@@ -942,5 +945,88 @@ def wires_leoni():
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
+
+def wirelist_all_simplu():
+    pbargui = Tk()
+    pbargui.title("Wirelist All In One")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/"
+    array_print = []
+    array_print2 = []
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv") and not file_all.startswith("All"):
+            file_counter = file_counter + 1
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            with open(dir_selectat + file_all, newline='') as csvfile:
+                array_wirelist = list(csv.reader(csvfile, delimiter=';'))
+            for i in range(len(array_wirelist)):
+                array_print.append([array_wirelist[i][0], array_wirelist[i][1], array_wirelist[i][2],
+                                   array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][5],
+                                   array_wirelist[i][6], array_wirelist[i][9]])
+                pbar['value'] += 2
+                pbargui.update_idletasks()
+            for i in range(len(array_wirelist)):
+                array_print.append([array_wirelist[i][0], array_wirelist[i][1], array_wirelist[i][2],
+                                   array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][7],
+                                   array_wirelist[i][8], array_wirelist[i][9]])
+                pbar['value'] += 2
+                pbargui.update_idletasks()
+            for i in range(len(array_wirelist)):
+                array_print2.append(array_wirelist[i])
+            continue
+        else:
+            continue
+    prn_excel_wirelistsallinone(array_print, array_print2)
+    pbar.destroy()
+    pbargui.destroy()
+    return None
+
+
+def wirelist_all_complet():
+    pbargui = Tk()
+    pbargui.title("Wirelist All In One Complet")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".xlsx") and not file_all.startswith("Leoni"):
+            file_counter = file_counter + 1
+    if file_counter == 0:
+        messagebox.showinfo('Finalizat!', "Directorul Complete BOM and WIRELIST/Wirelist/ este gol")
+        pbar.destroy()
+        pbargui.destroy()
+        return None
+    all_data = pd.DataFrame()
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".xlsx") and not file_all.startswith("Leoni"):
+            path = os.path.join(dir_selectat, file_all)
+            df = pd.read_excel(path)
+            all_data = all_data.append(df, ignore_index=True)
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+    all_data.to_csv(os.path.abspath(os.curdir) + "/MAN/Input/Others/Wirelist Complet.txt", encoding='utf-8',
+                    index=False, sep=';')
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!')
+    return None
 
 
