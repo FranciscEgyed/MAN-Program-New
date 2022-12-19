@@ -40,6 +40,11 @@ def sortare_jit():
     # Open JIT file
     fisier_calloff = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                                 title="Incarcati fisierul care necesita sortare")
+    if len(fisier_calloff) == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showinfo("Nu ati selectat nimic")
+        return None
     statuslabel["text"] = "Incarcare fisier excel"
     timelabel["text"] = "0.15 secunde / KSK"
     pbar['value'] += 2
@@ -48,7 +53,6 @@ def sortare_jit():
     try:
         wb = load_workbook(fisier_calloff)
     except:
-        pbar.destroy()
         pbar.destroy()
         pbargui.destroy()
         messagebox.showinfo("Fisier invalid", fisier_calloff + " extensie incompatibila!")
@@ -265,7 +269,7 @@ def sortare_jit_dir():
                 is_light = "NO"
                 array_database = []
                 kskprogres = kskprogres + 1
-                statuslabel2["text"] = "                 " + str(kskprogres) + " / " + str(kskcounter) + " : " + element[1:]
+                statuslabel2["text"] = "           " + str(kskprogres) + " / " + str(kskcounter) + " : " + element[1:]
                 pbar['value'] += 2
                 pbargui.update_idletasks()
                 array_temporar = []
@@ -354,7 +358,6 @@ def sortare_jit_dir():
                 array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
                                        array_temporar[1][8], data_download, element[1:], array_temporar[1][7], sstype,
                                        ';'.join(array_temporar_module)])
-
                 # create a table
                 cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
                                   (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
@@ -362,7 +365,6 @@ def sortare_jit_dir():
                 # insert multiple records using the more secure "?" method
                 cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
                 conn.commit()
-
                 with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/" + tip + "/"
                           + element[1:] + ".csv", 'w', newline='') as myfile:
                     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
