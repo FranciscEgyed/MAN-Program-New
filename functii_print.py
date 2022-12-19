@@ -1,6 +1,5 @@
 import datetime
 import os
-import time
 from tkinter import messagebox
 from openpyxl import Workbook
 from openpyxl.styles import Border, Side, PatternFill, Alignment, Font
@@ -10,7 +9,6 @@ from diverse import istsoll, log_file
 
 
 def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, sheet8):
-    start = time.time()
     thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'),
                          bottom=Side(style='thin'))
     dir_salvare_default = ""
@@ -284,7 +282,7 @@ def prn_excel_separare_ksk(sheet, nume_fisier):
         ws1.cell(column=1, row=i + 1, value=str(sheet[i]))
     if globale.director_salvare_raport == "":
         try:
-            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/" + nume_fisier + ".xlsx")
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/" + nume_fisier + ".xlsx")
             log_file("Creat Error file " + nume_fisier + ".xlsx")
         except PermissionError:
             log_file("Eroare scriere. Nu am salvat Error file " + nume_fisier + ".xlsx")
@@ -334,26 +332,6 @@ def prn_excel_wires_complete(sheet1, nume_fisier):
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist " + nume_fisier + ".xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul " + nume_fisier + "este read-only!")
-        return None
-
-
-def prn_excel_diagrame(sheet1):
-    wb = Workbook()
-    ws1 = wb.active
-    ws1.title = "Diagrame"
-    for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
-            try:
-                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-            except:
-                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
-    try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame.xlsx")
-        log_file("Creat wire Diagrame.xlsx")
-        messagebox.showinfo('Finalizat!')
-    except PermissionError:
-        log_file("Eroare salvare. Nu am salvat wirelist Diagrame.xlsx")
-        messagebox.showerror('Eroare scriere', "Fisierul Diagrame.xlsx este read-only!")
         return None
 
 
@@ -663,27 +641,6 @@ def prn_excel_variatii(sheet1):
         return None
 
 
-def prn_excel_splmaster(sheet1, sheet2, nume):
-    wb = Workbook()
-    ws1 = wb.active
-    ws1.title = "Splices"
-    ws2 = wb.create_sheet("Crimping")
-    for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
-            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-
-    for i in range(len(sheet2)):
-        for x in range(len(sheet2[i])):
-            ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
-    try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/" + nume + ".xlsx")
-        log_file("Creat Splices Master " + nume + ".xlsx")
-    except PermissionError:
-        log_file("Eroare salvare. Nu am salvat Splices Master " + nume + ".xlsx")
-        messagebox.showerror('Eroare scriere', "Fisierul Splices Master " + nume + ".xlsx este read-only!")
-        return None
-
-
 def prn_excel_compare_ksk_lhd(sheet1, sheet2):
     wb = Workbook()
     ws1 = wb.active
@@ -869,7 +826,6 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
     ws9.cell(column=5, row=1, value="Description")
     istsoll(ws6, ws9)
 
-
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/" + sheet1[1][0] + ".xlsx")
         log_file("Creat Light" + sheet1[1][0] + ".xlsx")
@@ -878,4 +834,3 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
         messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
         return None
     return None
-

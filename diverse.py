@@ -38,6 +38,7 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/",
                         #os.path.abspath(os.curdir) + "/MAN/Output/LDorado/",
                         #os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"]
     for d in directoareoutput:
         if not os.path.exists(d):
@@ -328,60 +329,6 @@ def istsoll(sheet, sheet2):
                     sheet2.cell(column=5, row=row.row).value = langenmodule[i][9]
 
 
-def verificare_raport(arr_raport):
-    exception_array = ["433014_6", "591003_1", "713004_4", "310000_509"]
-    for i in range(1, len(arr_raport)):
-        txt = ""
-        txt_arr = []
-        output = []
-        txt = arr_raport[i][12].replace("Wire No. - ", "")
-        txt_arr = txt.rsplit(",")
-        for x in range(len(txt_arr)):
-            if txt_arr[x].strip() not in exception_array:
-                output.append(txt_arr[x])
-        if "Error" in arr_raport[i][4]:
-            arr_raport[i][0] = "Klappschalle error"
-        elif "wrong" in arr_raport[i][4]:
-            arr_raport[i][0] = "Klappschalle error"
-        elif "Missing" in arr_raport[i][4]:
-            arr_raport[i][0] = "Klappschalle error"
-        elif arr_raport[i][5] == "No Module":
-            arr_raport[i][0] = "No Supersleeve Module"
-        elif "Error" in arr_raport[i][5]:
-            arr_raport[i][0] = arr_raport[i][5]
-        elif arr_raport[i][7] != "None":
-            arr_raport[i][0] = "Old/new error"
-        elif arr_raport[i][8] == "No Heck module":
-            arr_raport[i][0] = "Heckmodule error"
-        elif arr_raport[i][10] != "OK":
-            arr_raport[i][0] = "X1555 error"
-        elif arr_raport[i][11] != "OK":
-            arr_raport[i][0] = "Splice wire error"
-        elif arr_raport[i][12] != "OK" and len(output) > 0:
-            arr_raport[i][0] = "Same wire error"
-        elif arr_raport[i][13] != "OK":
-            arr_raport[i][0] = "X2799 error"
-        elif arr_raport[i][15] != "OK":
-            arr_raport[i][0] = "Modules not implemented error"
-        elif "Error" in arr_raport[i][17]:
-            arr_raport[i][0] = "Comment error"
-        elif "Mixed" in arr_raport[i][17]:
-            arr_raport[i][0] = "Comment error"
-        elif "only" in arr_raport[i][17]:
-            arr_raport[i][0] = "Comment error"
-        elif "error" in arr_raport[i][17]:
-            arr_raport[i][0] = "Comment error"
-        elif "NOT" in arr_raport[i][34]:
-            arr_raport[i][0] = "X6616/X6490 error"
-        elif arr_raport[i][37] != "OK":
-            arr_raport[i][0] = "Prufung error"
-        elif arr_raport[i][39] != "OK":
-            arr_raport[i][0] = "X6490 module missing"
-        elif arr_raport[i][40] != "OK":
-            arr_raport[i][0] = "Module check error"
-    return None
-
-
 def golire_directoare():
     dir_input1 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
     dir_input2 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
@@ -502,5 +449,22 @@ def databesemerge():
         conn.close()
     except sqlite3.OperationalError:
         return None
-
+    try:
+        conn2 = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        cursor2 = conn2.cursor()
+        query = "SELECT * FROM `KSKDatabase`"
+        cursor2.execute(query)
+        final_result = list(cursor2.fetchall())
+        cursor = conn.cursor()
+        # create a table
+        cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
+                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
+                          harness text, trailerno text, listamodule text) """)
+        # insert multiple records using the more secure "?" method
+        cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", final_result)
+        conn.commit()
+        conn.close()
+    except sqlite3.OperationalError:
+        return None
 

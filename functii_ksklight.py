@@ -61,7 +61,7 @@ def cutting_ksklight():
     array_wires_all.extend(array_wires_8013)
     lista_cutting = [["CC", "KSK No", "Module ID", "Wire No.", "LTG PMD", "Color", "Cross Sec", "Conector 1", "Pin 1",
                       "Conector 2", "Pin 2", "Sonderltg", "Length", "KANBAN-AG", "REAL NAME", "Ledset"]]
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_selectat):
@@ -194,7 +194,7 @@ def ss_ksklight():
         drawings = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt", newline='') as csvfile:
         compover = list(csv.reader(csvfile, delimiter=';'))
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
               "81.25484-5272", "81.25484-5267", "81.25484-5268"]
     ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
@@ -207,7 +207,6 @@ def ss_ksklight():
                     "Lengs_DWмм", "In KSK"]]
     file_counter = 0
     file_progres = 0
-    lista_module_KSK_light = []
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".xlsx"):
             file_counter = file_counter + 1
@@ -225,10 +224,10 @@ def ss_ksklight():
             path = os.path.join(dir_selectat, file_all)
             wb = load_workbook(path)
             ws = wb.worksheets[0]
-            lista_module_KSK_light = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
+            lista_module_ksk_light = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
 
             for i in range(len(ssdatabase_de_prelucrat)):
-                if ssdatabase_de_prelucrat[i][1] in lista_module_KSK_light:
+                if ssdatabase_de_prelucrat[i][1] in lista_module_ksk_light:
                     ssdatabase_de_prelucrat[i].append(1)
                 else:
                     ssdatabase_de_prelucrat[i].append(0)
@@ -244,7 +243,7 @@ def ss_ksklight():
             df2 = pd.pivot_table(df1, index=["Basic_Module"], columns=["Index"], fill_value=0)
             indexes = df2.index.values.tolist()
             valori = df2.values.tolist()
-            #index_value_pairs = [indexes[i] for i in range(len(valori)) if valori[i][0] != 0 and valori[i][1] != 0]
+            # index_value_pairs = [indexes[i] for i in range(len(valori)) if valori[i][0] != 0 and valori[i][1] != 0]
             index_value_pairs = []
             for i in range(len(valori)):
                 if valori[i][0] != 0 and valori[i][1] != 0:
@@ -317,13 +316,13 @@ def ss_ksklight():
     statuslabel["text"] = "Cautare part number LEONI             "
     pbar['value'] += 2
     pbargui.update_idletasks()
-    #for i in range(1, len(array_taiere_print[0]) - 1):
+    # for i in range(1, len(array_taiere_print[0]) - 1):
     #    pbar['value'] += 2
     #    pbargui.update_idletasks()
     #    for x in range(len(compover)):
     #        if array_taiere_print[0][i] == compover[x][0]:
     #            array_taiere_print[0][i] = compover[x][2]
-    #answer = askyesno(title='Optiuni printare', message='Doriti printare completa?')
+    # answer = askyesno(title='Optiuni printare', message='Doriti printare completa?')
     statuslabel["text"] = "Printare lista             "
     pbar['value'] += 2
     array_taiere_print[0].append("Desen")
@@ -359,15 +358,16 @@ def compare_ksk_light():
     lista_identice = []
     # lista_nonidentice = []
     start = time.time()
-    files_dir = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/")
-    my_dir = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    files_dir = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/")
+    my_dir = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(my_dir):
         if file_all.endswith(".xlsx"):
             file_counter = file_counter + 1
     file_counter = int(math.factorial(file_counter) / ((math.factorial(2)) * math.factorial((file_counter - 2))))
-    timelabel["text"] = "Estimated time to complete : " + str((file_counter * 0.02988) / 60) + " minutes."
+    timelabel["text"] = "             Estimated time to complete : " + \
+                        str(((file_counter * 0.02988) / 60) - ((file_progres * 0.02988) / 60)) + " minutes.            "
     pbargui.update_idletasks()
     if file_counter == 0:
         messagebox.showerror('Eroare fisier', 'Lipsa fisiere in director')
@@ -375,10 +375,11 @@ def compare_ksk_light():
     for file1, file2 in itertools.combinations(files_dir, 2):
         pbar['value'] += 2
         file_progres = file_progres + 1
-        statuslabel["text"] = "Combinatii verificate " + str(file_progres) + "/" + str(file_counter)
+        statuslabel["text"] = "                Combinatii verificate " + str(file_progres) + "/" + str(file_counter) +\
+                              "                "
         end = time.time()
-        timelabel["text"] = "Estimated time to complete : " + \
-                            str(((file_counter * (end - start)) - (end - start)) / 60)[:5] + " minutes."
+        timelabel["text"] = "         Estimated time to complete : " + \
+                            str(((file_counter * 0.02988) / 60) - ((file_progres * 0.02988) / 60)) + " minutes.        "
         pbargui.update_idletasks()
         path1 = os.path.join(my_dir, file1)
         path2 = os.path.join(my_dir, file2)
@@ -499,7 +500,7 @@ def raport_light():
             try:
                 pivot = yyy.pivot_table(index=indexlist, columns=columnlist, values="primarykey", fill_value=0,
                                         aggfunc='count')
-                #print(pivot.to_string())
+                # print(pivot.to_string())
                 pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport -" + indexlist[0] +
                                "-" + save_time + ".xlsx")
                 ws.destroy()
@@ -549,7 +550,3 @@ def raport_light():
     update3(list3)
     update4(list4)
     ws.mainloop()
-
-
-
-

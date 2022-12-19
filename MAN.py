@@ -95,7 +95,7 @@ menu5 = tk.Menubutton(menu_frame, text="KSK Light", background="DarkSeaGreen1", 
 menu5.grid(row=0, column=4)
 submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
 submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), raport_light(), statusidle()])
-submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light, statusidle()])
+submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light(), statusidle()])
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
 submenu5.add_separator()
@@ -106,12 +106,6 @@ menu5.configure(menu=submenu5)
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
-submenu7.add_command(label="Clip test/Test = Inlocuire U cu W",
-                     command=lambda: [statusbusy(), inlocuire(), statusidle()])
-submenu7.add_separator()
-submenu7.add_command(label="Diagrame",
-                     command=lambda: [statusbusy(), diagrame(), statusidle()])
-submenu7.add_separator()
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_separator()

@@ -1,9 +1,7 @@
-import os
 import time
 from tkinter import filedialog, messagebox, Tk, HORIZONTAL, Label, ttk
 from openpyxl.reader.excel import load_workbook
 import globale
-from diverse import verificare_raport
 from functii_print import prn_excel_raport
 from functii_rapoarte_small import *
 
@@ -280,3 +278,55 @@ def creare_raport_director():
     end = time.time()
     messagebox.showinfo('Finalizat!', 'Prelucrate '
                         + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+
+
+def verificare_raport(arr_raport):
+    exception_array = ["433014_6", "591003_1", "713004_4", "310000_509"]
+    for i in range(1, len(arr_raport)):
+        output = []
+        txt = arr_raport[i][12].replace("Wire No. - ", "")
+        txt_arr = txt.rsplit(",")
+        for x in range(len(txt_arr)):
+            if txt_arr[x].strip() not in exception_array:
+                output.append(txt_arr[x])
+        if "Error" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif "wrong" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif "Missing" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif arr_raport[i][5] == "No Module":
+            arr_raport[i][0] = "No Supersleeve Module"
+        elif "Error" in arr_raport[i][5]:
+            arr_raport[i][0] = arr_raport[i][5]
+        elif arr_raport[i][7] != "None":
+            arr_raport[i][0] = "Old/new error"
+        elif arr_raport[i][8] == "No Heck module":
+            arr_raport[i][0] = "Heckmodule error"
+        elif arr_raport[i][10] != "OK":
+            arr_raport[i][0] = "X1555 error"
+        elif arr_raport[i][11] != "OK":
+            arr_raport[i][0] = "Splice wire error"
+        elif arr_raport[i][12] != "OK" and len(output) > 0:
+            arr_raport[i][0] = "Same wire error"
+        elif arr_raport[i][13] != "OK":
+            arr_raport[i][0] = "X2799 error"
+        elif arr_raport[i][15] != "OK":
+            arr_raport[i][0] = "Modules not implemented error"
+        elif "Error" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "Mixed" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "only" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "error" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "NOT" in arr_raport[i][34]:
+            arr_raport[i][0] = "X6616/X6490 error"
+        elif arr_raport[i][37] != "OK":
+            arr_raport[i][0] = "Prufung error"
+        elif arr_raport[i][39] != "OK":
+            arr_raport[i][0] = "X6490 module missing"
+        elif arr_raport[i][40] != "OK":
+            arr_raport[i][0] = "Module check error"
+    return None
