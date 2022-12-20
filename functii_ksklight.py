@@ -504,6 +504,7 @@ def raport_light():
                 pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport -" + indexlist[0] +
                                "-" + save_time + ".xlsx")
                 ws.destroy()
+                messagebox.showinfo("Finalizat", "Raportul " + indexlist[0] + "/" + columnlist[0] + " a fost salvat!")
             except ValueError:
                 ws.destroy()
                 messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")

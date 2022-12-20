@@ -1,6 +1,7 @@
 import csv
 import os
 import datetime
+import shutil
 import sqlite3
 from tkinter import messagebox
 
@@ -447,24 +448,12 @@ def databesemerge():
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", final_result)
         conn.commit()
         conn.close()
+
     except sqlite3.OperationalError:
+        #messagebox.showerror("Database Error", "Online database unreachable, using local database")
         return None
     try:
-        conn2 = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
-        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
-        cursor2 = conn2.cursor()
-        query = "SELECT * FROM `KSKDatabase`"
-        cursor2.execute(query)
-        final_result = list(cursor2.fetchall())
-        cursor = conn.cursor()
-        # create a table
-        cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
-                          (primarykey text UNIQUE, numejit text, tip text, light text, datalivrare text, datajit text,
-                          harness text, trailerno text, listamodule text) """)
-        # insert multiple records using the more secure "?" method
-        cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", final_result)
-        conn.commit()
-        conn.close()
-    except sqlite3.OperationalError:
+        shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
+                     os.path.abspath(os.curdir) + "/MAN/Input/Others/")
+    except FileNotFoundError:
         return None
-
