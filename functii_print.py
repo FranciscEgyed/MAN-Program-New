@@ -834,3 +834,22 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
         messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
         return None
     return None
+
+
+def prn_excel_moduleinksk(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "All KSK"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=int(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Lista module in KSK.xlsx")
+        log_file("Lista module in KSK.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Lista module in KSK.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Lista module in KSK.xlsx este read-only!")
+        return None

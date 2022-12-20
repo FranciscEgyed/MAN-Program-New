@@ -448,12 +448,14 @@ def databesemerge():
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?)", final_result)
         conn.commit()
         conn.close()
-
     except sqlite3.OperationalError:
         #messagebox.showerror("Database Error", "Online database unreachable, using local database")
         return None
+
+
+def databasecopy():
     try:
-        shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
-                     os.path.abspath(os.curdir) + "/MAN/Input/Others/")
+       shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
+                     os.path.abspath(os.curdir) + "/MAN/Input/Others")
     except FileNotFoundError:
         return None

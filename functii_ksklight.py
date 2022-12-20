@@ -7,7 +7,8 @@ import time
 from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
-from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light
+from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light, \
+    prn_excel_moduleinksk
 import sqlite3
 
 
@@ -509,6 +510,24 @@ def raport_light():
                 ws.destroy()
                 messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
 
+
+    def moduleinksk():
+        printer = []
+        printer2 = []
+        for x in range(0, len(df.index)):
+            printer.append([df.iloc[x, 6], df.iloc[x, 9].split(";")])
+        for i in range(len(printer)):
+            for x in range(len(printer[i][1])):
+                printer2.append([printer[i][0], printer[i][1][x]])
+        try:
+            prn_excel_moduleinksk(printer2)
+            ws.destroy()
+            messagebox.showinfo("Finalizat", "Raportul Lista module in KSK a fost salvat!")
+        except ValueError:
+            ws.destroy()
+            messagebox.showerror("Error", "Error")
+
+
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")
     ws.geometry("+570+50")
@@ -538,6 +557,9 @@ def raport_light():
 
     brun = Button(ws, text="Generate report", command=run, bg="green", font="Arial 10 bold")
     brun.grid(row=5, column=4)
+    bmoduleinksk = Button(ws, text="Raport module in KSK", command=moduleinksk, bg="yellow", font="Arial 10 bold")
+    bmoduleinksk.grid(row=6, column=4)
+
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     indexe = Listbox(ws, exportselection=0)
