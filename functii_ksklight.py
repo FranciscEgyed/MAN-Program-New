@@ -53,6 +53,12 @@ def cutting_ksklight():
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8013.Wirelist.csv",
                   newline='') as csvfile:
             array_wires_8013 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8012.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8012 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8014.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8014 = list(csv.reader(csvfile, delimiter=';'))
     except:
         pbar.destroy()
         pbargui.destroy()
@@ -60,6 +66,9 @@ def cutting_ksklight():
         return None
     array_wires_all.extend(array_wires_8011)
     array_wires_all.extend(array_wires_8013)
+    array_wires_all.extend(array_wires_8012)
+    array_wires_all.extend(array_wires_8014)
+
     lista_cutting = [["CC", "KSK No", "Module ID", "Wire No.", "LTG PMD", "Color", "Cross Sec", "Conector 1", "Pin 1",
                       "Conector 2", "Pin 2", "Sonderltg", "Length", "KANBAN-AG", "REAL NAME", "Ledset"]]
     dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
