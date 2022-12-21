@@ -540,7 +540,7 @@ def raport_light():
             pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
                                     aggfunc='count')
 
-            pivot.loc[:, 'Total'] = pivot.iloc[:, 1:].sum(axis=1)
+            pivot.loc[:, 'Total'] = pivot.iloc[:, :].sum(axis=1)
             printarray = []
             for x in range(len(pivot.index)):
                 if pivot.iloc[x, -1] > 1:
@@ -549,7 +549,19 @@ def raport_light():
                         if pivot.iloc[x, y] != 0:
                             templist.append(pivot.columns[y])
                     printarray.append(templist)
-            prn_excel_compare_ksk_light(printarray, save_time, valuesdatajit_lb)
+            for x in range(len(pivot.index)):
+                if pivot.iloc[x, -1] == 1:
+                    templist = []
+                    for y in range(len(pivot.columns)-1):
+                        if pivot.iloc[x, y] != 0:
+                            templist.append(pivot.columns[y])
+                    printarray.append(templist)
+            #pivot.loc["Total"] = pivot.sum()
+            #for y in range(len(pivot.columns) - 1):
+            #    if pivot.iloc[-1, y] == 1:
+            #        print(pivot.columns[y])
+            #print(pivot)
+            prn_excel_compare_ksk_light(printarray, save_time)
 
             ws.destroy()
             messagebox.showinfo("Finalizat", "Comparatia " + save_time + " a fost salvat!")

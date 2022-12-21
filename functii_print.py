@@ -282,7 +282,8 @@ def prn_excel_separare_ksk(sheet, nume_fisier):
         ws1.cell(column=1, row=i + 1, value=str(sheet[i]))
     if globale.director_salvare_raport == "":
         try:
-            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/" + nume_fisier + ".xlsx")
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/" +
+                    nume_fisier + ".xlsx")
             log_file("Creat Error file " + nume_fisier + ".xlsx")
         except PermissionError:
             log_file("Eroare scriere. Nu am salvat Error file " + nume_fisier + ".xlsx")
@@ -332,42 +333,6 @@ def prn_excel_wires_complete(sheet1, nume_fisier):
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist " + nume_fisier + ".xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul " + nume_fisier + "este read-only!")
-        return None
-
-
-def prn_excel_separare_ksk_lista(sheet1, sheet2, data, nonksk, ksk):
-    save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
-    wb = Workbook()
-    ws1 = wb.active
-    ws1.title = "KSK Light"
-    for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
-            try:
-                ws1.cell(column=x + 1, row=i + 1, value=int(sheet1[i][x]))
-            except:
-                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-    for i in range(len(sheet2)):
-        if sheet2[i][0] != "XXXX":
-            try:
-                ws1.cell(column=5, row=i + 1, value=int(sheet2[i][0]))
-                ws1.cell(column=6, row=i + 1, value=int(sheet2[i][1]))
-                ws1.cell(column=7, row=i + 1, value=int(sheet2[i][2]))
-            except:
-                ws1.cell(column=5, row=i + 1, value=str(sheet2[i][0]))
-                ws1.cell(column=6, row=i + 1, value=str(sheet2[i][1]))
-                ws1.cell(column=7, row=i + 1, value=str(sheet2[i][2]))
-    ws1.cell(column=9, row=1, value="Total KSK")
-    ws1.cell(column=10, row=1, value=nonksk)
-    ws1.cell(column=9, row=2, value="KSK Light")
-    ws1.cell(column=10, row=2, value=ksk)
-    ws1.cell(column=9, row=3, value="Non KSK Light")
-    ws1.cell(column=10, row=3, value=nonksk - ksk)
-    try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/KSK Light-" + data + "-" + save_time + ".xlsx")
-        log_file("Creat wire KSK Light.xlsx")
-    except PermissionError:
-        log_file("Eroare salvare. Nu am salvat wirelist KSK Light.xlsx")
-        messagebox.showerror('Eroare scriere', "Fisierul KSK Light.xlsx este read-only!")
         return None
 
 
@@ -601,15 +566,13 @@ def prn_excel_wires_complete_leoni(sheet1, sheet2, nume_fisier):
         return None
 
 
-def prn_excel_compare_ksk_light(sheet1, data, sheet3):
+def prn_excel_compare_ksk_light(sheet1, data):
     wb = Workbook()
     ws1 = wb.active
     ws1.title = "Comparatie KSK Light"
-    for i in range(len(sheet3)):
-        ws1.cell(column=i + 1, row=1, value=str(sheet3[i]))
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
-            ws1.cell(column=x + 1, row=i + 2, value=str(sheet1[i][x]))
+            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
 
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Comparatie KSK " + data + ".xlsx")
@@ -850,3 +813,25 @@ def prn_excel_moduleinksk(sheet1):
         log_file("Eroare salvare. Nu am salvat Lista module in KSK.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Lista module in KSK.xlsx este read-only!")
         return None
+
+
+def prn_excel_ksk_neprelucrate(sheet, nume_fisier):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = nume_fisier
+    for i in range(len(sheet)):
+        ws1.cell(column=1, row=i + 1, value=str(sheet[i]))
+    if globale.director_salvare_raport == "":
+        try:
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/" + nume_fisier + ".xlsx")
+            log_file("Creat Error file " + nume_fisier + ".xlsx")
+        except PermissionError:
+            log_file("Eroare scriere. Nu am salvat Error file " + nume_fisier + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
+            return None
+    else:
+        try:
+            wb.save(globale.director_salvare_raport + "/Error file " + nume_fisier + ".xlsx")
+        except PermissionError:
+            messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
+            return None

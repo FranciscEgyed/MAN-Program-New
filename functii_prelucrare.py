@@ -128,23 +128,6 @@ def sortare_jit():
         if set(array_temporar_module).issubset(array_sortare_light[0]):
             prn_excel_separare_ksk(array_temporar_module, element[1:])
             is_light = "YES"
-        # Create LHD and RHD files for each KSK from JIT
-        stanga = []
-        dreapta = []
-        for x in range(len(array_temporar)):
-            if array_temporar[x][2] == "BODYL":
-                stanga.append([array_temporar[x][1]])
-            elif array_temporar[x][2] == "BODYR":
-                dreapta.append([array_temporar[x][1]])
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/LHD/"
-                  + element[1:] + ".csv", 'w', newline='') as myfile:
-            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-            wr.writerows(stanga)
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/RHD/"
-                  + element[1:] + ".csv", 'w', newline='') as myfile:
-            wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-            wr.writerows(dreapta)
-
         # Check harness type
         harnesstype = []
         for m in range(len(array_temporar_module)):
@@ -176,7 +159,6 @@ def sortare_jit():
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
         conn.commit()
         conn.close()
-
 
         # Write to disk
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/" + tip + "/"
@@ -324,22 +306,8 @@ def sortare_jit_dir():
                 if set(array_temporar_module).issubset(array_sortare_light[0]):
                     prn_excel_separare_ksk(array_temporar_module, element[1:])
                     is_light = "YES"
-                # Create LHD and RHD files for each KSK from JIT
-                stanga = []
-                dreapta = []
-                for x in range(len(array_temporar)):
-                    if array_temporar[x][2] == "BODYL":
-                        stanga.append([array_temporar[x][1]])
-                    elif array_temporar[x][2] == "BODYR":
-                        dreapta.append([array_temporar[x][1]])
-                with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/LHD/"
-                          + element[1:] + ".csv", 'w', newline='') as myfile:
-                    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-                    wr.writerows(stanga)
-                with open(os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/RHD/"
-                          + element[1:] + ".csv", 'w', newline='') as myfile:
-                    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-                    wr.writerows(dreapta)
+                else:
+                    prn_excel_ksk_neprelucrate(array_temporar_module, element[1:])
                 # Check harness type
                 harnesstype = []
                 for m in range(len(array_temporar_module)):
@@ -386,21 +354,6 @@ def sortare_jit_dir():
     pbar.destroy()
     pbargui.destroy()
     messagebox.showinfo('Finalizat!', str(file_progres) + " fisiere din " + str(file_counter))
-
-def golire_directoare_comparati():
-    dir_input1 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/LHD/"
-    dir_input2 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/RHD/"
-    for file_all in os.listdir(dir_input1):
-        try:
-            os.remove(dir_input1 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_input2):
-        try:
-            os.remove(dir_input2 + file_all)
-        except:
-            continue
-    messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
 
 
 def boms():

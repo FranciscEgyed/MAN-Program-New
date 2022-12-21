@@ -54,8 +54,6 @@ submenu2 = tk.Menu(menu2, tearoff=0, background="DarkSeaGreen1", font="Arial 10 
 submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), sortare_jit(), statusidle()])
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
-submenu2.add_command(label="Golire directoare comparatie LHD si RHD",
-                     command=lambda: [statusbusy(), golire_directoare_comparati(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
 submenu2.add_command(label="Prelucrare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])

@@ -21,9 +21,7 @@ def structura_directoare():
                        os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists",
                        os.path.abspath(os.curdir) + "/MAN/Input/BOMs",
                        os.path.abspath(os.curdir) + "/MAN/Input/Others",
-                       os.path.abspath(os.curdir) + "/MAN/Input",
-                       os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/LHD",
-                       os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Comparatii/RHD"]
+                       os.path.abspath(os.curdir) + "/MAN/Input"]
     for d in directoareinput:
         if not os.path.exists(d):
             os.makedirs(d)
@@ -37,9 +35,8 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/",
-                        #os.path.abspath(os.curdir) + "/MAN/Output/LDorado/",
-                        #os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"]
     for d in directoareoutput:
