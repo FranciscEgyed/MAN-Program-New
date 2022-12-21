@@ -3,7 +3,6 @@ import time
 from tkinter import filedialog, messagebox, Tk, HORIZONTAL, Label, ttk
 from openpyxl.reader.excel import load_workbook
 import globale
-from diverse import verificare_raport
 from functii_print import prn_excel_raport
 from functii_rapoarte_small import *
 
@@ -104,7 +103,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end0 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8000: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8000: " + str(file_progres) + "/" + str(file_counter) \
+                                      + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end0 - start0))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -146,7 +146,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end1 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8011: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8011: " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end1 - start1))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -188,7 +189,8 @@ def creare_raport_all():
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 end2 = time.time()
                 file_progres = file_progres + 1
-                statuslabel["text"] = "8023: " + str(file_progres) + "/" + str(file_counter) + " : " + file_all + "    "
+                statuslabel["text"] = "                 8023: " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all + "    "
                 timelabel["text"] = "Estimated time to complete : " + \
                                     str(((file_counter * 0.3) - (end2 - start2))/60)[:5] + " minutes."
                 pbar['value'] += 2
@@ -239,6 +241,11 @@ def creare_raport_director():
     for file_all in os.listdir(dir_prelucrare):
         if file_all.endswith(".xlsx") and not file_all.startswith("BOM"):
             file_counter = file_counter + 1
+    if file_counter == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
+        return None
     for file_all in os.listdir(dir_prelucrare):
         try:
             if file_all.endswith(".xlsx") and not file_all.startswith("BOM"):
@@ -264,7 +271,8 @@ def creare_raport_director():
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
                      module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
                 file_progres = file_progres + 1
-                statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                statuslabel["text"] = "                 " + str(file_progres) + "/" + \
+                                      str(file_counter) + " : " + file_all
                 pbar['value'] += 2
                 pbargui.update_idletasks()
         except PermissionError:
@@ -276,3 +284,55 @@ def creare_raport_director():
     end = time.time()
     messagebox.showinfo('Finalizat!', 'Prelucrate '
                         + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+
+
+def verificare_raport(arr_raport):
+    exception_array = ["433014_6", "591003_1", "713004_4", "310000_509"]
+    for i in range(1, len(arr_raport)):
+        output = []
+        txt = arr_raport[i][12].replace("Wire No. - ", "")
+        txt_arr = txt.rsplit(",")
+        for x in range(len(txt_arr)):
+            if txt_arr[x].strip() not in exception_array:
+                output.append(txt_arr[x])
+        if "Error" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif "wrong" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif "Missing" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
+        elif arr_raport[i][5] == "No Module":
+            arr_raport[i][0] = "No Supersleeve Module"
+        elif "Error" in arr_raport[i][5]:
+            arr_raport[i][0] = arr_raport[i][5]
+        elif arr_raport[i][7] != "None":
+            arr_raport[i][0] = "Old/new error"
+        elif arr_raport[i][8] == "No Heck module":
+            arr_raport[i][0] = "Heckmodule error"
+        elif arr_raport[i][10] != "OK":
+            arr_raport[i][0] = "X1555 error"
+        elif arr_raport[i][11] != "OK":
+            arr_raport[i][0] = "Splice wire error"
+        elif arr_raport[i][12] != "OK" and len(output) > 0:
+            arr_raport[i][0] = "Same wire error"
+        elif arr_raport[i][13] != "OK":
+            arr_raport[i][0] = "X2799 error"
+        elif arr_raport[i][15] != "OK":
+            arr_raport[i][0] = "Modules not implemented error"
+        elif "Error" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "Mixed" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "only" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "error" in arr_raport[i][17]:
+            arr_raport[i][0] = "Comment error"
+        elif "NOT" in arr_raport[i][34]:
+            arr_raport[i][0] = "X6616/X6490 error"
+        elif arr_raport[i][37] != "OK":
+            arr_raport[i][0] = "Prufung error"
+        elif arr_raport[i][39] != "OK":
+            arr_raport[i][0] = "X6490 module missing"
+        elif arr_raport[i][40] != "OK":
+            arr_raport[i][0] = "Module check error"
+    return None

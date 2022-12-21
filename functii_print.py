@@ -186,6 +186,7 @@ def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, shee
             log_file("Eroare scriere. Nu am salvat " + sheet1[1][0] + ".xlsx")
             messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
             return None
+
     return None
 
 
@@ -281,7 +282,7 @@ def prn_excel_separare_ksk(sheet, nume_fisier):
         ws1.cell(column=1, row=i + 1, value=str(sheet[i]))
     if globale.director_salvare_raport == "":
         try:
-            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/" + nume_fisier + ".xlsx")
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/" + nume_fisier + ".xlsx")
             log_file("Creat Error file " + nume_fisier + ".xlsx")
         except PermissionError:
             log_file("Eroare scriere. Nu am salvat Error file " + nume_fisier + ".xlsx")
@@ -331,26 +332,6 @@ def prn_excel_wires_complete(sheet1, nume_fisier):
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist " + nume_fisier + ".xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul " + nume_fisier + "este read-only!")
-        return None
-
-
-def prn_excel_diagrame(sheet1):
-    wb = Workbook()
-    ws1 = wb.active
-    ws1.title = "Diagrame"
-    for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
-            try:
-                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-            except:
-                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
-    try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame.xlsx")
-        log_file("Creat wire Diagrame.xlsx")
-        messagebox.showinfo('Finalizat!')
-    except PermissionError:
-        log_file("Eroare salvare. Nu am salvat wirelist Diagrame.xlsx")
-        messagebox.showerror('Eroare scriere', "Fisierul Diagrame.xlsx este read-only!")
         return None
 
 
@@ -620,26 +601,23 @@ def prn_excel_wires_complete_leoni(sheet1, sheet2, nume_fisier):
         return None
 
 
-def prn_excel_compare_ksk_light(sheet1, sheet2):
+def prn_excel_compare_ksk_light(sheet1, data, sheet3):
     wb = Workbook()
     ws1 = wb.active
     ws1.title = "Comparatie KSK Light"
-    rowno = 1
+    for i in range(len(sheet3)):
+        ws1.cell(column=i + 1, row=1, value=str(sheet3[i]))
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
-            rowno = i + 2
-            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-    for i in range(len(sheet2)):
-        for x in range(len(sheet2[i])):
-            ws1.cell(column=x + 1, row=i + rowno, value=str(sheet2[i][x]))
+            ws1.cell(column=x + 1, row=i + 2, value=str(sheet1[i][x]))
+
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Comparatie KSK Light.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Comparatie KSK " + data + ".xlsx")
         log_file("Creat wire Comparatie KSK Light.xlsx")
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat Comparatie KSK Light.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Comparatie KSK Light este read-only!")
         return None
-
 
 def prn_excel_variatii(sheet1):
     wb = Workbook()
@@ -657,27 +635,6 @@ def prn_excel_variatii(sheet1):
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat Variatii lungimi.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Variatii lungimi.xlsx este read-only!")
-        return None
-
-
-def prn_excel_splmaster(sheet1, sheet2, nume):
-    wb = Workbook()
-    ws1 = wb.active
-    ws1.title = "Splices"
-    ws2 = wb.create_sheet("Crimping")
-    for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
-            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-
-    for i in range(len(sheet2)):
-        for x in range(len(sheet2[i])):
-            ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
-    try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Splices Master/" + nume + ".xlsx")
-        log_file("Creat Splices Master " + nume + ".xlsx")
-    except PermissionError:
-        log_file("Eroare salvare. Nu am salvat Splices Master " + nume + ".xlsx")
-        messagebox.showerror('Eroare scriere', "Fisierul Splices Master " + nume + ".xlsx este read-only!")
         return None
 
 
@@ -866,9 +823,8 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
     ws9.cell(column=5, row=1, value="Description")
     istsoll(ws6, ws9)
 
-
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/" + sheet1[1][0] + ".xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/" + sheet1[1][0] + ".xlsx")
         log_file("Creat Light" + sheet1[1][0] + ".xlsx")
     except PermissionError:
         log_file("Eroare scriere. Nu am salvat Light" + sheet1[1][0] + ".xlsx")
@@ -876,3 +832,21 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
         return None
     return None
 
+
+def prn_excel_moduleinksk(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "All KSK"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=int(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Lista module in KSK.xlsx")
+        log_file("Lista module in KSK.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Lista module in KSK.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Lista module in KSK.xlsx este read-only!")
+        return None

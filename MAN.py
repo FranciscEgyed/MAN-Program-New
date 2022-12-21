@@ -35,7 +35,7 @@ statuslabel = tk.Label(root, text="Waiting . . .")
 menu1 = tk.Menubutton(menu_frame, text="Fisiere Sursa", background="DarkSeaGreen1", font="Arial 10 bold")
 menu1.grid(row=0, column=0)
 submenu1 = tk.Menu(menu1, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
-submenu1.add_command(label="Incarcare Input File", command=lambda: [statusbusy(), load_source(), statusidle()])
+submenu1.add_command(label="Incarcare Fisier Sursa", command=lambda: [statusbusy(), load_source(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix CSR", command=lambda: [statusbusy(), cmcsr(), statusidle()])
 submenu1.add_command(label="Control Matrix CSL", command=lambda: [statusbusy(), cmcsl(), statusidle()])
@@ -54,7 +54,7 @@ submenu2 = tk.Menu(menu2, tearoff=0, background="DarkSeaGreen1", font="Arial 10 
 submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), sortare_jit(), statusidle()])
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
-submenu2.add_command(label="Golire directoare LHD si RHD",
+submenu2.add_command(label="Golire directoare comparatie LHD si RHD",
                      command=lambda: [statusbusy(), golire_directoare_comparati(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
@@ -63,6 +63,11 @@ submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
                      command=lambda: [statusbusy(), boms_leoni(), statusidle()])
 submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
+                     command=lambda: [statusbusy(), wires_leoni(), statusidle()])
+submenu2.add_separator()
+submenu2.add_command(label="Creare wirelist toate platformele simplu",
+                     command=lambda: [statusbusy(), wirelist_all_simplu(), statusidle()])
+submenu2.add_command(label="Creare wirelist toate platformele complet",
                      command=lambda: [statusbusy(), wires_leoni(), statusidle()])
 menu2.configure(menu=submenu2)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -90,23 +95,17 @@ menu5 = tk.Menubutton(menu_frame, text="KSK Light", background="DarkSeaGreen1", 
 menu5.grid(row=0, column=4)
 submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
 submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), raport_light(), statusidle()])
-submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light, statusidle()])
+#submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light(), statusidle()])
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
 submenu5.add_separator()
-submenu5.add_command(label="Lista SuperSleeve KSK Light",
-                     command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
+# submenu5.add_command(label="Lista SuperSleeve KSK Light",
+#                     command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
 menu5.configure(menu=submenu5)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
-submenu7.add_command(label="Clip test/Test = Inlocuire U cu W",
-                     command=lambda: [statusbusy(), inlocuire(), statusidle()])
-submenu7.add_separator()
-submenu7.add_command(label="Diagrame",
-                     command=lambda: [statusbusy(), diagrame(), statusidle()])
-submenu7.add_separator()
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_separator()
@@ -117,11 +116,8 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
 submenu7.add_separator()
-
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
 
 
 menu_frame.grid(row=0, column=0)
@@ -130,8 +126,6 @@ label.grid(row=2, column=0)
 statuslabel.grid(row=12, column=0)
 structura_directoare()
 file_checker()
+databesemerge()
+databasecopy()
 root.mainloop()
-
-
-
-

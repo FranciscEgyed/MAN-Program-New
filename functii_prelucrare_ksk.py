@@ -415,10 +415,12 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         if sheet2[1][0].replace(".MY23", "") in arr_tabel_klappschale[i][0]:
             array_scriere_sheet6.append([arr_tabel_klappschale[i][1], arr_tabel_klappschale[i][2],
                                          arr_tabel_klappschale[i][3], arr_tabel_klappschale[i][4]])
-        # else:
-        #    messagebox.showinfo("Eroare klappschale!",
-        #                        "Pentru " + str(sheet1[1][0]) + " nu exista informatii in tabelul de klappschale!")
-        #    return None
+    if len(array_scriere_sheet6) == 1:
+        messagebox.showinfo("Eroare klappschale!",
+                            "Pentru " + str(sheet1[1][0]) + " nu exista informatii in tabelul de klappschale!" +
+                            "Nu se va salva nimic")
+        return None
+
     for i in range(1, len(array_scriere_sheet6)):
         counter = 0
         for x in range(len(sheet2)):
@@ -440,10 +442,12 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
     for i in range(len(array_scriere_sheet6)):
         array_scriere_sheet6[i].append("")
     arr_module_existente = [["Module", "Drawing", "Quantity"]]
+    lista_klappschale = []
     for i in range(1, len(sheet1)):
         if "Klapp" in sheet1[i][4]:
             arr_module_existente.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
-    'Bracket side'
+            lista_klappschale.append([sheet1[i][1], sheet1[i][7], sheet1[i][8]])
+    # Verificare bracket side
     sidebracket = "Error"
     for i in range(len(arr_bracket_side[0])):
         for x in range(1, len(sheet1)):
@@ -455,6 +459,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             if sheet1[u][1] == arr_bracket_side[1][y]:
                 sidebracket = "RHD"
                 break
+    # Verificare module klappschale lipsa
     arr_module_absente = []
     arr_module_existente_ver = []
     for x in range(1, len(arr_module_existente)):
@@ -488,8 +493,28 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         array_scriere_sheet6[i + 1].append(arr_module_absente[i])
     for i in range(len(arr_module_absente) + 1, len(array_scriere_sheet6)):
         array_scriere_sheet6[i].append("")
+    # Verificare desen klappschale (lhd sau rhd)
+    for x in range(len(lista_klappschale)):
+        for i in range(len(array_scriere_sheet6)):
+            if lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
+                    and array_scriere_sheet6[i][4] == "X":
+                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][4]
+            elif lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
+                    and array_scriere_sheet6[i][5] == "X":
+                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][5]
 
-    'integritate'
+    lista_rl_klappschale = [["8011", "BODYL"], ["8012", "BODYL"], ["8013", "BODYR"], ["8014", "BODYR"], ["8014", "BODYR"], ["8023", "BODYL"],
+     ["8024", "BODYR"], ["8025", "BODYL"], ["8026", "BODYR"], ["8030", "BODYR"], ["8001", "BODYR"], ["8000", "BODYL"],
+     ["8001", "BODYR"], ["8022", "BODYR"], ["8023", "BODYL"], ["8026", "BODYL"], ["8027", "BODYR"], ["8027", "BODYR"],
+     ["8030", "BODYR"], ["8031", "BODYL"], ["8032", "BODYR"], ["8032", "BODYR"], ["8033", "BODYL"], ["8044", "BODYR"],
+     ["8057", "BODYL"], ["8000", "BODYL"]]
+
+    for i in range(len(array_scriere_sheet6)):
+        for x in range(len(lista_rl_klappschale)):
+           if array_scriere_sheet6[i][12] == lista_rl_klappschale[x][0]:
+               array_scriere_sheet6[i][12] = lista_rl_klappschale[x][1]
+
+    # Verificare integritate(sa nu fie platforme combinate)
     ch = 0
     st = 0
     tg = 0
@@ -722,7 +747,6 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     if globale.is_light_save == "1":
         prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
-
 
 # BOM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def prelucrare_individuala_bom():

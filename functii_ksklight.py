@@ -7,7 +7,8 @@ import time
 from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
-from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light
+from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light, \
+    prn_excel_moduleinksk
 import sqlite3
 
 
@@ -26,13 +27,13 @@ def cutting_ksklight():
             control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='') as csvfile:
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
-
     except FileNotFoundError:
         pbar.destroy()
         pbargui.destroy()
         messagebox.showerror('Eroare fisier', 'Lipsa fisier Control_Matrix din INPUT')
         return None
-
+    # Liste excludere si inlocuire
+    excluderecst = ["81.25482-6147", "81.25482-6148", "81.25480-5681"]
     for i in range(len(control_matrix_csl)):
         if control_matrix_csl[i][1] != "":
             control_matrix.append(control_matrix_csl[i])
@@ -61,7 +62,7 @@ def cutting_ksklight():
     array_wires_all.extend(array_wires_8013)
     lista_cutting = [["CC", "KSK No", "Module ID", "Wire No.", "LTG PMD", "Color", "Cross Sec", "Conector 1", "Pin 1",
                       "Conector 2", "Pin 2", "Sonderltg", "Length", "KANBAN-AG", "REAL NAME", "Ledset"]]
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_selectat):
@@ -85,7 +86,7 @@ def cutting_ksklight():
             lista_module = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
             for q in range(len(array_wires_all)):
                 for x in range(len(lista_module)):
-                    if array_wires_all[q][0] == lista_module[x]:
+                    if array_wires_all[q][0] == lista_module[x] and array_wires_all[q][0] not in excluderecst:
                         array_fire_ksk.append([file_all.split(".")[0], array_wires_all[q][0],
                                                array_wires_all[q][1].lower(),
                                                array_wires_all[q][2], array_wires_all[q][3], array_wires_all[q][4],
@@ -99,7 +100,7 @@ def cutting_ksklight():
                                       array_fire_ksk[i][6], array_fire_ksk[i][7], array_fire_ksk[i][8],
                                       array_fire_ksk[i][9], array_fire_ksk[i][10], array_fire_ksk[i][11]])
     pbar['value'] += 2
-    statuslabel["text"] = "Searching Control matrix"
+    statuslabel["text"] = "Searching Control matrix        "
     pbargui.update_idletasks()
     for i in range(1, len(lista_cutting)):
         for x in range(len(control_matrix)):
@@ -169,13 +170,13 @@ def cutting_ksklight():
                 continue
         lista_wire_no[i].append(counter)
     pbar['value'] += 2
-    statuslabel["text"] = "Printing file"
+    statuslabel["text"] = "Printing file                     "
     pbargui.update_idletasks()
     prn_excel_cutting(lista_cutting, lista_cutting_unice, lista_wire_no)
     end = time.time()
-    messagebox.showinfo('Finalizat!', str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
+    messagebox.showinfo('Finalizat!', str(end - start)[:6] + " secunde.")
 
 
 def ss_ksklight():
@@ -194,7 +195,7 @@ def ss_ksklight():
         drawings = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt", newline='') as csvfile:
         compover = list(csv.reader(csvfile, delimiter=';'))
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
               "81.25484-5272", "81.25484-5267", "81.25484-5268"]
     ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
@@ -207,7 +208,6 @@ def ss_ksklight():
                     "Lengs_DWмм", "In KSK"]]
     file_counter = 0
     file_progres = 0
-    lista_module_KSK_light = []
     for file_all in os.listdir(dir_selectat):
         if file_all.endswith(".xlsx"):
             file_counter = file_counter + 1
@@ -225,10 +225,10 @@ def ss_ksklight():
             path = os.path.join(dir_selectat, file_all)
             wb = load_workbook(path)
             ws = wb.worksheets[0]
-            lista_module_KSK_light = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
+            lista_module_ksk_light = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
 
             for i in range(len(ssdatabase_de_prelucrat)):
-                if ssdatabase_de_prelucrat[i][1] in lista_module_KSK_light:
+                if ssdatabase_de_prelucrat[i][1] in lista_module_ksk_light:
                     ssdatabase_de_prelucrat[i].append(1)
                 else:
                     ssdatabase_de_prelucrat[i].append(0)
@@ -244,7 +244,7 @@ def ss_ksklight():
             df2 = pd.pivot_table(df1, index=["Basic_Module"], columns=["Index"], fill_value=0)
             indexes = df2.index.values.tolist()
             valori = df2.values.tolist()
-            #index_value_pairs = [indexes[i] for i in range(len(valori)) if valori[i][0] != 0 and valori[i][1] != 0]
+            # index_value_pairs = [indexes[i] for i in range(len(valori)) if valori[i][0] != 0 and valori[i][1] != 0]
             index_value_pairs = []
             for i in range(len(valori)):
                 if valori[i][0] != 0 and valori[i][1] != 0:
@@ -317,13 +317,13 @@ def ss_ksklight():
     statuslabel["text"] = "Cautare part number LEONI             "
     pbar['value'] += 2
     pbargui.update_idletasks()
-    #for i in range(1, len(array_taiere_print[0]) - 1):
+    # for i in range(1, len(array_taiere_print[0]) - 1):
     #    pbar['value'] += 2
     #    pbargui.update_idletasks()
     #    for x in range(len(compover)):
     #        if array_taiere_print[0][i] == compover[x][0]:
     #            array_taiere_print[0][i] = compover[x][2]
-    #answer = askyesno(title='Optiuni printare', message='Doriti printare completa?')
+    # answer = askyesno(title='Optiuni printare', message='Doriti printare completa?')
     statuslabel["text"] = "Printare lista             "
     pbar['value'] += 2
     array_taiere_print[0].append("Desen")
@@ -359,15 +359,16 @@ def compare_ksk_light():
     lista_identice = []
     # lista_nonidentice = []
     start = time.time()
-    files_dir = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/")
-    my_dir = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    files_dir = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/")
+    my_dir = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(my_dir):
         if file_all.endswith(".xlsx"):
             file_counter = file_counter + 1
     file_counter = int(math.factorial(file_counter) / ((math.factorial(2)) * math.factorial((file_counter - 2))))
-    timelabel["text"] = "Estimated time to complete : " + str((file_counter * 0.02988) / 60) + " minutes."
+    timelabel["text"] = "             Estimated time to complete : " + \
+                        str(((file_counter * 0.02988) / 60) - ((file_progres * 0.02988) / 60)) + " minutes.            "
     pbargui.update_idletasks()
     if file_counter == 0:
         messagebox.showerror('Eroare fisier', 'Lipsa fisiere in director')
@@ -375,10 +376,11 @@ def compare_ksk_light():
     for file1, file2 in itertools.combinations(files_dir, 2):
         pbar['value'] += 2
         file_progres = file_progres + 1
-        statuslabel["text"] = "Combinatii verificate " + str(file_progres) + "/" + str(file_counter)
+        statuslabel["text"] = "                Combinatii verificate " + str(file_progres) + "/" + str(file_counter) +\
+                              "                "
         end = time.time()
-        timelabel["text"] = "Estimated time to complete : " + \
-                            str(((file_counter * (end - start)) - (end - start)) / 60)[:5] + " minutes."
+        timelabel["text"] = "         Estimated time to complete : " + \
+                            str(((file_counter * 0.02988) / 60) - ((file_progres * 0.02988) / 60)) + " minutes.        "
         pbargui.update_idletasks()
         path1 = os.path.join(my_dir, file1)
         path2 = os.path.join(my_dir, file2)
@@ -415,8 +417,13 @@ def compare_ksk_light():
 
 def raport_light():
     # Create your connection.
-    cnx = sqlite3.connect("F:\Python Projects\MAN 2022\MAN/Input/Others/database.db")
+    try:
+        cnx = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+
     def scankey(event):
         val = event.widget.get()
         if val == '':
@@ -430,7 +437,6 @@ def raport_light():
 
     def update(data):
         datalivrare_lb.delete(0, 'end')
-        # put new data
         for item in data:
             datalivrare_lb.insert('end', item)
 
@@ -440,7 +446,7 @@ def raport_light():
     def deselect_all():
         datalivrare_lb.selection_clear(0, END)
 
-    list1 = df.datalivrare.unique()
+    list1 = df.DataLivrare.unique()
 
     def scankey2(event):
         val = event.widget.get()
@@ -455,7 +461,6 @@ def raport_light():
 
     def update2(data):
         datajit_lb.delete(0, 'end')
-        # put new data
         for item in data:
             datajit_lb.insert('end', item)
 
@@ -465,7 +470,7 @@ def raport_light():
     def deselect_all2():
         datajit_lb.selection_clear(0, END)
 
-    list2 = df.datajit.unique()
+    list2 = df.DataJIT.unique()
 
     def update3(data):
         indexe.delete(0, 'end')
@@ -477,7 +482,6 @@ def raport_light():
 
     def update4(data):
         coloane.delete(0, 'end')
-        # put new data
         for item in data:
             coloane.insert('end', item)
 
@@ -487,8 +491,8 @@ def raport_light():
         save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
         valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
         valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
-        xxx = df.query('datalivrare in @valuesdatalivrare_lb')
-        yyy = xxx.query('datajit in @valuesdatajit_lb')
+        xxx = df.query('DataLivrare in @valuesdatalivrare_lb')
+        yyy = xxx.query('DataJIT in @valuesdatajit_lb')
         indexlist = [indexe.get(idx) for idx in indexe.curselection()]
         columnlist = [coloane.get(idx) for idx in coloane.curselection()]
         if len(indexlist) + len(columnlist) == 0 or len(valuesdatalivrare_lb) + len(valuesdatajit_lb) == 0:
@@ -497,10 +501,58 @@ def raport_light():
             try:
                 pivot = yyy.pivot_table(index=indexlist, columns=columnlist, values="primarykey", fill_value=0,
                                         aggfunc='count')
-                print(pivot.to_string())
-                pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport" + save_time + ".xlsx")
+                # print(pivot.to_string())
+                pivot.to_excel(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Raport -" + indexlist[0] +
+                               "-" + save_time + ".xlsx")
+                ws.destroy()
+                messagebox.showinfo("Finalizat", "Raportul " + indexlist[0] + "/" + columnlist[0] + " a fost salvat!")
             except ValueError:
+                ws.destroy()
                 messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
+
+
+    def moduleinksk():
+        printer = []
+        printer2 = []
+        for x in range(0, len(df.index)):
+            printer.append([df.iloc[x, 6], df.iloc[x, 9].split(";")])
+        for i in range(len(printer)):
+            for x in range(len(printer[i][1])):
+                printer2.append([printer[i][0], printer[i][1][x]])
+        try:
+            prn_excel_moduleinksk(printer2)
+            ws.destroy()
+            messagebox.showinfo("Finalizat", "Raportul Lista module in KSK a fost salvat!")
+        except ValueError:
+            ws.destroy()
+            messagebox.showerror("Error", "Error")
+
+    def comparatie():
+        save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
+        valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
+        valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
+        xxx = df.query('DataLivrare in @valuesdatalivrare_lb')
+        yyy = xxx.query('DataJIT in @valuesdatajit_lb')
+        if len(valuesdatalivrare_lb) + len(valuesdatajit_lb) == 0:
+            messagebox.showerror("Valori gresite", "Nu ati selectat nimic")
+        else:
+
+            pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
+                                    aggfunc='count')
+
+            pivot.loc[:, 'Total'] = pivot.iloc[:, 1:].sum(axis=1)
+            printarray = []
+            for x in range(len(pivot.index)):
+                if pivot.iloc[x, -1] > 1:
+                    templist = []
+                    for y in range(len(pivot.columns)-1):
+                        if pivot.iloc[x, y] != 0:
+                            templist.append(pivot.columns[y])
+                    printarray.append(templist)
+            prn_excel_compare_ksk_light(printarray, save_time, valuesdatajit_lb)
+
+            ws.destroy()
+            messagebox.showinfo("Finalizat", "Comparatia " + save_time + " a fost salvat!")
 
 
     ws = Tk()
@@ -510,8 +562,8 @@ def raport_light():
     l2 = Label(ws, text="Data livrare")
     l3 = Label(ws, text="Index pentru pivot")
     l4 = Label(ws, text="Coloane pentru pivot")
-    l1.grid(row=0, column=0)
-    l2.grid(row=0, column=1)
+    l1.grid(row=0, column=1)
+    l2.grid(row=0, column=0)
     l3.grid(row=0, column=2)
     l4.grid(row=0, column=3)
     entry = Entry(ws)
@@ -532,6 +584,11 @@ def raport_light():
 
     brun = Button(ws, text="Generate report", command=run, bg="green", font="Arial 10 bold")
     brun.grid(row=5, column=4)
+    bmoduleinksk = Button(ws, text="Raport module in KSK", command=moduleinksk, bg="yellow", font="Arial 10 bold")
+    bmoduleinksk.grid(row=6, column=4)
+    bmoduleinksk = Button(ws, text="Raport comparatie KSK", command=comparatie, bg="blue", font="Arial 10 bold")
+    bmoduleinksk.grid(row=7, column=4)
+
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     indexe = Listbox(ws, exportselection=0)
@@ -545,7 +602,3 @@ def raport_light():
     update3(list3)
     update4(list4)
     ws.mainloop()
-
-
-
-
