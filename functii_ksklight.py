@@ -62,7 +62,7 @@ def cutting_ksklight():
     array_wires_all.extend(array_wires_8013)
     lista_cutting = [["CC", "KSK No", "Module ID", "Wire No.", "LTG PMD", "Color", "Cross Sec", "Conector 1", "Pin 1",
                       "Conector 2", "Pin 2", "Sonderltg", "Length", "KANBAN-AG", "REAL NAME", "Ledset"]]
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_selectat):
