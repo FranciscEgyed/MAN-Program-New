@@ -97,6 +97,9 @@ submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), ra
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
 submenu5.add_separator()
+submenu5.add_command(label="Lista taiere forecast module",
+                     command=lambda: [statusbusy(), cutting_ksklight_module(), statusidle()])
+submenu5.add_separator()
 # submenu5.add_command(label="Lista SuperSleeve KSK Light",
 #                     command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
 menu5.configure(menu=submenu5)

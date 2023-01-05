@@ -835,3 +835,36 @@ def prn_excel_ksk_neprelucrate(sheet, nume_fisier):
         except PermissionError:
             messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
             return None
+
+def prn_excel_cutting_module(sheet1, sheet2, sheet3):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Lista fire"
+    ws2 = wb.create_sheet("Lista fire unice KSK")
+    ws3 = wb.create_sheet("Lista Fire CST")
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            try:
+                ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
+            except:
+                ws2.cell(column=x + 1, row=i + 1, value=str(float(sheet2[i][x])))
+    for i in range(len(sheet3)):
+        for x in range(len(sheet3[i])):
+            try:
+                ws3.cell(column=x + 1, row=i + 1, value=sheet3[i][x])
+            except:
+                ws3.cell(column=x + 1, row=i + 1, value=str(float(sheet3[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Lista Cutting Forecast.xlsx")
+        log_file("Creat wire Lista Cutting Forecast.xlsx")
+
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat wirelist Lista Cutting Forecast.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Lista Cutting Forecast.xlsx este read-only!")
+        return None

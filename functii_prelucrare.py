@@ -2,12 +2,11 @@ import csv
 import os
 import time
 from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
-
 import pandas as pd
 from openpyxl import load_workbook
 from diverse import log_file
 from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni, \
-    prn_excel_wirelistsallinone
+    prn_excel_wirelistsallinone, prn_excel_ksk_neprelucrate
 import sqlite3
 
 
