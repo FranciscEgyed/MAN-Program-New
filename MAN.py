@@ -7,6 +7,7 @@ from functii_ksklight import *
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
 from functii_rapoarte import *
+from masterdata import inlocuire
 
 
 def statusbusy():
@@ -55,8 +56,8 @@ submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), so
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Prelucrare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
-submenu2.add_command(label="Prelucrare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
+submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
+submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
                      command=lambda: [statusbusy(), boms_leoni(), statusidle()])
@@ -114,6 +115,9 @@ submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), e
 submenu7.add_separator()
 submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
+submenu7.add_separator()
+submenu7.add_command(label="Prelucrare masterdata",
+                     command=lambda: [statusbusy(), inlocuire(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
 submenu7.add_separator()

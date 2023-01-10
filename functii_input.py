@@ -297,27 +297,33 @@ def cmcsr():
             pbargui.update_idletasks()
             for i in range(3, len(array_sortare)):
                 for x in range(111, 2682):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][47].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][46], "FIR", array_sortare[i][13], array_sortare[i][91],
                                             array_sortare[i][92], array_sortare[i][93], array_sortare[i][94]])
-                    elif array_sortare[i][x] == "Y":
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][47].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][46], "OPERATIE", array_sortare[i][13],
                                             array_sortare[i][91],
                                             array_sortare[i][92], array_sortare[i][93], array_sortare[i][94]])
-                    elif array_sortare[i][x] == "S" and array_sortare[i][11] not in listatwist:
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s"  \
+                            and array_sortare[i][11] not in listatwist:
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][47].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][46], "COMPONENT", array_sortare[i][13],
                                             array_sortare[i][91], array_sortare[i][92], array_sortare[i][93],
                                             array_sortare[i][94]])
-                    elif array_sortare[i][x] == "S" and array_sortare[i][11] in listatwist:
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s" \
+                            and array_sortare[i][11] in listatwist:
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i+4][47].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i+4][9], array_sortare[3][x],
@@ -364,24 +370,28 @@ def cmcsl():
             pbargui.update_idletasks()
             for i in range(3, len(array_sortare)):
                 for x in range(63, 663):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[1][x] + array_sortare[i][3].lower(),
                                             array_sortare[i][28].replace("U", "W"),
                                             array_sortare[i][3].lower(), array_sortare[i][4], array_sortare[1][x],
                                             array_sortare[i][2], "FIR", array_sortare[i][5], array_sortare[i][33],
                                             array_sortare[i][34], array_sortare[i][35], array_sortare[i][36]])
-                    elif array_sortare[i][x] == "Y":
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[1][x] + array_sortare[i][3].lower(),
                                             array_sortare[i][28].replace("U", "W"),
                                             array_sortare[i][3].lower(), array_sortare[i][4], array_sortare[1][x],
                                             array_sortare[i][2], "OPERATIE", array_sortare[i][5], array_sortare[i][33],
                                             array_sortare[i][34], array_sortare[i][35], array_sortare[i][36]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s":
                         array_print.append([array_sortare[1][x] + array_sortare[i][3].lower(),
                                             array_sortare[i][28].replace("U", "W"),
                                             array_sortare[i][3].lower(), array_sortare[i][4], array_sortare[1][x],
                                             array_sortare[i][2], "COMPONENT", array_sortare[i][5], array_sortare[i][33],
                                             array_sortare[i][34], array_sortare[i][35], array_sortare[i][36]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
 
             with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", 'w', newline='',
                       encoding='utf-8') as myfile:
@@ -422,19 +432,19 @@ def cmtglml():
             pbargui.update_idletasks()
             for i in range(3, len(array_sortare)):
                 for x in range(81, 402):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[2][x] + array_sortare[i][7].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][7].lower(), array_sortare[i][6], array_sortare[2][x],
                                             array_sortare[i][5], "FIR", array_sortare[i][10], array_sortare[i][20],
                                             array_sortare[i][21], array_sortare[i][22], array_sortare[i][23]])
-                    elif array_sortare[i][x] == "Y":
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[2][x] + array_sortare[i][7].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][3].lower(), array_sortare[i][6], array_sortare[2][x],
                                             array_sortare[i][5], "OPERATIE", array_sortare[i][10], array_sortare[i][20],
                                             array_sortare[i][21], array_sortare[i][22], array_sortare[i][23]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s":
                         array_print.append([array_sortare[2][x] + array_sortare[i][7].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][3].lower(), array_sortare[i][6], array_sortare[2][x],
@@ -481,19 +491,19 @@ def cmtglmr():
             pbargui.update_idletasks()
             for i in range(3, len(array_sortare)):
                 for x in range(81, 2152):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[3][x] + array_sortare[i][10].lower(),
                                             array_sortare[i][11].replace("U", "W"),
                                             array_sortare[i][10].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][8], "FIR", array_sortare[i][13], array_sortare[i][23],
                                             array_sortare[i][24], array_sortare[i][25], array_sortare[i][26]])
-                    elif array_sortare[i][x] == "Y":
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[3][x] + array_sortare[i][10].lower(),
                                             array_sortare[i][11].replace("U", "W"),
                                             array_sortare[i][10].lower(), array_sortare[i][9], array_sortare[3][x],
                                             array_sortare[i][8], "OPERATIE", array_sortare[i][13], array_sortare[i][23],
                                             array_sortare[i][24], array_sortare[i][25], array_sortare[i][26]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s":
                         array_print.append([array_sortare[3][x] + array_sortare[i][10].lower(),
                                             array_sortare[i][11].replace("U", "W"),
                                             array_sortare[i][10].lower(), array_sortare[i][9], array_sortare[3][x],
@@ -540,19 +550,19 @@ def cm4axell():
             pbargui.update_idletasks()
             for i in range(2, len(array_sortare)):
                 for x in range(78, 260):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[1][x] + array_sortare[i][12].lower(),
                                             array_sortare[i][9].replace("U", "W"),
                                             array_sortare[i][12].lower(), array_sortare[i][13], array_sortare[1][x],
                                             array_sortare[i][8], "FIR", array_sortare[i][14], array_sortare[i][38],
                                             array_sortare[i][39], array_sortare[i][40], array_sortare[i][41]])
-                    elif array_sortare[i][x] == "Y":
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[1][x] + array_sortare[i][12].lower(),
                                             array_sortare[i][9].replace("U", "W"),
                                             array_sortare[i][12].lower(), array_sortare[i][13], array_sortare[1][x],
                                             array_sortare[i][8], "OEPRATIE", array_sortare[i][14], array_sortare[i][38],
                                             array_sortare[i][39], array_sortare[i][40], array_sortare[i][41]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s":
                         array_print.append([array_sortare[1][x] + array_sortare[i][12].lower(),
                                             array_sortare[i][9].replace("U", "W"),
                                             array_sortare[i][12].lower(), array_sortare[i][13], array_sortare[1][x],
@@ -599,19 +609,19 @@ def cm4axelr():
             pbargui.update_idletasks()
             for i in range(2, len(array_sortare)):
                 for x in range(79, 632):
-                    if array_sortare[i][x] == "X":
+                    if array_sortare[i][x] == "X" or array_sortare[i][x] == "x":
                         array_print.append([array_sortare[1][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][10], array_sortare[1][x],
                                             array_sortare[i][7], "FIR", array_sortare[i][12], array_sortare[i][37],
                                             array_sortare[i][38], array_sortare[i][39], array_sortare[i][40]])
-                    elif array_sortare[i][x] == "Y":
+                    elif array_sortare[i][x] == "Y" or array_sortare[i][x] == "y":
                         array_print.append([array_sortare[1][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][10], array_sortare[1][x],
                                             array_sortare[i][7], "OPERATIE", array_sortare[i][12], array_sortare[i][37],
                                             array_sortare[i][38], array_sortare[i][39], array_sortare[i][40]])
-                    elif array_sortare[i][x] == "S":
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s":
                         array_print.append([array_sortare[1][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][8].replace("U", "W"),
                                             array_sortare[i][11].lower(), array_sortare[i][10], array_sortare[1][x],
