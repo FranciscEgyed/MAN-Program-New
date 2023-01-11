@@ -121,11 +121,10 @@ def prelucrare_wirelist_faza1(array_prelucrare):
 
 def prelucrare_wirelist_faza2(arr_module_file2, listas):
     # "Selectie fisiere wirelist"
-
     lista_selectie = (["SATTEL LHD", "8011"], ["SATTEL RHD", "8013"], ["CHASSIS LHD", "8012"], ["CHASSIS RHD", "8014"],
                       ["TGLM LHD", "8023"], ["TGLM RHD", "8024"], ["4AXEL LHD", "8025"], ["4AXEL RHD", "8026"],
                       ["4AXEL MIL LHD", "8000"], ["4AXEL MIL RHD", "8001"], ["CHASSIS MIL RHD", "8030"],
-                      ["CHASSIS MIL LHD", "8031"])
+                      ["CHASSIS MIL LHD", "8031"], ["MIL_SAT RHD", "8052"], ["MIL_SAT LHD", "8053"])
     lista_fisiere = []
     array_scriere_sheet2 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Lange",
                              "Kurzname/Pin", "K/P Count", "One Wire Error", "DC Error", "Cross Sec Error",
@@ -135,7 +134,6 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
                              "Combination Error", "Sonderltg."]]
     concatenare_2 = []
     concatenare_3 = []
-
     for i in range(len(listas)):
         for x in range(len(lista_selectie)):
             if listas[i] in lista_selectie[x]:
@@ -503,11 +501,13 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
                     and array_scriere_sheet6[i][5] == "X":
                 array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][5]
 
-    lista_rl_klappschale = [["8011", "BODYL"], ["8012", "BODYL"], ["8013", "BODYR"], ["8014", "BODYR"], ["8014", "BODYR"], ["8023", "BODYL"],
-     ["8024", "BODYR"], ["8025", "BODYL"], ["8026", "BODYR"], ["8030", "BODYR"], ["8001", "BODYR"], ["8000", "BODYL"],
-     ["8001", "BODYR"], ["8022", "BODYR"], ["8023", "BODYL"], ["8026", "BODYL"], ["8027", "BODYR"], ["8027", "BODYR"],
-     ["8030", "BODYR"], ["8031", "BODYL"], ["8032", "BODYR"], ["8032", "BODYR"], ["8033", "BODYL"], ["8044", "BODYR"],
-     ["8057", "BODYL"], ["8000", "BODYL"]]
+    lista_rl_klappschale = [["8011", "BODYL"], ["8012", "BODYL"], ["8013", "BODYR"], ["8014", "BODYR"],
+                            ["8014", "BODYR"], ["8023", "BODYL"], ["8024", "BODYR"], ["8025", "BODYL"],
+                            ["8026", "BODYR"], ["8030", "BODYR"], ["8001", "BODYR"], ["8000", "BODYL"],
+                            ["8001", "BODYR"], ["8022", "BODYR"], ["8023", "BODYL"], ["8026", "BODYL"],
+                            ["8027", "BODYR"], ["8027", "BODYR"], ["8030", "BODYR"], ["8031", "BODYL"],
+                            ["8032", "BODYR"], ["8032", "BODYR"], ["8033", "BODYL"], ["8044", "BODYR"],
+                            ["8057", "BODYL"], ["8000", "BODYL"], ["8052", "BODYL"], ["8053", "BODYR"]]
 
     for i in range(len(array_scriere_sheet6)):
         for x in range(len(lista_rl_klappschale)):
@@ -529,7 +529,7 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             tg = tg + 1
         elif "4AXEL" in sheet1[i][5]:
             a4 = a4 + 1
-        elif "Mil" in sheet1[i][5]:
+        elif "Mil" in sheet1[i][5] or "MIL" in sheet1[i][5]:
             mil = mil + 1
     intergitate = "NOT OK"
     if ch > 0 and st == 0 and tg == 0 and a4 == 0 and mil == 0:
@@ -820,7 +820,7 @@ def prelucrare_bom_faza2(arr_sheet1, listas):
     lista_selectie = (["SATTEL LHD", "8011"], ["SATTEL RHD", "8013"], ["CHASSIS LHD", "8012"], ["CHASSIS RHD", "8014"],
                       ["TGLM LHD", "8023"], ["TGLM RHD", "8024"], ["4AXEL LHD", "8025"], ["4AXEL RHD", "8026"],
                       ["4AXEL MIL LHD", "8000"], ["4AXEL MIL RHD", "8001"], ["CHASSIS MIL RHD", "8030"],
-                      ["CHASSIS MIL LHD", "8031"])
+                      ["CHASSIS MIL LHD", "8031"], ["MIL_SAT RHD", "8052"], ["MIL_SAT LHD", "8053"])
     lista_fisiere = []
     arr_sheet2 = [["Module", "Quantity", "Bezei", "VOBES-ID", "Benennung", "Verwendung", "Verwendung", "Kurzname", "xy",
                    "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe", "E-Komponente",
