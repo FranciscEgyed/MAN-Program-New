@@ -1,5 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
+
+from functii_database import databasecontent
 from functii_diverse import *
 from functii_input import *
 from diverse import *
@@ -7,7 +9,7 @@ from functii_ksklight import *
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
 from functii_rapoarte import *
-from masterdata import inlocuire
+from masterdata import *
 
 
 def statusbusy():
@@ -120,6 +122,8 @@ submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
+submenu7.add_separator()
+submenu7.add_command(label="Database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
 submenu7.add_separator()
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
