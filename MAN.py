@@ -1,6 +1,5 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-
 from functii_database import databasecontent
 from functii_diverse import *
 from functii_input import *
@@ -49,6 +48,9 @@ submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [stat
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
+submenu1.add_separator()
+submenu1.add_command(label="asdasdasdasdasdasd",
+                     command=lambda: [statusbusy(), cmcslnew(), statusidle()])
 menu1.configure(menu=submenu1)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu2 = tk.Menubutton(menu_frame, text="Fisiere Input", background="DarkSeaGreen1", font="Arial 10 bold")

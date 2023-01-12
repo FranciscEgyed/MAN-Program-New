@@ -312,7 +312,7 @@ def cmcsr():
                                             array_sortare[i][46], "OPERATIE", array_sortare[i][13],
                                             array_sortare[i][91],
                                             array_sortare[i][92], array_sortare[i][93], array_sortare[i][94]])
-                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s"  \
+                    elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s" \
                             and array_sortare[i][11] not in listatwist:
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
                                             array_sortare[i][47].replace("U", "W"),
@@ -325,8 +325,8 @@ def cmcsr():
                     elif array_sortare[i][x] == "S" or array_sortare[i][x] == "s" \
                             and array_sortare[i][11] in listatwist:
                         array_print.append([array_sortare[3][x] + array_sortare[i][11].lower(),
-                                            array_sortare[i+4][47].replace("U", "W"),
-                                            array_sortare[i][11].lower(), array_sortare[i+4][9], array_sortare[3][x],
+                                            array_sortare[i + 4][47].replace("U", "W"),
+                                            array_sortare[i][11].lower(), array_sortare[i + 4][9], array_sortare[3][x],
                                             array_sortare[i][46], "FIR", array_sortare[i][13],
                                             array_sortare[i][91], array_sortare[i][92], array_sortare[i][93],
                                             array_sortare[i][94]])
@@ -717,3 +717,230 @@ def cmss():
         end3 = time.time()
         print(end3 - start1)
 
+
+def cmcsrnew():
+    pbargui = Tk()
+    pbargui.title("Control Matrix CSR")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
+    fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul control matrix:")
+    array_print = [["Module ID+REAL NAME", "KANBAN-AG", "REAL NAME", "Kanban name", "Module ID", "Ledset",
+                    "Type", "Material PN", "Conector 1", "Pin 1", "Conector 2", "Pin 2"]]
+    idx_conector = []
+    idx_pin = []
+    idx_module = []
+    idx_knname = ""
+    idx_realname = ""
+    idx_leadset = ""
+    idx_kanbanag = ""
+    idx_pnmaterial = ""
+
+    if fisier_cm[-3:] == "csv":
+        with open(fisier_cm, newline='') as csvfile:
+            array_sortare = list(csv.reader(csvfile, delimiter=','))
+
+        if "8014" in array_sortare[0]:
+            for i, j in enumerate(array_sortare[5]):
+                if j == 'Kurzname':
+                    idx_conector.append(i)
+                elif j == 'Pin':
+                    idx_pin.append(i)
+                elif j == 'KN Name':
+                    idx_knname = i
+                elif j == 'Real Name':
+                    idx_realname = i
+                elif j == 'Ledset':
+                    idx_leadset = i
+                elif j == 'KANBAN-AG':
+                    idx_kanbanag = i
+                elif j == 'PN':
+                    idx_pnmaterial = i
+            for i, j in enumerate(array_sortare[3]):
+                if len(j) == 13:
+                    idx_module.append(i)
+
+            statuslabel["text"] = "Working on it . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+
+            for i in range(6, len(array_sortare)):
+                for x in range(0, len(idx_module)):
+                    if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "OPERATIE",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][11] not in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "COMPONENT",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][11] in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname],
+                                            array_sortare[i][idx_knname].lower(), array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+
+            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(array_print)
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showinfo('Finalizat!', "Finalizat.")
+        else:
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul CSR")
+    else:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Extensie gresita!', "Incarcati fisierul CSV")
+
+
+def cmcslnew():
+    pbargui = Tk()
+    pbargui.title("Control Matrix CSR")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
+    fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul control matrix:")
+    array_print = [["Module ID+REAL NAME", "KANBAN-AG", "REAL NAME", "Kanban name", "Module ID", "Ledset",
+                    "Type", "Material PN", "Conector 1", "Pin 1", "Conector 2", "Pin 2"]]
+    idx_conector = []
+    idx_pin = []
+    idx_module = []
+    idx_knname = ""
+    idx_realname = ""
+    idx_leadset = ""
+    idx_kanbanag = ""
+    idx_pnmaterial = ""
+
+    if fisier_cm[-3:] == "csv":
+        with open(fisier_cm, newline='') as csvfile:
+            array_sortare = list(csv.reader(csvfile, delimiter=','))
+
+        if "8011" in array_sortare[0]:
+            for i, j in enumerate(array_sortare[2]):
+                if j == 'von' or j == 'nach':
+                    idx_conector.append(i)
+                elif j == 'Pin':
+                    idx_pin.append(i)
+                elif j == 'Kanban name':
+                    idx_knname = i
+                elif j == 'REAL NAME':
+                    idx_realname = i
+                elif j == 'Leadset':
+                    idx_leadset = i
+                elif j == 'Actual Kanban-AG':
+                    idx_kanbanag = i
+                elif j == 'FORS PN':
+                    idx_pnmaterial = i
+            for i, j in enumerate(array_sortare[1]):
+                if len(j) == 13:
+                    idx_module.append(i)
+            print(idx_knname)
+            statuslabel["text"] = "Working on it . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+
+            for i in range(6, len(array_sortare)):
+                for x in range(0, len(idx_module)):
+                    if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "OPERATIE",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][11] not in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "COMPONENT",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][11] in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname],
+                                            array_sortare[i][idx_knname].lower(), array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+
+            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(array_print)
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showinfo('Finalizat!', "Finalizat.")
+        else:
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul CSR")
+    else:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Extensie gresita!', "Incarcati fisierul CSV")
