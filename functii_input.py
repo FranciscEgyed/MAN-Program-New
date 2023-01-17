@@ -793,7 +793,7 @@ def cmcsrnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] not in listatwist:
+                            and array_sortare[i][idx_realname] not in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname].lower(),
@@ -805,7 +805,7 @@ def cmcsrnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] in listatwist:
+                            and array_sortare[i][idx_realname] in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname],
@@ -907,7 +907,7 @@ def cmcslnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] not in listatwist:
+                            and array_sortare[i][idx_realname] not in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname].lower(),
@@ -919,7 +919,7 @@ def cmcslnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] in listatwist:
+                            and array_sortare[i][idx_realname] in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname],
@@ -1021,7 +1021,7 @@ def cmtglmlnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] not in listatwist:
+                            and array_sortare[i][idx_realname] not in listatwist:
                         array_print.append([array_sortare[2][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname].lower(),
@@ -1033,7 +1033,7 @@ def cmtglmlnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] in listatwist:
+                            and array_sortare[i][idx_realname] in listatwist:
                         array_print.append([array_sortare[2][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname],
@@ -1134,7 +1134,7 @@ def cmtglmrnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] not in listatwist:
+                            and array_sortare[i][idx_realname] not in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname].lower(),
@@ -1146,7 +1146,7 @@ def cmtglmrnew():
                         pbar['value'] += 2
                         pbargui.update_idletasks()
                     elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                            and array_sortare[i][11] in listatwist:
+                            and array_sortare[i][idx_realname] in listatwist:
                         array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                             array_sortare[i][idx_kanbanag].replace("23U", "23W"),
                                             array_sortare[i][idx_realname],
@@ -1167,6 +1167,232 @@ def cmtglmrnew():
             pbar.destroy()
             pbargui.destroy()
             messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul TGLM R")
+    else:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Extensie gresita!', "Incarcati fisierul CSV")
+
+
+def cm4axellnew():
+    pbargui = Tk()
+    pbargui.title("Control Matrix 4AXEL L")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
+    fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul control matrix:")
+    array_print = [["Module ID+REAL NAME", "KANBAN-AG", "REAL NAME", "Kanban name", "Module ID", "Ledset",
+                    "Type", "Material PN", "Conector 1", "Pin 1", "Conector 2", "Pin 2"]]
+    idx_conector = []
+    idx_pin = []
+    idx_module = []
+    idx_knname = ""
+    idx_realname = ""
+    idx_leadset = ""
+    idx_kanbanag = ""
+    idx_pnmaterial = ""
+
+    if fisier_cm[-3:] == "csv":
+        with open(fisier_cm, newline='') as csvfile:
+            array_sortare = list(csv.reader(csvfile, delimiter=','))
+
+        if "AXL" in array_sortare[3]:
+            for i, j in enumerate(array_sortare[2]):
+                if j == 'Xcode_1' or j == 'Xcode_2':
+                    idx_conector.append(i)
+                elif j == 'Cavity_1' or j == 'Cavity_2':
+                    idx_pin.append(i)
+                elif 'KANBAN' in j:
+                    idx_knname = i
+                elif j == 'WireNo':
+                    idx_realname = i
+                elif j == 'Leadset':
+                    idx_leadset = i
+                elif j == 'COD':
+                    idx_kanbanag = i
+                elif j == "PN":
+                    idx_pnmaterial = i
+            for i, j in enumerate(array_sortare[1]):
+                if len(j) == 13:
+                    idx_module.append(i)
+            statuslabel["text"] = "Working on it . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+
+            for i in range(6, len(array_sortare)):
+                for x in range(0, len(idx_module)):
+                    if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "OPERATIE",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][idx_realname] not in listatwist:
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "COMPONENT",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][idx_realname] in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname],
+                                            array_sortare[i][idx_knname].lower(), array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+
+            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXEL_L.txt", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(array_print)
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showinfo('Finalizat!', "Finalizat.")
+        else:
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul 4AXEL L")
+    else:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Extensie gresita!', "Incarcati fisierul CSV")
+
+
+def cm4axelrnew():
+    pbargui = Tk()
+    pbargui.title("Control Matrix 4AXEL R")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
+    fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul control matrix:")
+    array_print = [["Module ID+REAL NAME", "KANBAN-AG", "REAL NAME", "Kanban name", "Module ID", "Ledset",
+                    "Type", "Material PN", "Conector 1", "Pin 1", "Conector 2", "Pin 2"]]
+    idx_conector = []
+    idx_pin = []
+    idx_module = []
+    idx_knname = ""
+    idx_realname = ""
+    idx_leadset = ""
+    idx_kanbanag = ""
+    idx_pnmaterial = ""
+
+    if fisier_cm[-3:] == "csv":
+        with open(fisier_cm, newline='') as csvfile:
+            array_sortare = list(csv.reader(csvfile, delimiter=','))
+
+        if "8026" in array_sortare[2]:
+            for i, j in enumerate(array_sortare[3]):
+                if j == 'Xcode_1' or j == 'Xcode_2':
+                    idx_conector.append(i)
+                elif j == 'Cavity_1' or j == 'Cavity_2':
+                    idx_pin.append(i)
+                elif 'KANBAN' in j:
+                    idx_knname = i
+                elif j == 'WireNo':
+                    idx_realname = i
+                elif j == 'LeadSet':
+                    idx_leadset = i
+                elif j == 'COD':
+                    idx_kanbanag = i
+                elif j == "PN":
+                    idx_pnmaterial = i
+            for i, j in enumerate(array_sortare[1]):
+                if len(j) == 13:
+                    idx_module.append(i)
+            statuslabel["text"] = "Working on it . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            print(idx_realname)
+            for i in range(6, len(array_sortare)):
+                for x in range(0, len(idx_module)):
+                    if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "OPERATIE",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][idx_realname] not in listatwist:
+                        array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "COMPONENT",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+                        pbar['value'] += 2
+                        pbargui.update_idletasks()
+                    elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                            and array_sortare[i][idx_realname] in listatwist:
+                        array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                            array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                            array_sortare[i][idx_realname],
+                                            array_sortare[i][idx_knname].lower(), array_sortare[3][idx_module[x]],
+                                            array_sortare[i][idx_leadset], "FIR",
+                                            array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                            array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                            array_sortare[i][idx_pin[1]]])
+
+            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXEL_R.txt", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(array_print)
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showinfo('Finalizat!', "Finalizat.")
+        else:
+            pbar.destroy()
+            pbargui.destroy()
+            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul 4AXEL R")
     else:
         pbar.destroy()
         pbargui.destroy()

@@ -43,8 +43,8 @@ submenu1.add_command(label="Control Matrix CSR", command=lambda: [statusbusy(), 
 submenu1.add_command(label="Control Matrix CSL", command=lambda: [statusbusy(), cmcslnew(), statusidle()])
 submenu1.add_command(label="Control Matrix TGLM L", command=lambda: [statusbusy(), cmtglmlnew(), statusidle()])
 submenu1.add_command(label="Control Matrix TGLM R", command=lambda: [statusbusy(), cmtglmrnew(), statusidle()])
-submenu1.add_command(label="Control Matrix 4AXEL L(8025)", command=lambda: [statusbusy(), cm4axell(), statusidle()])
-submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [statusbusy(), cm4axelr(), statusidle()])
+submenu1.add_command(label="Control Matrix 4AXEL L(8025)", command=lambda: [statusbusy(), cm4axellnew(), statusidle()])
+submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [statusbusy(), cm4axelrnew(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
