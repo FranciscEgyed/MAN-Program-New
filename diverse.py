@@ -6,6 +6,11 @@ import sqlite3
 from tkinter import messagebox
 
 
+def error_file(log):
+    with open(os.path.abspath(os.curdir) + "/MAN/Error file.txt", 'a') as myfile:
+        myfile.write(datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S") + " - " + str(log) + "\n")
+    return None
+
 def log_file(log):
     with open(os.path.abspath(os.curdir) + "/MAN/Log file.txt", 'a') as myfile:
         myfile.write(datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S") + " - " + str(log) + "\n")
@@ -26,11 +31,14 @@ def structura_directoare():
         if not os.path.exists(d):
             os.makedirs(d)
     directoareoutput = [os.path.abspath(os.curdir) + "/MAN/Output/Excel Files",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Report Files",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Report Files UA",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Report Files BE",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000 UA",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011 UA",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023 UA",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000 BE",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011 BE",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023 BE",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/",

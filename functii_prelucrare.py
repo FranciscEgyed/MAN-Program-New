@@ -2,9 +2,11 @@ import csv
 import os
 import time
 from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
+from typing import List, Any
+
 import pandas as pd
 from openpyxl import load_workbook
-from diverse import log_file
+from diverse import log_file, error_file
 from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni, \
     prn_excel_wirelistsallinone, prn_excel_ksk_neprelucrate
 import sqlite3
@@ -66,10 +68,17 @@ def sortare_jit():
     pbargui.update_idletasks()
     ws = wb.worksheets[0]
     lista_calloff_total = []
+    is_error = False
     for row in ws['A']:
         if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and\
-                row.value != "Ext.JIT Call No":
+                row.value != "Ext.JIT Call No" and len(ws.cell(row=row.row, column=2).value) == 13:
             lista_calloff_total.append(row.value)
+        elif row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and\
+                row.value != "Ext.JIT Call No":
+            is_error = True
+            error_file("Eroare in " + os.path.basename(fisier_calloff) + " pe randul " + str(row.row) + " valoarea " +
+                       ws.cell(row=row.row, column=2).value + " nu este corecta")
+
 
     lista_calloff_unice = list(dict.fromkeys(lista_calloff_total))
     file_counter = len(lista_calloff_unice)
@@ -78,7 +87,7 @@ def sortare_jit():
     # Extract each KSK from JIT file
     for element in lista_calloff_unice:
         is_light = "NO"
-        array_temporar = []
+        array_temporar: list[list[str | Any]] = []
         array_temporar_module = []
         array_database = []
         for row in ws['A']:
@@ -181,6 +190,9 @@ def sortare_jit():
              "Necunoscute = " + str(cnec))
     messagebox.showinfo("Finalizat", "Sortate  8000 = " + str(c8000) + ", 8011 = " + str(c8011) + ", 8023 = " +
                         str(c8023) + ", Necunoscute = " + str(cnec))
+    if is_error:
+        messagebox.showinfo("Erori in fisiere", "Verificati fisierul === Error file.txt === !")
+        os.startfile(os.path.abspath(os.curdir) + "/MAN/Error file.txt")
     return None
 
 def sortare_jit_dir():
