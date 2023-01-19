@@ -70,15 +70,15 @@ def sortare_jit():
     lista_calloff_total = []
     is_error = False
     for row in ws['A']:
-        if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and\
-                row.value != "Ext.JIT Call No" and len(ws.cell(row=row.row, column=2).value) == 13:
+        if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
+                row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or \
+                                                    len(ws.cell(row=row.row, column=2).value) == 14):
             lista_calloff_total.append(row.value)
-        elif row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and\
+        elif row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
                 row.value != "Ext.JIT Call No":
             is_error = True
             error_file("Eroare in " + os.path.basename(fisier_calloff) + " pe randul " + str(row.row) + " valoarea " +
                        ws.cell(row=row.row, column=2).value + " nu este corecta")
-
 
     lista_calloff_unice = list(dict.fromkeys(lista_calloff_total))
     file_counter = len(lista_calloff_unice)
@@ -107,7 +107,8 @@ def sortare_jit():
                      ws.cell(row=row.row, column=3).value, qty, ws.cell(row=row.row, column=5).value,
                      ws.cell(row=row.row, column=12).value, ws.cell(row=row.row, column=13).value,
                      ws.cell(row=row.row, column=16).value, ws.cell(row=row.row, column=14).value])
-                array_temporar_module.append(ws.cell(row=row.row, column=2).value.replace('PM.', '81.').replace('VM.', '81.'))
+                array_temporar_module.append(
+                    ws.cell(row=row.row, column=2).value.replace('PM.', '81.').replace('VM.', '81.'))
         for i in range(len(array_temporar)):
             if "PM." in array_temporar[i][1]:
                 array_temporar[i][1] = array_temporar[i][1].replace('PM.', '81.')
@@ -132,7 +133,7 @@ def sortare_jit():
                 tip = "Necunoscut"
         if tip == "Necunoscut":
             cnec = cnec + 1
-        #Chech KSK if part of KSK Light project
+        # Chech KSK if part of KSK Light project
         if set(array_temporar_module).issubset(array_sortare_light[0]):
             prn_excel_separare_ksk(array_temporar_module, element[1:])
             is_light = "YES"
@@ -195,6 +196,7 @@ def sortare_jit():
         os.startfile(os.path.abspath(os.curdir) + "/MAN/Error file.txt")
     return None
 
+
 def sortare_jit_dir():
     pbargui = Tk()
     pbargui.title("Sortare JIT din director")
@@ -254,7 +256,8 @@ def sortare_jit_dir():
             lista_calloff_total = []
             for row in ws['A']:
                 if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
-                        row.value != "Ext.JIT Call No":
+                        row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or \
+                                                            len(ws.cell(row=row.row, column=2).value) == 14):
                     lista_calloff_total.append(row.value)
             lista_calloff_unice = list(dict.fromkeys(lista_calloff_total))
             kskcounter = len(lista_calloff_unice)
@@ -265,7 +268,8 @@ def sortare_jit_dir():
                 is_light = "NO"
                 array_database = []
                 kskprogres = kskprogres + 1
-                statuslabel2["text"] = "                 " + str(kskprogres) + " / " + str(kskcounter) + " : " + element[1:]
+                statuslabel2["text"] = "                 " + str(kskprogres) + " / " + str(
+                    kskcounter) + " : " + element[1:]
                 pbar['value'] += 2
                 pbargui.update_idletasks()
                 array_temporar = []
@@ -323,7 +327,8 @@ def sortare_jit_dir():
                 harnesstype = []
                 for m in range(len(array_temporar_module)):
                     for n in range(len(array_module_active)):
-                        if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
+                        if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][
+                            3] != "XXXX":
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
                 # Check ss type
@@ -355,7 +360,6 @@ def sortare_jit_dir():
                     wr.writerows(array_temporar)
                 del array_temporar
                 end = time.time()
-
 
             file_progres = file_progres + 1
             statuslabel["text"] = str(file_progres) + " / " + str(file_counter) + " : " + file_all
@@ -493,6 +497,7 @@ def boms():
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
+
 def wires():
     pbargui = Tk()
     pbargui.title("Prelucrare WIRELIST-uri")
@@ -537,7 +542,7 @@ def wires():
                                     array_t.append(array_incarcat[x][i])
                             array_original.append(array_t)
                         if array_original[0][0] != 1 and len(array_original[0]) != 2:
-                            messagebox.showerror('Eroare fisier'+file_all, 'Nu ai incarcat fisierul corect ...')
+                            messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect ...')
                             return
                         if len(array_original) < 50:
                             for i in range(0, len(array_original)):
@@ -550,10 +555,11 @@ def wires():
                             for i in range(0, 50):
                                 if array_original[i][0] == "0":
                                     if str(array_original[i][1]) != "Ltg-Nr.":
-                                        messagebox.showerror('Eroare fisier'+file_all, 'Nu ai incarcat fisierul corect')
+                                        messagebox.showerror('Eroare fisier' + file_all,
+                                                             'Nu ai incarcat fisierul corect')
                                         return
                     except:
-                        messagebox.showerror('Eroare fisier'+file_all, 'Nu ai incarcat fisierul corect')
+                        messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect')
                         return
                     nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
                     array_temp = [["Module", "Ltg No", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Kurzname",
@@ -609,6 +615,7 @@ def wires():
     pbargui.destroy()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
+
 
 def boms_leoni():
     pbargui = Tk()
@@ -743,6 +750,7 @@ def boms_leoni():
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
+
 
 def wires_leoni():
     pbargui = Tk()
@@ -942,14 +950,14 @@ def wirelist_all_simplu():
                 array_wirelist = list(csv.reader(csvfile, delimiter=';'))
             for i in range(len(array_wirelist)):
                 array_print.append([array_wirelist[i][0], array_wirelist[i][1], array_wirelist[i][2],
-                                   array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][5],
-                                   array_wirelist[i][6], array_wirelist[i][9]])
+                                    array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][5],
+                                    array_wirelist[i][6], array_wirelist[i][9]])
                 pbar['value'] += 2
                 pbargui.update_idletasks()
             for i in range(len(array_wirelist)):
                 array_print.append([array_wirelist[i][0], array_wirelist[i][1], array_wirelist[i][2],
-                                   array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][7],
-                                   array_wirelist[i][8], array_wirelist[i][9]])
+                                    array_wirelist[i][3], array_wirelist[i][4], array_wirelist[i][7],
+                                    array_wirelist[i][8], array_wirelist[i][9]])
                 pbar['value'] += 2
                 pbargui.update_idletasks()
             for i in range(len(array_wirelist)):
@@ -998,5 +1006,3 @@ def wirelist_all_complet():
     pbargui.destroy()
     messagebox.showinfo('Finalizat!')
     return None
-
-

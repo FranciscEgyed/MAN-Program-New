@@ -95,7 +95,6 @@ def databasecontent():
             listaallksknew = yyy['KSKNo'].unique()
         update3(listaallksknew)
 
-
     def exportksk():
         ksklist = [ksk_lb.get(idx) for idx in ksk_lb.curselection()]
         for ksk in ksklist:
@@ -121,6 +120,7 @@ def databasecontent():
                       encoding='utf-8') as myfile:
                 wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
                 wr.writerows(arraywrite)
+        messagebox.showinfo('Finalizat!')
 
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")

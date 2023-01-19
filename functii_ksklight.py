@@ -624,6 +624,7 @@ def raport_light():
     update2(list2)
     update3(list3)
     update4(list4)
+    select_all()
     ws.mainloop()
 
 

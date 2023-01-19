@@ -31,7 +31,8 @@ def inlocuire():
                 if partro == array_ete_prelucrat[i][0]:
                     indexro = array_ete_prelucrat[i][1]
             partroindex = partro + indexro
-            if file_all.endswith(".prg"):
+
+            if file_all.endswith(".prg") and len(file_all) == 15:
                 #path = os.path.join(path, file_all)
                 with open(path + "/" + director + "/" + file_all) as f:
                     newText = f.read().replace(file_all[:-4], partroindex)
@@ -43,14 +44,14 @@ def inlocuire():
                     newText = f.read()
                 with open(pathsave + "/" + director + "/" + partroindex + ".mdl", "w") as fff:
                     fff.write(newText)
-
             elif file_all.endswith(".csv"):
                 with open(path + "/" + director + "/" + file_all, newline='') as csvfile:
                     csvarray = list(csv.reader(csvfile, delimiter=';'))
                 for i in range(len(csvarray)):
                     for x in range(len(array_ete_prelucrat)):
-                        if array_ete_prelucrat[x][0].replace("23W", "23U") in csvarray[i][2]:
-                            csvarray[i][2] = array_ete_prelucrat[x][0] + array_ete_prelucrat[x][1]
+                        for y, elem in enumerate(csvarray[i]):
+                            if array_ete_prelucrat[x][0].replace("23W", "23U") in elem:
+                                csvarray[i][y] = array_ete_prelucrat[x][0] + array_ete_prelucrat[x][1]
                 with open(pathsave + "/" + director + "/" + file_all, 'w', newline='',
                           encoding='utf-8') as myfile:
                     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
@@ -60,8 +61,9 @@ def inlocuire():
                     csvarray = list(csv.reader(csvfile, delimiter=';'))
                 for i in range(len(csvarray)):
                     for x in range(len(array_ete_prelucrat)):
-                        if array_ete_prelucrat[x][0].replace("23W", "23U") in csvarray[i][2]:
-                            csvarray[i][2] = array_ete_prelucrat[x][0] + array_ete_prelucrat[x][1]
+                        for y, elem in enumerate(csvarray[i]):
+                            if array_ete_prelucrat[x][0].replace("23W", "23U") in elem:
+                                csvarray[i][y] = array_ete_prelucrat[x][0] + array_ete_prelucrat[x][1]
                 with open(pathsave + "/" + director + "/" + file_all, 'w', newline='',
                           encoding='utf-8') as myfile:
                     wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')

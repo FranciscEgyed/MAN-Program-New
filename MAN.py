@@ -112,18 +112,15 @@ menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
-submenu7.add_separator()
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
-submenu7.add_separator()
 submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
+submenu7.add_command(label="Database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
-submenu7.add_separator()
-submenu7.add_command(label="Database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
 submenu7.add_separator()
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
