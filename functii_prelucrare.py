@@ -327,8 +327,8 @@ def sortare_jit_dir():
                 harnesstype = []
                 for m in range(len(array_temporar_module)):
                     for n in range(len(array_module_active)):
-                        if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][
-                            3] != "XXXX":
+                        if array_temporar_module[m] == array_module_active[n][0] and \
+                                array_module_active[n][3] != "XXXX":
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
                 # Check ss type

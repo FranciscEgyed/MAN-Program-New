@@ -118,7 +118,7 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
-submenu7.add_command(label="Database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
+submenu7.add_command(label="Extragere KSK din database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
 submenu7.add_separator()
