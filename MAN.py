@@ -36,7 +36,7 @@ statuslabel = tk.Label(root, text="Waiting . . .")
 
 menu1 = tk.Menubutton(menu_frame, text="Fisiere Sursa", background="DarkSeaGreen1", font="Arial 10 bold")
 menu1.grid(row=0, column=0)
-submenu1 = tk.Menu(menu1, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu1 = tk.Menu(menu1, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu1.add_command(label="Incarcare Fisier Sursa", command=lambda: [statusbusy(), load_source(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix CSR", command=lambda: [statusbusy(), cmcsrnew(), statusidle()])
@@ -53,7 +53,7 @@ menu1.configure(menu=submenu1)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu2 = tk.Menubutton(menu_frame, text="Fisiere Input", background="DarkSeaGreen1", font="Arial 10 bold")
 menu2.grid(row=0, column=1)
-submenu2 = tk.Menu(menu2, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu2 = tk.Menu(menu2, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), sortare_jit(), statusidle()])
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
@@ -74,7 +74,7 @@ menu2.configure(menu=submenu2)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu3 = tk.Menubutton(menu_frame, text="Prelucrare KSK", background="DarkSeaGreen1", font="Arial 10 bold")
 menu3.grid(row=0, column=2)
-submenu3 = tk.Menu(menu3, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu3 = tk.Menu(menu3, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu3.add_command(label="Wirelist individual",
                      command=lambda: [statusbusy(), wirelist_individual(), statusidle()])
 submenu3.add_command(label="Wirelist toate", command=lambda: [statusbusy(), wirelist_director(), statusidle()])
@@ -85,7 +85,7 @@ menu3.configure(menu=submenu3)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu4 = tk.Menubutton(menu_frame, text="Rapoarte", background="DarkSeaGreen1", font="Arial 10 bold")
 menu4.grid(row=0, column=3)
-submenu4 = tk.Menu(menu4, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu4 = tk.Menu(menu4, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu4.add_command(label="Raport", command=lambda: [statusbusy(), creare_raport(), statusidle()])
 submenu4.add_command(label="Rapoarte din director",
                      command=lambda: [statusbusy(), creare_raport_director(), statusidle()])
@@ -94,14 +94,11 @@ menu4.configure(menu=submenu4)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu5 = tk.Menubutton(menu_frame, text="KSK Light", background="DarkSeaGreen1", font="Arial 10 bold")
 menu5.grid(row=0, column=4)
-submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), raport_light(), statusidle()])
 #submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light(), statusidle()])
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
-submenu5.add_separator()
-submenu5.add_command(label="Lista taiere forecast module",
-                     command=lambda: [statusbusy(), cutting_ksklight_module(), statusidle()])
 submenu5.add_separator()
 # submenu5.add_command(label="Lista SuperSleeve KSK Light",
 #                     command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
@@ -109,7 +106,7 @@ menu5.configure(menu=submenu5)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
-submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 10 bold")
+submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
