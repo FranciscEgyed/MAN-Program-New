@@ -119,6 +119,7 @@ submenu7.add_command(label="Extragere KSK din database", command=lambda: [status
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
 submenu7.add_separator()
+
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

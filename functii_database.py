@@ -69,7 +69,6 @@ def databasecontent():
         for item in data:
             datajit_lb.insert('end', item)
 
-
     list2 = df.DataJIT.unique()
 
     def update3(data):
@@ -146,7 +145,6 @@ def databasecontent():
     bsch1.grid(row=4, column=2)
     bexp = Button(ws, text="Export", command=exportksk)
     bexp.grid(row=4, column=3)
-
 
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")

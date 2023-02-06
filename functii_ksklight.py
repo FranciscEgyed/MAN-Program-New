@@ -4,13 +4,11 @@ import itertools
 import math
 import os
 import time
-from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button, filedialog
+from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
-from openpyxl.workbook import Workbook
-
 from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light, \
-    prn_excel_moduleinksk, prn_excel_cutting_module
+    prn_excel_moduleinksk
 import sqlite3
 
 
@@ -456,7 +454,6 @@ def raport_light():
 
     def deselect_all():
         datalivrare_lb.selection_clear(0, END)
-
     list1 = df.DataLivrare.unique()
 
     def scankey2(event):
@@ -480,7 +477,6 @@ def raport_light():
 
     def deselect_all2():
         datajit_lb.selection_clear(0, END)
-
     list2 = df.DataJIT.unique()
 
     def update3(data):
@@ -488,14 +484,12 @@ def raport_light():
         # put new data
         for item in data:
             indexe.insert('end', item)
-
     list3 = df.columns.values.tolist()[2:]
 
     def update4(data):
         coloane.delete(0, 'end')
         for item in data:
             coloane.insert('end', item)
-
     list4 = df.columns.values.tolist()[2:]
 
     def run():
@@ -521,15 +515,14 @@ def raport_light():
                 ws.destroy()
                 messagebox.showerror("Valori gresite", "Indexul si coloanele nu pot contine aceasi informatii.")
 
-
     def moduleinksk():
         printer = []
         printer2 = []
         for x in range(0, len(df.index)):
-            printer.append([df.iloc[x, 6], df.iloc[x, 9].split(";")])
+            printer.append([df.iloc[x, 6], df.iloc[x, 9].split(";"), df.iloc[x, 5]])
         for i in range(len(printer)):
             for x in range(len(printer[i][1])):
-                printer2.append([printer[i][0], printer[i][1][x]])
+                printer2.append([printer[i][0], printer[i][1][x], printer[i][2]])
         try:
             prn_excel_moduleinksk(printer2)
             ws.destroy()
@@ -550,7 +543,6 @@ def raport_light():
 
             pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
                                     aggfunc='count')
-
             pivot.loc[:, 'Total'] = pivot.iloc[:, :].sum(axis=1)
             printarray = []
             for x in range(len(pivot.index)):
@@ -576,7 +568,6 @@ def raport_light():
 
             ws.destroy()
             messagebox.showinfo("Finalizat", "Comparatia " + save_time + " a fost salvat!")
-
 
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")
