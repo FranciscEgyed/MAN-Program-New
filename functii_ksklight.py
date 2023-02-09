@@ -696,7 +696,11 @@ def stockcompa():
     # Upload stock to database
     cursor = conn.cursor()
     # create a table
-    cursor.execute("""DROP TABLE KSKStocks""")
+    try:
+        cursor.execute("""DROP TABLE KSKStocks""")
+    except sqlite3.OperationalError:
+        pass
+
     cursor.execute("""CREATE TABLE KSKStocks
                               (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
                               DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
