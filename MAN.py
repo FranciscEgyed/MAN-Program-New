@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-from functii_database import databasecontent
+from functii_database import databasecontent, exportdatabase, database_delete_record
 from functii_diverse import *
 from functii_input import *
 from diverse import *
@@ -21,7 +21,7 @@ def statusidle():
 
 root = tk.Tk()
 root.title("2022 MAN file processor")
-root.geometry("500x450+50+50")
+root.geometry("600x450+50+50")
 root.iconbitmap("Img/ICON.ico")
 img = ImageTk.PhotoImage(Image.open("Img/MAN.jpg"))
 container = tk.Frame(root, bg="gray")
@@ -115,13 +115,23 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
-submenu7.add_command(label="Extragere KSK din database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
+submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()
-submenu7.add_command(label="Stergere fisiere", command=golire_directoare)
-submenu7.add_separator()
-
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")
+menu8.grid(row=0, column=6)
+submenu8 = tk.Menu(menu8, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenu8.add_command(label="Extragere KSK din database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
+submenu8.add_separator()
+submenu8.add_command(label="Incarcare stock pentru comparatie", command=stockcompa)
+submenu8.add_separator()
+submenu8.add_command(label="Extragere database completa", command=lambda: [statusbusy(), exportdatabase(), statusidle()])
+submenu8.add_separator()
+submenu8.add_command(label="Stergere inregistrari din database",
+                     command=lambda: [statusbusy(), database_delete_record(), statusidle()], background="red")
+submenu8.add_separator()
+menu8.configure(menu=submenu8)
 
 
 menu_frame.grid(row=0, column=0)

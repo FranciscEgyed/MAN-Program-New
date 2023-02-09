@@ -4,7 +4,7 @@ import itertools
 import math
 import os
 import time
-from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button
+from tkinter import messagebox, Tk, ttk, HORIZONTAL, Label, Entry, Listbox, END, Button, filedialog
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
 from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light, \
@@ -270,7 +270,7 @@ def ss_ksklight():
             array_print.extend(add_to_print)
             end1 = time.time()
             timelabel["text"] = "Estimated time to complete : " \
-                                + str((file_counter * (end1-start1)) / 60)[:5] + " minutes."
+                                + str((file_counter * (end1 - start1)) / 60)[:5] + " minutes."
             pbargui.update_idletasks()
     statuslabel["text"] = "Creare lista SuperSleeve         "
     pbar['value'] += 2
@@ -341,10 +341,10 @@ def ss_ksklight():
             if array_taiere_print[i][0] == drawings[x][0]:
                 array_taiere_print[i].append(drawings[x][1])
                 break
-    #pbargui.update_idletasks()
-    #if answer:
+    # pbargui.update_idletasks()
+    # if answer:
     prn_excel_supers_ksk_all(array_print, array_unic_print2, array_taiere_print)
-    #else:
+    # else:
     #    prn_excel_supers_ksk_all_simplu(array_taiere_print)
 
     pbar.destroy()
@@ -385,7 +385,7 @@ def compare_ksk_light():
     for file1, file2 in itertools.combinations(files_dir, 2):
         pbar['value'] += 2
         file_progres = file_progres + 1
-        statuslabel["text"] = "                Combinatii verificate " + str(file_progres) + "/" + str(file_counter) +\
+        statuslabel["text"] = "                Combinatii verificate " + str(file_progres) + "/" + str(file_counter) + \
                               "                "
         end = time.time()
         timelabel["text"] = "         Estimated time to complete : " + \
@@ -432,7 +432,11 @@ def raport_light():
         cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+    dfstock = pd.read_sql_query("SELECT * FROM KSKStocks", cnx)
 
+    contain_values = df[df['KSKNo'].str.contains('0006K-0H19')]
+    print(contain_values)
+    print(dfstock.loc[2])
     def scankey(event):
         val = event.widget.get()
         if val == '':
@@ -454,6 +458,7 @@ def raport_light():
 
     def deselect_all():
         datalivrare_lb.selection_clear(0, END)
+
     list1 = df.DataLivrare.unique()
 
     def scankey2(event):
@@ -477,6 +482,7 @@ def raport_light():
 
     def deselect_all2():
         datajit_lb.selection_clear(0, END)
+
     list2 = df.DataJIT.unique()
 
     def update3(data):
@@ -484,12 +490,14 @@ def raport_light():
         # put new data
         for item in data:
             indexe.insert('end', item)
+
     list3 = df.columns.values.tolist()[2:]
 
     def update4(data):
         coloane.delete(0, 'end')
         for item in data:
             coloane.insert('end', item)
+
     list4 = df.columns.values.tolist()[2:]
 
     def run():
@@ -537,10 +545,9 @@ def raport_light():
         valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
         xxx = df.query('DataLivrare in @valuesdatalivrare_lb')
         yyy = xxx.query('DataJIT in @valuesdatajit_lb')
-        if len(valuesdatalivrare_lb) + len(valuesdatajit_lb) == 0:
+        if len(valuesdatalivrare_lb) == 0 or len(valuesdatajit_lb) == 0:
             messagebox.showerror("Valori gresite", "Nu ati selectat nimic")
         else:
-
             pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
                                     aggfunc='count')
             pivot.loc[:, 'Total'] = pivot.iloc[:, :].sum(axis=1)
@@ -548,22 +555,53 @@ def raport_light():
             for x in range(len(pivot.index)):
                 if pivot.iloc[x, -1] > 1:
                     templist = []
-                    for y in range(len(pivot.columns)-1):
+                    for y in range(len(pivot.columns) - 1):
                         if pivot.iloc[x, y] != 0:
                             templist.append(pivot.columns[y])
                     printarray.append(templist)
             for x in range(len(pivot.index)):
                 if pivot.iloc[x, -1] == 1:
                     templist = []
-                    for y in range(len(pivot.columns)-1):
+                    for y in range(len(pivot.columns) - 1):
                         if pivot.iloc[x, y] != 0:
                             templist.append(pivot.columns[y])
                     printarray.append(templist)
-            #pivot.loc["Total"] = pivot.sum()
-            #for y in range(len(pivot.columns) - 1):
-            #    if pivot.iloc[-1, y] == 1:
-            #        print(pivot.columns[y])
-            #print(pivot)
+            prn_excel_compare_ksk_light(printarray, save_time)
+            ws.destroy()
+            messagebox.showinfo("Finalizat", "Comparatia " + save_time + " a fost salvat!")
+
+    def comparatiestock():
+
+        save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
+        valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
+        valuesdatajit_lb = [datajit_lb.get(idx) for idx in datajit_lb.curselection()]
+        xxx = df.query('DataLivrare in @valuesdatalivrare_lb')
+        yyy = xxx.query('DataJIT in @valuesdatajit_lb')
+
+        result = pd.merge(yyy, dfstock, how='outer')
+        print(result.head(10))
+        if len(valuesdatalivrare_lb) == 0 or len(valuesdatajit_lb) == 0:
+            messagebox.showerror("Valori gresite", "Nu ati selectat nimic")
+        else:
+
+            pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
+                                           aggfunc='count')
+            pivot.loc[:, 'Total'] = pivot.iloc[:, :].sum(axis=1)
+            printarray = []
+            for x in range(len(pivot.index)):
+                if pivot.iloc[x, -1] > 1:
+                    templist = []
+                    for y in range(len(pivot.columns) - 1):
+                        if pivot.iloc[x, y] != 0:
+                            templist.append(pivot.columns[y])
+                    printarray.append(templist)
+            for x in range(len(pivot.index)):
+                if pivot.iloc[x, -1] == 1:
+                    templist = []
+                    for y in range(len(pivot.columns) - 1):
+                        if pivot.iloc[x, y] != 0:
+                            templist.append(pivot.columns[y])
+                    printarray.append(templist)
             prn_excel_compare_ksk_light(printarray, save_time)
 
             ws.destroy()
@@ -596,12 +634,16 @@ def raport_light():
     bds1.grid(row=4, column=0)
     bds2.grid(row=4, column=1)
 
-    brun = Button(ws, text="Generate report", command=run, bg="green", font="Arial 10 bold")
+    brun = Button(ws, text="Generate report", command=run, bg="lime", font="Arial 10 bold")
     brun.grid(row=5, column=4)
     bmoduleinksk = Button(ws, text="Raport module in KSK", command=moduleinksk, bg="yellow", font="Arial 10 bold")
     bmoduleinksk.grid(row=6, column=4)
-    bmoduleinksk = Button(ws, text="Raport comparatie KSK", command=comparatie, bg="blue", font="Arial 10 bold")
-    bmoduleinksk.grid(row=7, column=4)
+    comparatieall = Button(ws, text="Raport comparatie KSK", command=comparatie, bg="pink", font="Arial 10 bold")
+    comparatieall.grid(row=7, column=4)
+
+    comparatiest = Button(ws, text="Raport comparatie KSKvsSTOCK", command=comparatiestock, bg="cyan",
+                          font="Arial 10 bold")
+    comparatiest.grid(row=8, column=4)
 
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
@@ -619,12 +661,51 @@ def raport_light():
     ws.mainloop()
 
 
-
-
-
-
-
-
-
-
-
+def stockcompa():
+    # Incarcare stock
+    array_stock = []
+    fisier_stock = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                              title="Incarcati fisierul cu cablajele pe stock:")
+    if len(fisier_stock) == 0:
+        messagebox.showinfo("Nu ati selectat nimic")
+        return None
+    try:
+        wb = load_workbook(fisier_stock)
+    except:
+        messagebox.showinfo("Fisier invalid", fisier_stock + " extensie incompatibila!")
+        return None
+    ws = wb.worksheets[0]
+    for row in ws['A']:
+        if row.value is not None:
+            array_stock.append(row.value)
+    # Create your connection.
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
+    df = pd.read_sql_query("SELECT * FROM KSKDatabase", conn)
+    databaseall = df.values.tolist()
+    array_stock_load = []
+    counter = 0
+    for i in range(len(array_stock)):
+        for x in range(len(databaseall)):
+            if array_stock[i] == databaseall[x][6]:
+                array_stock_load.append(databaseall[x])
+                counter += 1
+    # Upload stock to database
+    cursor = conn.cursor()
+    # create a table
+    cursor.execute("""DROP TABLE KSKStocks""")
+    cursor.execute("""CREATE TABLE KSKStocks
+                              (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                              DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
+    # insert multiple records using the more secure "?" method
+    cursor.executemany("INSERT OR IGNORE INTO KSKStocks VALUES (?,?,?,?,?,?,?,?,?,?)", array_stock_load)
+    query = "SELECT COUNT(*) from KSKStocks"
+    cursor.execute(query)  # execute query separately
+    res = cursor.fetchone()
+    total_rows = res[0]  # total rows
+    conn.commit()
+    conn.close()
+    messagebox.showinfo("Finalizat!", "Incarcate " + str(total_rows) + " cablaje pe stock!")

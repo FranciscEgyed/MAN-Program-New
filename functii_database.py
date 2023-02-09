@@ -2,10 +2,11 @@ import csv
 import os
 import sqlite3
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import pandas as pd
+from openpyxl.reader.excel import load_workbook
 
-from functii_print import prn_databasecontent_ksk
+from functii_print import prn_excel_export_database
 
 
 def databasecontent():
@@ -22,7 +23,6 @@ def databasecontent():
         array_sortare_module = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
         array_module_active = list(csv.reader(csvfile, delimiter=';'))
-
 
     def scankey(event):
         val = event.widget.get()
@@ -99,6 +99,9 @@ def databasecontent():
         for ksk in ksklist:
             exp = df.loc[df['KSKNo'] == ksk]
             moduleksk = list(exp.iloc[0, 9].split(";"))
+            trailerno = exp.iloc[0, 7]
+            data = exp.iloc[0, 4]
+
             for item in moduleksk:
                 if item in array_sortare_module[0]:
                     tip = "8000"
@@ -113,8 +116,43 @@ def databasecontent():
                     tip = "Necunoscut"
             arraywrite = [['Harness', 'Module', 'Side', 'Quantity', tip, "Date", "Time", "Trailer No"]]
             for module in moduleksk:
-                arraywrite.append([ksk, module, "", 1, "PC", "", "", ""])
-                # de introdus data data trailerno
+                for i in range(len(array_module_active)):
+                    if array_module_active[i][0] == module and "LHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYL", 1, "PC", data, data, trailerno])
+                    elif array_module_active[i][0] == module and "RHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYR", 1, "PC", data, data, trailerno])
+            with open(os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/" + ksk + ".csv", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(arraywrite)
+        messagebox.showinfo('Finalizat!')
+
+    def exportall():
+        for ksk in listaallksk:
+            exp = df.loc[df['KSKNo'] == ksk]
+            moduleksk = list(exp.iloc[0, 9].split(";"))
+            trailerno = exp.iloc[0, 7]
+            data = exp.iloc[0, 4]
+
+            for item in moduleksk:
+                if item in array_sortare_module[0]:
+                    tip = "8000"
+                    break
+                elif item in array_sortare_module[1]:
+                    tip = "8011"
+                    break
+                elif item in array_sortare_module[2]:
+                    tip = "8023"
+                    break
+                else:
+                    tip = "Necunoscut"
+            arraywrite = [['Harness', 'Module', 'Side', 'Quantity', tip, "Date", "Time", "Trailer No"]]
+            for module in moduleksk:
+                for i in range(len(array_module_active)):
+                    if array_module_active[i][0] == module and "LHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYL", 1, "PC", data, data, trailerno])
+                    elif array_module_active[i][0] == module and "RHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYR", 1, "PC", data, data, trailerno])
             with open(os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/" + ksk + ".csv", 'w', newline='',
                       encoding='utf-8') as myfile:
                 wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
@@ -145,6 +183,8 @@ def databasecontent():
     bsch1.grid(row=4, column=2)
     bexp = Button(ws, text="Export", command=exportksk)
     bexp.grid(row=4, column=3)
+    bexpall = Button(ws, text="Export All", command=exportall)
+    bexpall.grid(row=5, column=3)
 
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
@@ -158,3 +198,55 @@ def databasecontent():
     update3(list3)
     ws.mainloop()
 
+
+def exportdatabase():
+    # Create your connection.
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
+    array_write = []
+    c = conn.cursor()
+    c.execute("select * from KSKDatabase")
+    mysel = c.execute("select * from KSKDatabase ")
+    for i, row in enumerate(mysel):
+        for j, value in enumerate(row):
+            array_write.append([i, j, row[j]])
+    prn_excel_export_database(array_write)
+    messagebox.showinfo('Finalizat!')
+
+
+def database_delete_record():
+    array_delete_rows = []
+    fisier_delete = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                               title="Incarcati fisierul cu cablajele pe stock:")
+    if len(fisier_delete) == 0:
+        messagebox.showinfo("Nu ati selectat nimic")
+        return None
+    try:
+        wb = load_workbook(fisier_delete)
+    except:
+        messagebox.showinfo("Fisier invalid", fisier_delete + " extensie incompatibila!")
+        return None
+    ws = wb.worksheets[0]
+    for row in ws['A']:
+        if row.value is not None:
+            array_delete_rows.append(row.value)
+
+    # Create your connection.
+    try:
+        conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+    except sqlite3.OperationalError:
+        conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+        messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
+    counter = 0
+    cursor = conn.cursor()
+
+    for i in range(len(array_delete_rows)):
+        counter += 1
+        query_string = "DELETE from KSKDatabase where primarykey in (%s)" % ','.join(['?'] * len(array_delete_rows))
+        cursor.execute(query_string, array_delete_rows)
+        conn.commit()
+    conn.close()
+    messagebox.showinfo("Finalizat", "Sterse " + str(counter) + " inregistrari")

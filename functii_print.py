@@ -785,7 +785,6 @@ def prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7
     ws9.insert_cols(5)
     ws9.cell(column=5, row=1, value="Description")
     istsoll(ws6, ws9)
-
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/" + sheet1[1][0] + ".xlsx")
         log_file("Creat Light" + sheet1[1][0] + ".xlsx")
@@ -863,11 +862,11 @@ def prn_excel_cutting_module(sheet1, sheet2, sheet3):
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Lista Cutting Forecast.xlsx")
         log_file("Creat wire Lista Cutting Forecast.xlsx")
-
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist Lista Cutting Forecast.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Lista Cutting Forecast.xlsx este read-only!")
         return None
+
 
 def prn_databasecontent_ksk(sheet1, ksk):
     wb = Workbook()
@@ -879,11 +878,29 @@ def prn_databasecontent_ksk(sheet1, ksk):
                 ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
-
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/" + ksk + ".xlsx")
         log_file("Creat wire Lista Cutting Forecast.xlsx")
 
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat wirelist Lista Cutting Forecast.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Lista Cutting Forecast.xlsx este read-only!")
+        return None
+
+
+def prn_excel_export_database(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Database"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Database/Database.xlsx")
+        log_file("Creat export database.xlsx")
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist Lista Cutting Forecast.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Lista Cutting Forecast.xlsx este read-only!")

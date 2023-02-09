@@ -351,6 +351,8 @@ def golire_directoare():
     dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
     dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
     dir_ldorado = os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"
+    dir_output_database1 = os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/"
+    dir_output_database2 = os.path.abspath(os.curdir) + "/MAN/Output/Database/"
 
     for file_all in os.listdir(dir_input1):
         try:
@@ -417,11 +419,16 @@ def golire_directoare():
             os.remove(dir_output_wire_complet + file_all)
         except:
             continue
-    # for file_all in os.listdir(dir_ldorado):
-    #    try:
-    #        os.remove(dir_ldorado + file_all)
-    #    except:
-    #        continue
+    for file_all in os.listdir(dir_output_database1):
+        try:
+            os.remove(dir_output_database1 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_database2):
+        try:
+            os.remove(dir_output_database2 + file_all)
+        except:
+            continue
     for file_all in os.listdir(dir_output_separare2):
         try:
             os.remove(dir_output_separare2 + file_all)

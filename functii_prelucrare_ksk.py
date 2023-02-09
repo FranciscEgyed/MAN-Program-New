@@ -12,7 +12,7 @@ from functii_print import prn_excel_bom, prn_excel_wires, prn_excel_wires_light
 # WIRES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def wirelist_individual():
     # try:
-    director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+    globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                                title="Selectati directorul pentru salvare")
     wire_file = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
     selected_dir_wire = os.path.dirname(os.path.realpath(wire_file)) + "/"
@@ -21,7 +21,7 @@ def wirelist_individual():
     with open(wire_file, newline='') as csvfile:
         array_module_file = list(csv.reader(csvfile, delimiter=';'))
     if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
-        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
         return
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
         array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
@@ -750,9 +750,8 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
 
 # BOM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def prelucrare_individuala_bom():
-    global dir_salvare
     try:
-        dir_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+        globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                               title="Selectati directorul pentru salvare")
         file_single = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
         with open(file_single, newline='') as csvfile:
@@ -884,7 +883,7 @@ def wirelist_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
                 return
             counter = counter + 1
             array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
@@ -916,7 +915,7 @@ def wirelist_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel11!')
                 return
             counter = counter + 1
             array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
@@ -948,7 +947,7 @@ def wirelist_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
                 return
             counter = counter + 1
             array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
@@ -981,7 +980,7 @@ def wirelist_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
                 return
             counter = counter + 1
             array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
@@ -1047,7 +1046,7 @@ def bom_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
                 return
             counter = counter + 1
             file_progres = file_progres + 1
@@ -1070,7 +1069,7 @@ def bom_director():
             with open(dir_selectat + file_all, newline='') as csvfile:
                 array_modul = list(csv.reader(csvfile, delimiter=';'))
             if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
                 return
             counter = counter + 1
             file_progres = file_progres + 1
