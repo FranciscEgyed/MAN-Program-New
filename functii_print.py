@@ -907,16 +907,24 @@ def prn_excel_export_database(sheet1):
         return None
 
 
-def prn_excel_diagrame(sheet1):
+def prn_excel_diagrame(sheet1, sheet2):
     wb = Workbook()
     ws1 = wb.active
+
     ws1.title = "Diferente diagrame"
+    ws2 = wb.create_sheet("Diagrame noi")
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
             try:
                 ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            try:
+                ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
+            except:
+                ws2.cell(column=x + 1, row=i + 1, value=str(float(sheet2[i][x])))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diferente diagrame.xlsx")
         log_file("Creat Diferente diagrame.xlsx")

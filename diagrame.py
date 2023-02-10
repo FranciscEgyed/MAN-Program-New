@@ -1,9 +1,7 @@
 import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
-
 from openpyxl import load_workbook
-
 from functii_print import prn_excel_diagrame
 
 
@@ -32,10 +30,8 @@ def comparatiediagrame():
 
 
 # verificare diagrame in ambele directoare
-
-
-
     array_log = []
+    array_new = []
     for file_all in os.listdir(dir_new):
         if file_all.endswith(".xlsx"):
             file_progres = file_progres + 1
@@ -43,22 +39,24 @@ def comparatiediagrame():
             pbar['value'] += 2
             pbargui.update_idletasks()
             wb1 = load_workbook(dir_new + "/" + file_all)
-            wb2 = load_workbook(dir_old + "/" + file_all)
-            sheet1 = wb1.worksheets[0]
-            sheet2 = wb2.worksheets[0]
+            try:
+                wb2 = load_workbook(dir_old + "/" + file_all)
+                sheet1 = wb1.worksheets[0]
+                sheet2 = wb2.worksheets[0]
 
-            # iterate through the rows and columns of both worksheets
-            for row in range(1, sheet1.max_row + 1):
-                for col in range(1, sheet1.max_column + 1):
-                    cell1 = sheet1.cell(row, col)
-                    cell2 = sheet2.cell(row, col)
-                    if cell1.value != cell2.value:
-                        array_log.append([file_all, cell1.value, cell2.value, row, col])
-                pbar['value'] += 2
-                pbargui.update_idletasks()
-
+                # iterate through the rows and columns of both worksheets
+                for row in range(1, sheet1.max_row + 1):
+                    for col in range(1, sheet1.max_column + 1):
+                        cell1 = sheet1.cell(row, col)
+                        cell2 = sheet2.cell(row, col)
+                        if cell1.value != cell2.value:
+                            array_log.append([file_all, cell1.value, cell2.value, row, col])
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+            except:
+                array_new.append([file_all])
     array_log.insert(0, ["Fisier", "Valoare noua", "Valoare veche", "Rand", "Coloana"])
-    prn_excel_diagrame(array_log)
+    prn_excel_diagrame(array_log, array_new)
 
     pbar.destroy()
     pbargui.destroy()
