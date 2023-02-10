@@ -462,7 +462,6 @@ def boms():
                             array_temporar2 = []
                             for t in range(16, len(array_original[i])):
                                 array_temporar2.append(array_original[i][t])
-                            print(array_original[i])
                             array_temp.append(
                                 [array_original[i][1], array_original[i][2], array_original[i][3], array_original[i][4],
                                  array_original[i][5], array_original[i][6], array_original[i][7], array_original[i][8],

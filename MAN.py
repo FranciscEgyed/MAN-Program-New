@@ -1,5 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
+
+from diagrame import comparatiediagrame
 from functii_database import databasecontent, exportdatabase, database_delete_record
 from functii_diverse import *
 from functii_input import *
@@ -115,6 +117,8 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
+submenu7.add_command(label="Comparatie diagrame", command=comparatiediagrame)
+submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()
 menu7.configure(menu=submenu7)

@@ -905,3 +905,22 @@ def prn_excel_export_database(sheet1):
         log_file("Eroare salvare. Nu am salvat wirelist Lista Cutting Forecast.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Lista Cutting Forecast.xlsx este read-only!")
         return None
+
+
+def prn_excel_diagrame(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Diferente diagrame"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diferente diagrame.xlsx")
+        log_file("Creat Diferente diagrame.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat wirelist Diferente diagrame.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Diferente diagrame.xlsx este read-only!")
+        return None
