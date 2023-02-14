@@ -1086,7 +1086,8 @@ def wires_new():
                             array_out_temp = []
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
-                                    if array_module[vermodule][1] in array_wires[0][verwires]:
+                                    if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1096,8 +1097,8 @@ def wires_new():
                             index_quer = array_wires[0].index('Quer.')
                             index_kurz1 = array_wires[0].index('Kurzname')
                             index_pin1 = array_wires[0].index('Pin')
-                            index_kurz2 = array_wires[0][index_kurz1:].index('Kurzname') + index_kurz1
-                            index_pin2 = array_wires[0][index_pin1:].index('Pin') + index_pin1
+                            index_kurz2 = array_wires[0][index_kurz1 + 1:].index('Kurzname') + index_kurz1 + 1
+                            index_pin2 = array_wires[0][index_pin1 + 1:].index('Pin') + index_pin1 + 1
                             index_sonder = array_wires[0].index('Sonderltg.')
                             for wire in range(1, len(array_wires)):
                                 for index in range(pot_position, ltgno_position):
@@ -1105,7 +1106,7 @@ def wires_new():
                                         array_out_temp.append([array_wires[0][index], array_wires[wire][index_ltgno],
                                                                array_wires[wire][index_leitung],
                                                                array_wires[wire][index_farbe],
-                                                               array_wires[wire][index_quer],
+                                                               float(array_wires[wire][index_quer].replace(',', '.')),
                                                                array_wires[wire][index_kurz1],
                                                                array_wires[wire][index_pin1],
                                                                array_wires[wire][index_kurz2],
@@ -1123,7 +1124,8 @@ def wires_new():
                             elif array_incarcat[i][0] == "1":
                                 for verwires in range(len(array_wires[0])):
                                     for vermodule in range(len(array_module)):
-                                        if array_module[vermodule][1] in array_wires[0][verwires]:
+                                        if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 array_out_temp = []
                                 index_ltgno = array_wires[0].index('Ltg-Nr.')
@@ -1132,8 +1134,8 @@ def wires_new():
                                 index_quer = array_wires[0].index('Quer.')
                                 index_kurz1 = array_wires[0].index('Kurzname')
                                 index_pin1 = array_wires[0].index('Pin')
-                                index_kurz2 = array_wires[0][index_kurz1:].index('Kurzname') + index_kurz1
-                                index_pin2 = array_wires[0][index_pin1:].index('Pin') + index_pin1
+                                index_kurz2 = array_wires[0][index_kurz1 + 1:].index('Kurzname') + index_kurz1 + 1
+                                index_pin2 = array_wires[0][index_pin1 + 1:].index('Pin') + index_pin1 + 1
                                 index_sonder = array_wires[0].index('Sonderltg.')
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1143,9 +1145,10 @@ def wires_new():
                                             array_out_temp.append(
                                                 [array_wires[0][index], array_wires[wire][index_ltgno],
                                                  array_wires[wire][index_leitung], array_wires[wire][index_farbe],
-                                                 array_wires[wire][index_quer], array_wires[wire][index_kurz1],
-                                                 array_wires[wire][index_pin1], array_wires[wire][index_kurz2],
-                                                 array_wires[wire][index_pin2], array_wires[wire][index_sonder],
+                                                 float(array_wires[wire][index_quer].replace(',', '.')),
+                                                 array_wires[wire][index_kurz1], array_wires[wire][index_pin1],
+                                                 array_wires[wire][index_kurz2], array_wires[wire][index_pin2],
+                                                 array_wires[wire][index_sonder],
                                                  array_wires[wire][index]])
                                 array_module = []
                                 array_wires = []

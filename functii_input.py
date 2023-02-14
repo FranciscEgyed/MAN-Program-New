@@ -870,14 +870,14 @@ def cmcslnew():
                     idx_realname = i
                 elif j == 'Leadset':
                     idx_leadset = i
-                elif j == 'Actual Kanban-AG':
+                elif j == 'Actual KanbanAG':
                     idx_kanbanag = i
                 elif j == 'FORS PN':
                     idx_pnmaterial = i
             for i, j in enumerate(array_sortare[1]):
                 if len(j) == 13:
                     idx_module.append(i)
-            print(idx_knname)
+
             statuslabel["text"] = "Working on it . . . "
             pbar['value'] += 2
             pbargui.update_idletasks()
