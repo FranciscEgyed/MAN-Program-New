@@ -1100,7 +1100,7 @@ def cmtglmrnew():
                     idx_leadset = i
                 elif j == 'COD':
                     idx_kanbanag = i
-                elif 'Wires' in  j:
+                elif 'Wires' in j:
                     idx_pnmaterial = i
             for i, j in enumerate(array_sortare[3]):
                 if len(j) == 13:

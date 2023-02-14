@@ -1,7 +1,6 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-
-from diagrame import comparatiediagrame
+from diagrame import *
 from functii_database import databasecontent, exportdatabase, database_delete_record
 from functii_diverse import *
 from functii_input import *
@@ -60,8 +59,8 @@ submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), so
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
-submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
+submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), boms_new(), statusidle()])
+submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires_new(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
                      command=lambda: [statusbusy(), boms_leoni(), statusidle()])
@@ -98,14 +97,11 @@ menu5 = tk.Menubutton(menu_frame, text="KSK Light", background="DarkSeaGreen1", 
 menu5.grid(row=0, column=4)
 submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), raport_light(), statusidle()])
-#submenu5.add_command(label="Comparatie KSK Light", command=lambda: [statusbusy(), compare_ksk_light(), statusidle()])
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
 submenu5.add_separator()
-# submenu5.add_command(label="Lista SuperSleeve KSK Light",
-#                     command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
 menu5.configure(menu=submenu5)
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++a
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
