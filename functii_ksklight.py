@@ -23,9 +23,9 @@ def cutting_ksklight():
     start = time.time()
     control_matrix = []
     try:
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", newline='') as csvfile:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", newline='', encoding="utf8") as csvfile:
             control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='') as csvfile:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='', encoding="utf8") as csvfile:
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
     except FileNotFoundError:
         pbar.destroy()

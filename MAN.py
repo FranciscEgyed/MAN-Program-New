@@ -59,18 +59,13 @@ submenu2.add_command(label="Sortare JIT(SAP)", command=lambda: [statusbusy(), so
 submenu2.add_command(label="Sortare JIT(SAP) din director",
                      command=lambda: [statusbusy(), sortare_jit_dir(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), boms_new(), statusidle()])
-submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires_new(), statusidle()])
+submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), boms(), statusidle()])
+submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Prelucrare BOM-uri cu PN Leoni",
-                     command=lambda: [statusbusy(), boms_leoni(), statusidle()])
-submenu2.add_command(label="Prelucrare WIRELIST-uri cu PN Leoni",
-                     command=lambda: [statusbusy(), wires_leoni(), statusidle()])
+submenu2.add_command(label="Creare Wirelist complet", command=lambda: [statusbusy(), wires_complet(), statusidle()])
 submenu2.add_separator()
-submenu2.add_command(label="Creare wirelist toate platformele simplu",
-                     command=lambda: [statusbusy(), wirelist_all_simplu(), statusidle()])
-submenu2.add_command(label="Creare wirelist toate platformele complet",
-                     command=lambda: [statusbusy(), wires_leoni(), statusidle()])
+
+
 menu2.configure(menu=submenu2)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu3 = tk.Menubutton(menu_frame, text="Prelucrare KSK", background="DarkSeaGreen1", font="Arial 10 bold")
