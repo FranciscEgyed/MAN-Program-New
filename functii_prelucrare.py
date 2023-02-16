@@ -6,7 +6,7 @@ from typing import Any
 from openpyxl import load_workbook
 from diverse import log_file, error_file
 from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni, \
-    prn_excel_wirelistsallinone, prn_excel_ksk_neprelucrate
+    prn_excel_wirelistsallinone, prn_excel_ksk_neprelucrate, prn_excel_wires_complete
 import sqlite3
 
 
@@ -783,11 +783,9 @@ def wires_complet():
                             array_output[0].append("Lange")
                             break
                     for i in range(1, len(array_incarcat)):
-                        if array_incarcat[i][0] == "2":
-                            array_module.append(array_incarcat[i])
-                        elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "0":
+                        if i == len(array_incarcat) - 1:
                             array_wires.append(array_incarcat[i])
-                        elif array_incarcat[i][0] == "1":
+
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
@@ -805,13 +803,31 @@ def wires_complet():
                             array_module = []
                             array_wires = []
                             array_output.extend(array_out_temp)
-                    for i in range(0, 25):
-                        print(array_output[i])
-                    #with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/" + nume_fisier + ".csv", 'w',
-                    #          newline='') as myfile:
-                    #    wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-                    #    wr.writerows(array_output)
-                    #    log_file("Creat " + nume_fisier)
+                        else:
+                            if array_incarcat[i][0] == "2":
+                                array_module.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "0":
+                                array_wires.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "1":
+                                for verwires in range(len(array_wires[0])):
+                                    for vermodule in range(len(array_module)):
+                                        if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] = array_module[vermodule][2]
+                                pot_position = array_wires[0].index('Pot.') + 1
+                                ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
+                                array_out_temp = []
+                                for wire in range(1, len(array_wires)):
+                                    for index in range(pot_position, ltgno_position):
+                                        if array_wires[wire][index] != "-":
+                                            temp_list = array_wires[wire][1:pot_position]
+                                            temp_list.append(array_wires[wire][index])
+                                            array_out_temp.append(temp_list)
+                                array_module = []
+                                array_wires = []
+                                array_output.extend(array_out_temp)
+                    prn_excel_wires_complete(array_output, nume_fisier)
+
 
     end = time.time()
     pbar.destroy()
