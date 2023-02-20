@@ -5,8 +5,8 @@ from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
 from typing import Any
 from openpyxl import load_workbook
 from diverse import log_file, error_file
-from functii_print import prn_excel_separare_ksk, prn_excel_bom_complete, prn_excel_wires_complete_leoni, \
-    prn_excel_wirelistsallinone, prn_excel_ksk_neprelucrate, prn_excel_wires_complete
+from functii_print import prn_excel_separare_ksk, prn_excel_wires_complete_leoni, prn_excel_ksk_neprelucrate, \
+    prn_excel_wires_complete, prn_excel_bom_complete, prn_excel_boomcumulat, prn_excel_wirelistsallinone
 import sqlite3
 
 
@@ -69,7 +69,7 @@ def sortare_jit():
     is_error = False
     for row in ws['A']:
         if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
-                row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or \
+                row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or
                                                     len(ws.cell(row=row.row, column=2).value) == 14):
             lista_calloff_total.append(row.value)
         elif row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
@@ -254,7 +254,7 @@ def sortare_jit_dir():
             lista_calloff_total = []
             for row in ws['A']:
                 if row.value is not None and row.value != "ext.Abrufnummer" and row.value != "PRODN" and \
-                        row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or \
+                        row.value != "Ext.JIT Call No" and (len(ws.cell(row=row.row, column=2).value) == 13 or
                                                             len(ws.cell(row=row.row, column=2).value) == 14):
                     lista_calloff_total.append(row.value)
             lista_calloff_unice = list(dict.fromkeys(lista_calloff_total))
@@ -377,8 +377,8 @@ def wires():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8030", "8031",
-                         "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                         "8030", "8031", "8032", "8052", "8053"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
@@ -536,8 +536,8 @@ def boms():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
-    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8030", "8031",
-                  "8052", "8053"]
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                  "8030", "8031", "8032", "8052", "8053"]
     dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
     start = time.time()
     file_counter = 0
@@ -604,6 +604,10 @@ def boms():
                             index_kurz = array_comp[0].index('Kurzname')
                             index_xy = array_comp[0].index('xy')
                             index_teile = array_comp[0].index('Teilenummer')
+                            try:
+                                index_vorzug = array_comp[0].index('Vorzugsteil')
+                            except ValueError:
+                                index_vorzug = index_teile
                             index_tab = array_comp[0].index('TAB-Nummer')
                             index_refe = array_comp[0].index('Referenzteil')
                             index_farbe = array_comp[0].index('Farbe')
@@ -628,6 +632,7 @@ def boms():
                                                                array_comp[comp][index_kurz],
                                                                array_comp[comp][index_xy],
                                                                array_comp[comp][index_teile],
+                                                               array_comp[comp][index_vorzug],
                                                                array_comp[comp][index_tab],
                                                                array_comp[comp][index_refe],
                                                                array_comp[comp][index_farbe],
@@ -661,6 +666,10 @@ def boms():
                                 index_kurz = array_comp[0].index('Kurzname')
                                 index_xy = array_comp[0].index('xy')
                                 index_teile = array_comp[0].index('Teilenummer')
+                                try:
+                                    index_vorzug = array_comp[0].index('Vorzugsteil')
+                                except ValueError:
+                                    index_vorzug = index_teile
                                 index_tab = array_comp[0].index('TAB-Nummer')
                                 index_refe = array_comp[0].index('Referenzteil')
                                 index_farbe = array_comp[0].index('Farbe')
@@ -686,6 +695,7 @@ def boms():
                                                                    array_comp[comp][index_kurz],
                                                                    array_comp[comp][index_xy],
                                                                    array_comp[comp][index_teile],
+                                                                   array_comp[comp][index_vorzug],
                                                                    array_comp[comp][index_tab],
                                                                    array_comp[comp][index_refe],
                                                                    array_comp[comp][index_farbe],
@@ -715,8 +725,8 @@ def wires_complet():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8030", "8031",
-                         "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                         "8030", "8031", "8032", "8052", "8053"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
@@ -827,11 +837,661 @@ def wires_complet():
                                 array_wires = []
                                 array_output.extend(array_out_temp)
                     prn_excel_wires_complete(array_output, nume_fisier)
-
-
     end = time.time()
     pbar.destroy()
     pbargui.destroy()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
+
+def wires_pnleoni():
+    pbargui = Tk()
+    pbargui.title("Prelucrare WIRELIST-uri")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                         "8030", "8031", "8032", "8052", "8053"]
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
+              newline='') as csvfile:
+        array_componente = list(csv.reader(csvfile, delimiter=';'))
+    dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                           title="Selectati directorul cu fisiere:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_wirelist):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    for file_all in os.listdir(dir_wirelist):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            for item in array_wirelisturi:
+                if item in file_all:
+                    try:
+                        array_original = []
+                        with open(dir_wirelist + "/" + file_all, newline='') as csvfile:
+                            array_incarcat = list(csv.reader(csvfile, delimiter=';'))
+                        if "AEM" in array_incarcat[0][1]:
+                            for i in range(len(array_incarcat)):
+                                del array_incarcat[i][1]
+                        for x in range(len(array_incarcat)):
+                            array_t = []
+                            for i in range(len(array_incarcat[x])):
+                                if i < 27 and array_incarcat[x][0] == "3":
+                                    if array_incarcat[x][i] == "":
+                                        array_t.append("X")
+                                    else:
+                                        array_t.append(array_incarcat[x][i])
+                                elif array_incarcat[x][i] != "":
+                                    array_t.append(array_incarcat[x][i])
+                            array_original.append(array_t)
+                        if array_original[0][0] != 1 and len(array_original[0]) != 2:
+                            messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect ...')
+                            return
+                        if len(array_original) < 50:
+                            for i in range(0, len(array_original)):
+                                if array_original[i][0] == "0":
+                                    if str(array_original[i][1]) != "Ltg-Nr.":
+                                        messagebox.showerror('Eroare fisier' + file_all,
+                                                             'Nu ai incarcat fisierul corect')
+                                        return
+                        else:
+                            for i in range(0, 50):
+                                if array_original[i][0] == "0":
+                                    if str(array_original[i][1]) != "Ltg-Nr.":
+                                        messagebox.showerror('Eroare fisier' + file_all,
+                                                             'Nu ai incarcat fisierul corect')
+                                        return
+                    except:
+                        messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect')
+                        return
+                    nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
+                    array_output = []
+                    array_module = []
+                    array_wires = []
+                    for i in range(1, len(array_incarcat)):
+                        if array_incarcat[i][0] == "0":
+                            pot_position = array_incarcat[i].index('Pot.') + 1
+                            array_output.append(array_incarcat[i][1:pot_position])
+                            array_output[0].append("Lange")
+                            break
+                    for i in range(1, len(array_incarcat)):
+                        if i == len(array_incarcat) - 1:
+                            array_wires.append(array_incarcat[i])
+
+                            for verwires in range(len(array_wires[0])):
+                                for vermodule in range(len(array_module)):
+                                    if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                        array_wires[0][verwires] = array_module[vermodule][2]
+                            pot_position = array_wires[0].index('Pot.') + 1
+                            ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
+                            array_out_temp = []
+                            for wire in range(1, len(array_wires)):
+                                for index in range(pot_position, ltgno_position):
+                                    if array_wires[wire][index] != "-":
+                                        temp_list = array_wires[wire][1:pot_position]
+                                        temp_list.append(array_wires[wire][index])
+                                        array_out_temp.append(temp_list)
+                            array_module = []
+                            array_wires = []
+                            array_output.extend(array_out_temp)
+                        else:
+                            if array_incarcat[i][0] == "2":
+                                array_module.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "0":
+                                array_wires.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "1":
+                                for verwires in range(len(array_wires[0])):
+                                    for vermodule in range(len(array_module)):
+                                        if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] = array_module[vermodule][2]
+                                pot_position = array_wires[0].index('Pot.') + 1
+                                ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
+                                array_out_temp = []
+                                for wire in range(1, len(array_wires)):
+                                    for index in range(pot_position, ltgno_position):
+                                        if array_wires[wire][index] != "-":
+                                            temp_list = array_wires[wire][1:pot_position]
+                                            temp_list.append(array_wires[wire][index])
+                                            array_out_temp.append(temp_list)
+                                array_module = []
+                                array_wires = []
+                                array_output.extend(array_out_temp)
+                    array_output_comp1 = array_output
+                    for x in range(len(array_output_comp1)):
+                        for y in range(len(array_output_comp1[x])):
+                            for z in range(len(array_componente)):
+                                if array_output_comp1[x][y] == array_componente[z][0]:
+                                    array_output_comp1[x][y] = array_componente[z][2]
+                    array_output_comp2 = array_output
+                    for x in range(len(array_output_comp2)):
+                        for y in range(len(array_output_comp2[x])):
+                            for z in range(len(array_componente)):
+                                if array_output_comp2[x][y] == array_componente[z][0]:
+                                    array_output_comp2[x][y] = array_componente[z][2]
+
+                    prn_excel_wires_complete_leoni(array_output, array_output_comp1, array_output_comp2, nume_fisier)
+    end = time.time()
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+    return None
+
+
+def boms_pnleoni():
+    pbargui = Tk()
+    pbargui.title("Prelucrare BOM-uri")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    global nume_fisier
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                  "8030", "8031", "8032", "8052", "8053"]
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
+              newline='') as csvfile:
+        array_componente = list(csv.reader(csvfile, delimiter=';'))
+    dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_BOM):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    for file_all in os.listdir(dir_BOM):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            for item in array_boms:
+                if item in file_all:
+                    try:
+                        with open(dir_BOM + "/" + file_all, newline='') as csvfile:
+                            array_incarcat = list(csv.reader(csvfile, delimiter=';'))
+                        if "AEM" in array_incarcat[0][1]:
+                            for i in range(len(array_incarcat)):
+                                del array_incarcat[i][1]
+                        if array_incarcat[0][0] != "1" and len(array_incarcat[0]) != 2:
+                            messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                            return
+                        if len(array_incarcat) < 50:
+                            for i in range(0, len(array_incarcat)):
+                                if array_incarcat[i][0] == "0":
+                                    if str(array_incarcat[i][-1])[:1] != "V":
+                                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                                        return
+                        else:
+                            for i in range(0, 50):
+                                if array_incarcat[i][0] == "0":
+                                    if str(array_incarcat[i][-1])[:1] != "V":
+                                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                                        return
+                    except:
+                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                        return
+                    nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
+                    array_output = [
+                        ["Module", "Quantity", "Bezeichnung", "VOBES-ID", "Benennung", "Verwendung", "Verwendung",
+                         "Kurzname", "xy", "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe",
+                         "E-Komponente", "E-Komponente Part-Nr.", "Einh."]]
+                    array_module = []
+                    array_comp = []
+                    for i in range(1, len(array_incarcat)):
+                        if i == len(array_incarcat) - 1:
+                            array_comp.append(array_incarcat[i])
+                            array_out_temp = []
+                            for vercomp in range(len(array_comp[0])):
+                                for vermodule in range(len(array_module)):
+                                    if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                        array_comp[0][vercomp] = array_module[vermodule][2]
+                            last_position = len(array_comp[0])
+                            index_beze = array_comp[0].index('Bezeichnung')
+                            index_VID = array_comp[0].index('VOBES-ID')
+                            try:
+                                index_bene = array_comp[0].index('Benennung')
+                            except ValueError:
+                                index_bene = index_VID
+                            index_verew1 = array_comp[0].index('Verwendung')
+                            index_verew2 = array_comp[0][index_verew1:].index('Verwendung') + index_verew1
+                            index_kurz = array_comp[0].index('Kurzname')
+                            index_xy = array_comp[0].index('xy')
+                            index_teile = array_comp[0].index('Teilenummer')
+                            try:
+                                index_vorzug = array_comp[0].index('Vorzugsteil')
+                            except ValueError:
+                                index_vorzug = index_teile
+                            index_tab = array_comp[0].index('TAB-Nummer')
+                            index_refe = array_comp[0].index('Referenzteil')
+                            index_farbe = array_comp[0].index('Farbe')
+                            try:
+                                index_ekomp = array_comp[0].index('E-Komponente')
+                            except ValueError:
+                                index_ekomp = index_VID
+                            try:
+                                index_ekomppn = array_comp[0].index('E-Komponente Part-Nr.')
+                            except ValueError:
+                                index_ekomppn = index_VID
+                            index_einh = array_comp[0].index('Einh.')
+                            for comp in range(1, len(array_comp)):
+                                for index in range(index_einh + 1, last_position):
+                                    if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                        array_out_temp.append([array_comp[0][index], array_comp[comp][index],
+                                                               array_comp[comp][index_beze],
+                                                               array_comp[comp][index_VID],
+                                                               array_comp[comp][index_bene],
+                                                               array_comp[comp][index_verew1],
+                                                               array_comp[comp][index_verew2],
+                                                               array_comp[comp][index_kurz],
+                                                               array_comp[comp][index_xy],
+                                                               array_comp[comp][index_teile],
+                                                               array_comp[comp][index_vorzug],
+                                                               array_comp[comp][index_tab],
+                                                               array_comp[comp][index_refe],
+                                                               array_comp[comp][index_farbe],
+                                                               array_comp[comp][index_ekomp],
+                                                               array_comp[comp][index_ekomppn],
+                                                               array_comp[comp][index_einh]])
+                            array_module = []
+                            array_comp = []
+                            array_output.extend(array_out_temp)
+                        else:
+                            if array_incarcat[i][0] == "2":
+                                array_module.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "4" or \
+                                    array_incarcat[i][0] == "0":
+                                array_comp.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "1":
+                                for vercomp in range(len(array_comp[0])):
+                                    for vermodule in range(len(array_module)):
+                                        if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                            array_comp[0][vercomp] = array_module[vermodule][2]
+                                array_out_temp = []
+                                last_position = len(array_comp[0])
+                                index_beze = array_comp[0].index('Bezeichnung')
+                                index_VID = array_comp[0].index('VOBES-ID')
+                                try:
+                                    index_bene = array_comp[0].index('Benennung')
+                                except ValueError:
+                                    index_bene = index_VID
+                                index_verew1 = array_comp[0].index('Verwendung')
+                                index_verew2 = array_comp[0][index_verew1:].index('Verwendung') + index_verew1
+                                index_kurz = array_comp[0].index('Kurzname')
+                                index_xy = array_comp[0].index('xy')
+                                index_teile = array_comp[0].index('Teilenummer')
+                                try:
+                                    index_vorzug = array_comp[0].index('Vorzugsteil')
+                                except ValueError:
+                                    index_vorzug = index_teile
+                                index_tab = array_comp[0].index('TAB-Nummer')
+                                index_refe = array_comp[0].index('Referenzteil')
+                                index_farbe = array_comp[0].index('Farbe')
+                                try:
+                                    index_ekomp = array_comp[0].index('E-Komponente')
+                                except ValueError:
+                                    index_ekomp = index_VID
+                                try:
+                                    index_ekomppn = array_comp[0].index('E-Komponente Part-Nr.')
+                                except ValueError:
+                                    index_ekomppn = index_VID
+                                index_einh = array_comp[0].index('Einh.')
+
+                                for comp in range(1, len(array_comp)):
+                                    for index in range(index_einh + 1, last_position):
+                                        if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                            array_out_temp.append([array_comp[0][index], array_comp[comp][index],
+                                                                   array_comp[comp][index_beze],
+                                                                   array_comp[comp][index_VID],
+                                                                   array_comp[comp][index_bene],
+                                                                   array_comp[comp][index_verew1],
+                                                                   array_comp[comp][index_verew2],
+                                                                   array_comp[comp][index_kurz],
+                                                                   array_comp[comp][index_xy],
+                                                                   array_comp[comp][index_teile],
+                                                                   array_comp[comp][index_vorzug],
+                                                                   array_comp[comp][index_tab],
+                                                                   array_comp[comp][index_refe],
+                                                                   array_comp[comp][index_farbe],
+                                                                   array_comp[comp][index_ekomp],
+                                                                   array_comp[comp][index_ekomppn],
+                                                                   array_comp[comp][index_einh]])
+                                array_module = []
+                                array_comp = []
+                                array_output.extend(array_out_temp)
+                    array_output[0].append("PN Leoni 1")
+                    array_output[0].append("PN Leoni 2")
+                    for x in range(len(array_output)):
+                        for y in range(len(array_componente)):
+                            if array_output[x][9] == array_componente[y][0]:
+                                array_output[x].append(array_componente[y][1])
+                                array_output[x].append(array_componente[y][2])
+                    prn_excel_bom_complete(array_output, nume_fisier)
+    end = time.time()
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+    return None
+
+
+def boms_cumulat():
+    pbargui = Tk()
+    pbargui.title("Prelucrare BOM-uri")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    global nume_fisier
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                  "8030", "8031", "8032", "8052", "8053"]
+    array_output = [["Module", "Quantity", "Bezeichnung", "VOBES-ID", "Benennung", "Verwendung", "Verwendung",
+                     "Kurzname", "xy", "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe",
+                     "E-Komponente", "E-Komponente Part-Nr.", "Einh.", "Platforma"]]
+    dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_BOM):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    for file_all in os.listdir(dir_BOM):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            for item in array_boms:
+                if item in file_all:
+                    try:
+                        with open(dir_BOM + "/" + file_all, newline='') as csvfile:
+                            array_incarcat = list(csv.reader(csvfile, delimiter=';'))
+                        if "AEM" in array_incarcat[0][1]:
+                            for i in range(len(array_incarcat)):
+                                del array_incarcat[i][1]
+                        if array_incarcat[0][0] != "1" and len(array_incarcat[0]) != 2:
+                            messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                            return
+                        if len(array_incarcat) < 50:
+                            for i in range(0, len(array_incarcat)):
+                                if array_incarcat[i][0] == "0":
+                                    if str(array_incarcat[i][-1])[:1] != "V":
+                                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                                        return
+                        else:
+                            for i in range(0, 50):
+                                if array_incarcat[i][0] == "0":
+                                    if str(array_incarcat[i][-1])[:1] != "V":
+                                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                                        return
+                    except:
+                        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                        return
+                    nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
+
+                    array_module = []
+                    array_comp = []
+                    for i in range(1, len(array_incarcat)):
+                        if i == len(array_incarcat) - 1:
+                            array_comp.append(array_incarcat[i])
+                            array_out_temp = []
+                            for vercomp in range(len(array_comp[0])):
+                                for vermodule in range(len(array_module)):
+                                    if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                        array_comp[0][vercomp] = array_module[vermodule][2]
+                            last_position = len(array_comp[0])
+                            index_beze = array_comp[0].index('Bezeichnung')
+                            index_VID = array_comp[0].index('VOBES-ID')
+                            try:
+                                index_bene = array_comp[0].index('Benennung')
+                            except ValueError:
+                                index_bene = index_VID
+                            index_verew1 = array_comp[0].index('Verwendung')
+                            index_verew2 = array_comp[0][index_verew1:].index('Verwendung') + index_verew1
+                            index_kurz = array_comp[0].index('Kurzname')
+                            index_xy = array_comp[0].index('xy')
+                            index_teile = array_comp[0].index('Teilenummer')
+                            try:
+                                index_vorzug = array_comp[0].index('Vorzugsteil')
+                            except ValueError:
+                                index_vorzug = index_teile
+                            index_tab = array_comp[0].index('TAB-Nummer')
+                            index_refe = array_comp[0].index('Referenzteil')
+                            index_farbe = array_comp[0].index('Farbe')
+                            try:
+                                index_ekomp = array_comp[0].index('E-Komponente')
+                            except ValueError:
+                                index_ekomp = index_VID
+                            try:
+                                index_ekomppn = array_comp[0].index('E-Komponente Part-Nr.')
+                            except ValueError:
+                                index_ekomppn = index_VID
+                            index_einh = array_comp[0].index('Einh.')
+                            for comp in range(1, len(array_comp)):
+                                for index in range(index_einh + 1, last_position):
+                                    if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                        array_out_temp.append([array_comp[0][index], array_comp[comp][index],
+                                                               array_comp[comp][index_beze],
+                                                               array_comp[comp][index_VID],
+                                                               array_comp[comp][index_bene],
+                                                               array_comp[comp][index_verew1],
+                                                               array_comp[comp][index_verew2],
+                                                               array_comp[comp][index_kurz],
+                                                               array_comp[comp][index_xy],
+                                                               array_comp[comp][index_teile],
+                                                               array_comp[comp][index_vorzug],
+                                                               array_comp[comp][index_tab],
+                                                               array_comp[comp][index_refe],
+                                                               array_comp[comp][index_farbe],
+                                                               array_comp[comp][index_ekomp],
+                                                               array_comp[comp][index_ekomppn],
+                                                               array_comp[comp][index_einh], nume_fisier])
+                            array_module = []
+                            array_comp = []
+                            array_output.extend(array_out_temp)
+                        else:
+                            if array_incarcat[i][0] == "2":
+                                array_module.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "4" or \
+                                    array_incarcat[i][0] == "0":
+                                array_comp.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "1":
+                                for vercomp in range(len(array_comp[0])):
+                                    for vermodule in range(len(array_module)):
+                                        if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                            array_comp[0][vercomp] = array_module[vermodule][2]
+                                array_out_temp = []
+                                last_position = len(array_comp[0])
+                                index_beze = array_comp[0].index('Bezeichnung')
+                                index_VID = array_comp[0].index('VOBES-ID')
+                                try:
+                                    index_bene = array_comp[0].index('Benennung')
+                                except ValueError:
+                                    index_bene = index_VID
+                                index_verew1 = array_comp[0].index('Verwendung')
+                                index_verew2 = array_comp[0][index_verew1:].index('Verwendung') + index_verew1
+                                index_kurz = array_comp[0].index('Kurzname')
+                                index_xy = array_comp[0].index('xy')
+                                index_teile = array_comp[0].index('Teilenummer')
+                                try:
+                                    index_vorzug = array_comp[0].index('Vorzugsteil')
+                                except ValueError:
+                                    index_vorzug = index_teile
+                                index_tab = array_comp[0].index('TAB-Nummer')
+                                index_refe = array_comp[0].index('Referenzteil')
+                                index_farbe = array_comp[0].index('Farbe')
+                                try:
+                                    index_ekomp = array_comp[0].index('E-Komponente')
+                                except ValueError:
+                                    index_ekomp = index_VID
+                                try:
+                                    index_ekomppn = array_comp[0].index('E-Komponente Part-Nr.')
+                                except ValueError:
+                                    index_ekomppn = index_VID
+                                index_einh = array_comp[0].index('Einh.')
+
+                                for comp in range(1, len(array_comp)):
+                                    for index in range(index_einh + 1, last_position):
+                                        if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                            array_out_temp.append([array_comp[0][index], array_comp[comp][index],
+                                                                   array_comp[comp][index_beze],
+                                                                   array_comp[comp][index_VID],
+                                                                   array_comp[comp][index_bene],
+                                                                   array_comp[comp][index_verew1],
+                                                                   array_comp[comp][index_verew2],
+                                                                   array_comp[comp][index_kurz],
+                                                                   array_comp[comp][index_xy],
+                                                                   array_comp[comp][index_teile],
+                                                                   array_comp[comp][index_vorzug],
+                                                                   array_comp[comp][index_tab],
+                                                                   array_comp[comp][index_refe],
+                                                                   array_comp[comp][index_farbe],
+                                                                   array_comp[comp][index_ekomp],
+                                                                   array_comp[comp][index_ekomppn],
+                                                                   array_comp[comp][index_einh], nume_fisier])
+                                array_module = []
+                                array_comp = []
+                                array_output.extend(array_out_temp)
+    prn_excel_boomcumulat(array_output)
+    end = time.time()
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+    return None
+
+
+def wires_cumulat():
+    pbargui = Tk()
+    pbargui.title("Prelucrare WIRELIST-uri")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
+                         "8030", "8031", "8032", "8052", "8053"]
+
+    dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                           title="Selectati directorul cu fisiere:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_wirelist):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    array_output = []
+    for file_all in os.listdir(dir_wirelist):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            for item in array_wirelisturi:
+                if item in file_all:
+                    try:
+                        array_original = []
+                        with open(dir_wirelist + "/" + file_all, newline='') as csvfile:
+                            array_incarcat = list(csv.reader(csvfile, delimiter=';'))
+                        if "AEM" in array_incarcat[0][1]:
+                            for i in range(len(array_incarcat)):
+                                del array_incarcat[i][1]
+                        for x in range(len(array_incarcat)):
+                            array_t = []
+                            for i in range(len(array_incarcat[x])):
+                                if i < 27 and array_incarcat[x][0] == "3":
+                                    if array_incarcat[x][i] == "":
+                                        array_t.append("X")
+                                    else:
+                                        array_t.append(array_incarcat[x][i])
+                                elif array_incarcat[x][i] != "":
+                                    array_t.append(array_incarcat[x][i])
+                            array_original.append(array_t)
+                        if array_original[0][0] != 1 and len(array_original[0]) != 2:
+                            messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect ...')
+                            return
+                        if len(array_original) < 50:
+                            for i in range(0, len(array_original)):
+                                if array_original[i][0] == "0":
+                                    if str(array_original[i][1]) != "Ltg-Nr.":
+                                        messagebox.showerror('Eroare fisier' + file_all,
+                                                             'Nu ai incarcat fisierul corect')
+                                        return
+                        else:
+                            for i in range(0, 50):
+                                if array_original[i][0] == "0":
+                                    if str(array_original[i][1]) != "Ltg-Nr.":
+                                        messagebox.showerror('Eroare fisier' + file_all,
+                                                             'Nu ai incarcat fisierul corect')
+                                        return
+                    except:
+                        messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect')
+                        return
+                    nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
+                    array_module = []
+                    array_wires = []
+                    for i in range(1, len(array_incarcat)):
+                        if array_incarcat[i][0] == "0":
+                            pot_position = array_incarcat[i].index('Pot.') + 1
+                            array_output.append(array_incarcat[i][1:pot_position])
+                            array_output[0].append("Lange")
+                            break
+                    for i in range(1, len(array_incarcat)):
+                        if i == len(array_incarcat) - 1:
+                            array_wires.append(array_incarcat[i])
+
+                            for verwires in range(len(array_wires[0])):
+                                for vermodule in range(len(array_module)):
+                                    if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                        array_wires[0][verwires] = array_module[vermodule][2]
+                            pot_position = array_wires[0].index('Pot.') + 1
+                            ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
+                            array_out_temp = []
+                            for wire in range(1, len(array_wires)):
+                                for index in range(pot_position, ltgno_position):
+                                    if array_wires[wire][index] != "-":
+                                        temp_list = array_wires[wire][1:pot_position]
+                                        temp_list.append(array_wires[wire][index])
+                                        array_out_temp.append(temp_list)
+                            array_module = []
+                            array_wires = []
+                            array_output.extend(array_out_temp)
+                        else:
+                            if array_incarcat[i][0] == "2":
+                                array_module.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "0":
+                                array_wires.append(array_incarcat[i])
+                            elif array_incarcat[i][0] == "1":
+                                for verwires in range(len(array_wires[0])):
+                                    for vermodule in range(len(array_module)):
+                                        if array_wires[0][verwires] == array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] = array_module[vermodule][2]
+                                pot_position = array_wires[0].index('Pot.') + 1
+                                ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
+                                array_out_temp = []
+                                for wire in range(1, len(array_wires)):
+                                    for index in range(pot_position, ltgno_position):
+                                        if array_wires[wire][index] != "-":
+                                            temp_list = array_wires[wire][1:pot_position]
+                                            temp_list.append(array_wires[wire][index])
+                                            array_out_temp.append(temp_list)
+                                for x in range(1, len(array_out_temp)):
+                                    array_out_temp[x].append(nume_fisier)
+                                array_module = []
+                                array_wires = []
+                                array_output.extend(array_out_temp)
+    prn_excel_wirelistsallinone(array_output)
+    end = time.time()
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+    return None

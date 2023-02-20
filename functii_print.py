@@ -336,24 +336,17 @@ def prn_excel_wires_complete(sheet1, nume_fisier):
         return None
 
 
-def prn_excel_wirelistsallinone(sheet1, sheet2):
+def prn_excel_wirelistsallinone(sheet1):
     wb = Workbook()
     ws1 = wb.active
 
     ws1.title = "Wirelists All"
-    ws2 = wb.create_sheet("Wirelists All 2")
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
             try:
                 ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
-    for i in range(len(sheet2)):
-        for x in range(len(sheet2[i])):
-            try:
-                ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
-            except:
-                ws2.cell(column=x + 1, row=i + 1, value=str(float(sheet2[i][x])))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Wirelists All.xlsx")
         log_file("Creat wire Wirelists All.xlsx")
@@ -361,6 +354,27 @@ def prn_excel_wirelistsallinone(sheet1, sheet2):
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat wirelist Wirelists All.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Wirelists All.xlsx este read-only!")
+        return None
+
+
+def prn_excel_boomcumulat(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+
+    ws1.title = "Wirelists All"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/BOM All.xlsx")
+        log_file("Creat wire BOM All.xlsx")
+        messagebox.showinfo('Finalizat!')
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat wirelist BOM All.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul BOM All.xlsx este read-only!")
         return None
 
 
@@ -539,11 +553,12 @@ def prn_excel_splksklight(sheet1):
         return None
 
 
-def prn_excel_wires_complete_leoni(sheet1, sheet2, nume_fisier):
+def prn_excel_wires_complete_leoni(sheet1, sheet2, sheet3, nume_fisier):
     wb = Workbook()
     ws1 = wb.active
     ws1.title = "MAN Pn"
-    ws2 = wb.create_sheet("LEONI Pn")
+    ws2 = wb.create_sheet("LEONI Pn1")
+    ws3 = wb.create_sheet("LEONI Pn2")
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
             try:
@@ -556,6 +571,12 @@ def prn_excel_wires_complete_leoni(sheet1, sheet2, nume_fisier):
                 ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
             except:
                 ws2.cell(column=x + 1, row=i + 1, value=str(float(sheet2[i][x])))
+    for i in range(len(sheet3)):
+        for x in range(len(sheet3[i])):
+            try:
+                ws3.cell(column=x + 1, row=i + 1, value=sheet3[i][x])
+            except:
+                ws3.cell(column=x + 1, row=i + 1, value=str(float(sheet3[i][x])))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/Leoni " + nume_fisier +
                 ".xlsx")
@@ -581,6 +602,7 @@ def prn_excel_compare_ksk_light(sheet1, data):
         log_file("Eroare salvare. Nu am salvat Comparatie KSK Light.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Comparatie KSK Light este read-only!")
         return None
+
 
 def prn_excel_variatii(sheet1):
     wb = Workbook()
@@ -834,6 +856,7 @@ def prn_excel_ksk_neprelucrate(sheet, nume_fisier):
         except PermissionError:
             messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
             return None
+
 
 def prn_excel_cutting_module(sheet1, sheet2, sheet3):
     wb = Workbook()

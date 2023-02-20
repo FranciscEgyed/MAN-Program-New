@@ -63,9 +63,15 @@ submenu2.add_command(label="Incarcare BOM-uri", command=lambda: [statusbusy(), b
 submenu2.add_command(label="Incarcare WIRELIST-uri", command=lambda: [statusbusy(), wires(), statusidle()])
 submenu2.add_separator()
 submenu2.add_command(label="Creare Wirelist complet", command=lambda: [statusbusy(), wires_complet(), statusidle()])
+submenu2.add_command(label="Creare Wirelist complet cu PN Leoni",
+                     command=lambda: [statusbusy(), wires_pnleoni(), statusidle()])
+submenu2.add_command(label="Creare BOM cu PN Leoni",
+                     command=lambda: [statusbusy(), boms_pnleoni(), statusidle()])
 submenu2.add_separator()
-
-
+submenu2.add_command(label="Creare BOM toate platformele",
+                     command=lambda: [statusbusy(), boms_cumulat(), statusidle()])
+submenu2.add_command(label="Creare Wirelist toate platformele",
+                     command=lambda: [statusbusy(), wires_cumulat(), statusidle()])
 menu2.configure(menu=submenu2)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu3 = tk.Menubutton(menu_frame, text="Prelucrare KSK", background="DarkSeaGreen1", font="Arial 10 bold")
