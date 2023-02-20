@@ -10,6 +10,7 @@ from openpyxl.reader.excel import load_workbook
 from functii_print import prn_excel_cutting, prn_excel_supers_ksk_all, prn_excel_compare_ksk_light, \
     prn_excel_moduleinksk
 import sqlite3
+from fuzzywuzzy import fuzz
 
 
 def cutting_ksklight():
@@ -23,9 +24,11 @@ def cutting_ksklight():
     start = time.time()
     control_matrix = []
     try:
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", newline='', encoding="utf8") as csvfile:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", newline='',
+                  encoding="utf8") as csvfile:
             control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='', encoding="utf8") as csvfile:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='',
+                  encoding="utf8") as csvfile:
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
     except FileNotFoundError:
         pbar.destroy()
@@ -34,6 +37,7 @@ def cutting_ksklight():
         return None
     # Liste excludere si inlocuire
     excluderecst = ["81.25482-6147", "81.25482-6148"]
+    listafiretext = ["gelb", "GELB", "weis", "WEIS", "grau", "GRAU", "blau", "BLAU", "grue", "GRUE"]
     for i in range(len(control_matrix_csl)):
         if control_matrix_csl[i][1] != "":
             control_matrix.append(control_matrix_csl[i])
@@ -116,6 +120,12 @@ def cutting_ksklight():
             if lista_cutting[i][2] + lista_cutting[i][3] == control_matrix[x][0]:
                 lista_cutting[i].extend([control_matrix[x][1], control_matrix[x][3], control_matrix[x][5]])
                 break
+            # ceva pentru culori
+            elif lista_cutting[i][3][0:4] in listafiretext:
+                if fuzz.ratio(lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][0]) > 94:
+                    print(lista_cutting[i][3][0:4], lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][0])
+                    lista_cutting[i].extend([control_matrix[x][1], control_matrix[x][3], control_matrix[x][5]])
+                    break
         pbar['value'] += 2
         pbargui.update_idletasks()
     for i in range(len(lista_cutting)):
@@ -437,6 +447,7 @@ def raport_light():
     contain_values = df[df['KSKNo'].str.contains('0006K-0H19')]
     print(contain_values)
     print(dfstock.loc[2])
+
     def scankey(event):
         val = event.widget.get()
         if val == '':
@@ -585,7 +596,7 @@ def raport_light():
         else:
 
             pivot = yyy.pivot_table(index="Module", columns="KSKNo", values="primarykey", fill_value=0,
-                                           aggfunc='count')
+                                    aggfunc='count')
             pivot.loc[:, 'Total'] = pivot.iloc[:, :].sum(axis=1)
             printarray = []
             for x in range(len(pivot.index)):

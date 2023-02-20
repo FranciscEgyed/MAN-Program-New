@@ -1378,7 +1378,9 @@ def wires_cumulat():
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
                          "8030", "8031", "8032", "8052", "8053"]
-
+    array_output = [["Ltg-Nr.", "Verbindung", "von", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung",
+                     "nach", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung", "Leitung", "Sonderltg.",
+                     "Farbe", "Quer.", "Pot.", "Lange", "Platforma"]]
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
     start = time.time()
@@ -1387,7 +1389,6 @@ def wires_cumulat():
     for file_all in os.listdir(dir_wirelist):
         if file_all.endswith(".csv"):
             file_counter = file_counter + 1
-    array_output = []
     for file_all in os.listdir(dir_wirelist):
         if file_all.endswith(".csv"):
             file_progres = file_progres + 1
@@ -1435,18 +1436,14 @@ def wires_cumulat():
                         messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect')
                         return
                     nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
+                    platforma = nume_fisier[0:4]
                     array_module = []
                     array_wires = []
-                    for i in range(1, len(array_incarcat)):
-                        if array_incarcat[i][0] == "0":
-                            pot_position = array_incarcat[i].index('Pot.') + 1
-                            array_output.append(array_incarcat[i][1:pot_position])
-                            array_output[0].append("Lange")
-                            break
+
                     for i in range(1, len(array_incarcat)):
                         if i == len(array_incarcat) - 1:
+                            array_out_temp = []
                             array_wires.append(array_incarcat[i])
-
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
@@ -1454,17 +1451,53 @@ def wires_cumulat():
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
-                            array_out_temp = []
+                            index_ltgno = array_wires[0].index('Ltg-Nr.')
+                            index_verbindung = array_wires[0].index('Verbindung')
+                            index_von = array_wires[0].index('von')
+                            index_nach = array_wires[0].index('nach')
+                            index_quer = array_wires[0].index('Quer.')
+                            index_kurz1 = array_wires[0].index('Kurzname')
+                            index_pin1 = array_wires[0].index('Pin')
+                            index_kurz2 = array_wires[0][index_kurz1 + 1:].index('Kurzname') + index_kurz1 + 1
+                            index_pin2 = array_wires[0][index_pin1 + 1:].index('Pin') + index_pin1 + 1
+                            index_xy1 = array_wires[0].index('xy')
+                            index_kontakt1 = array_wires[0].index('Kontakt')
+                            index_xy2 = array_wires[0][index_xy1 + 1:].index('xy') + index_xy1 + 1
+                            index_kontakt2 = array_wires[0][index_kontakt1 + 1:].index('Kontakt') + index_kontakt1 + 1
+                            index_dichtung = array_wires[0].index('Dichtung')
+                            index_dichtung2 = array_wires[0][index_dichtung + 1:].index('Dichtung') + index_dichtung + 1
+                            index_leitung = array_wires[0].index('Leitung')
+                            index_farbe = array_wires[0].index('Farbe')
+                            index_sonder = array_wires[0].index('Sonderltg.')
                             for wire in range(1, len(array_wires)):
                                 for index in range(pot_position, ltgno_position):
                                     if array_wires[wire][index] != "-":
-                                        temp_list = array_wires[wire][1:pot_position]
-                                        temp_list.append(array_wires[wire][index])
-                                        array_out_temp.append(temp_list)
+                                        array_out_temp.append([array_wires[wire][index_ltgno],
+                                                               array_wires[wire][index_verbindung],
+                                                               array_wires[wire][index_von],
+                                                               array_wires[wire][index_kurz1],
+                                                               array_wires[wire][index_pin1],
+                                                               array_wires[wire][index_xy1],
+                                                               array_wires[wire][index_kontakt1],
+                                                               array_wires[wire][index_dichtung],
+                                                               array_wires[wire][index_nach],
+                                                               array_wires[wire][index_kurz2],
+                                                               array_wires[wire][index_pin2],
+                                                               array_wires[wire][index_xy2],
+                                                               array_wires[wire][index_kontakt2],
+                                                               array_wires[wire][index_dichtung2],
+                                                               array_wires[wire][index_leitung],
+                                                               array_wires[wire][index_sonder],
+                                                               array_wires[wire][index_farbe],
+                                                               array_wires[wire][index_quer],
+                                                               array_wires[wire][pot_position],
+                                                               array_wires[wire][index],
+                                                               platforma])
                             array_module = []
                             array_wires = []
                             array_output.extend(array_out_temp)
                         else:
+                            array_out_temp = []
                             if array_incarcat[i][0] == "2":
                                 array_module.append(array_incarcat[i])
                             elif array_incarcat[i][0] == "3" or array_incarcat[i][0] == "0":
@@ -1477,18 +1510,54 @@ def wires_cumulat():
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
-                                array_out_temp = []
+                                index_ltgno = array_wires[0].index('Ltg-Nr.')
+                                index_verbindung = array_wires[0].index('Verbindung')
+                                index_von = array_wires[0].index('von')
+                                index_nach = array_wires[0].index('nach')
+                                index_quer = array_wires[0].index('Quer.')
+                                index_kurz1 = array_wires[0].index('Kurzname')
+                                index_pin1 = array_wires[0].index('Pin')
+                                index_kurz2 = array_wires[0][index_kurz1 + 1:].index('Kurzname') + index_kurz1 + 1
+                                index_pin2 = array_wires[0][index_pin1 + 1:].index('Pin') + index_pin1 + 1
+                                index_xy1 = array_wires[0].index('xy')
+                                index_kontakt1 = array_wires[0].index('Kontakt')
+                                index_xy2 = array_wires[0][index_xy1 + 1:].index('xy') + index_xy1 + 1
+                                index_kontakt2 = array_wires[0][index_kontakt1 + 1:].index(
+                                    'Kontakt') + index_kontakt1 + 1
+                                index_dichtung = array_wires[0].index('Dichtung')
+                                index_dichtung2 = array_wires[0][index_dichtung + 1:].index(
+                                    'Dichtung') + index_dichtung + 1
+                                index_leitung = array_wires[0].index('Leitung')
+                                index_farbe = array_wires[0].index('Farbe')
+                                index_sonder = array_wires[0].index('Sonderltg.')
                                 for wire in range(1, len(array_wires)):
                                     for index in range(pot_position, ltgno_position):
                                         if array_wires[wire][index] != "-":
-                                            temp_list = array_wires[wire][1:pot_position]
-                                            temp_list.append(array_wires[wire][index])
-                                            array_out_temp.append(temp_list)
-                                for x in range(1, len(array_out_temp)):
-                                    array_out_temp[x].append(nume_fisier)
+                                            array_out_temp.append([array_wires[wire][index_ltgno],
+                                                                   array_wires[wire][index_verbindung],
+                                                                   array_wires[wire][index_von],
+                                                                   array_wires[wire][index_kurz1],
+                                                                   array_wires[wire][index_pin1],
+                                                                   array_wires[wire][index_xy1],
+                                                                   array_wires[wire][index_kontakt1],
+                                                                   array_wires[wire][index_dichtung],
+                                                                   array_wires[wire][index_nach],
+                                                                   array_wires[wire][index_kurz2],
+                                                                   array_wires[wire][index_pin2],
+                                                                   array_wires[wire][index_xy2],
+                                                                   array_wires[wire][index_kontakt2],
+                                                                   array_wires[wire][index_dichtung2],
+                                                                   array_wires[wire][index_leitung],
+                                                                   array_wires[wire][index_sonder],
+                                                                   array_wires[wire][index_farbe],
+                                                                   array_wires[wire][index_quer],
+                                                                   array_wires[wire][pot_position],
+                                                                   array_wires[wire][index],
+                                                                   platforma])
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
+
     prn_excel_wirelistsallinone(array_output)
     end = time.time()
     pbar.destroy()
