@@ -388,6 +388,11 @@ def wires():
     for file_all in os.listdir(dir_wirelist):
         if file_all.endswith(".csv"):
             file_counter = file_counter + 1
+    if file_counter == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Eroare fisiere', 'Nu ai incarcat nimic')
+        return
     for file_all in os.listdir(dir_wirelist):
         if file_all.endswith(".csv"):
             file_progres = file_progres + 1
@@ -1370,7 +1375,7 @@ def boms_cumulat():
 
 def wires_cumulat():
     pbargui = Tk()
-    pbargui.title("Prelucrare WIRELIST-uri")
+    pbargui.title("Prelucrare WIRELIST-uri cumulate")
     pbargui.geometry("500x50+50+550")
     pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
     statuslabel = Label(pbargui, text="Waiting . . .")
@@ -1378,12 +1383,11 @@ def wires_cumulat():
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
                          "8030", "8031", "8032", "8052", "8053"]
-    array_output = [["Ltg-Nr.", "Verbindung", "von", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung",
+    array_output = [["Module ID", "Ltg-Nr.", "Verbindung", "von", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung",
                      "nach", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung", "Leitung", "Sonderltg.",
                      "Farbe", "Quer.", "Pot.", "Lange", "Platforma"]]
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
-    start = time.time()
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_wirelist):
@@ -1472,7 +1476,8 @@ def wires_cumulat():
                             for wire in range(1, len(array_wires)):
                                 for index in range(pot_position, ltgno_position):
                                     if array_wires[wire][index] != "-":
-                                        array_out_temp.append([array_wires[wire][index_ltgno],
+                                        array_out_temp.append([array_wires[0][index],
+                                                               array_wires[wire][index_ltgno],
                                                                array_wires[wire][index_verbindung],
                                                                array_wires[wire][index_von],
                                                                array_wires[wire][index_kurz1],
@@ -1533,7 +1538,8 @@ def wires_cumulat():
                                 for wire in range(1, len(array_wires)):
                                     for index in range(pot_position, ltgno_position):
                                         if array_wires[wire][index] != "-":
-                                            array_out_temp.append([array_wires[wire][index_ltgno],
+                                            array_out_temp.append([array_wires[0][index],
+                                                                   array_wires[wire][index_ltgno],
                                                                    array_wires[wire][index_verbindung],
                                                                    array_wires[wire][index_von],
                                                                    array_wires[wire][index_kurz1],
@@ -1557,10 +1563,7 @@ def wires_cumulat():
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
-
-    prn_excel_wirelistsallinone(array_output)
-    end = time.time()
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+    prn_excel_wirelistsallinone(array_output)
     return None

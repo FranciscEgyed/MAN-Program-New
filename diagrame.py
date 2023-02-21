@@ -1,8 +1,9 @@
+import itertools
 import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
-from functii_print import prn_excel_diagrame
+from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule
 
 
 def comparatiediagrame():
@@ -58,6 +59,116 @@ def comparatiediagrame():
     array_log.insert(0, ["Fisier", "Valoare noua", "Valoare veche", "Rand", "Coloana"])
     prn_excel_diagrame(array_log, array_new)
 
+    pbar.destroy()
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+
+
+def asocierediagramemodule():
+    pbargui = Tk()
+    pbargui.title("Asociere diagrame cu module din matrix")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul cu informatiile diagrama - modul:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    array_diagmod = [["Platforma", "Diagrama", "Module 1", "Module 2", "Module 3", "Module 4", "Module 5"]]
+    array_diagmod_my23 = ["Platforma", "Diagrama", "Module 1", "Module 2", "Module 3", "Module 4", "Module 5"]
+    array_output = [["Platforma", "Diagrama", "Module"]]
+    wb = load_workbook(file_load)
+    ws1 = wb.active
+    for row in ws1['C']:
+        if row.value is not None and row.value != "Назва модуля":
+            array_diagmod.append([ws1.cell(row=row.row, column=1).value, ws1.cell(row=row.row, column=3).value,
+                                  ws1.cell(row=row.row, column=13).value, ws1.cell(row=row.row, column=14).value,
+                                  ws1.cell(row=row.row, column=15).value, ws1.cell(row=row.row, column=16).value,
+                                  ws1.cell(row=row.row, column=17).value, ws1.cell(row=row.row, column=18).value])
+            file_counter += 1
+    for i in range(1, len(array_diagmod)):
+        # descompunere liste module
+        array_output_temp = []
+        lista_module1 = []
+        lista_module2 = []
+        lista_module3 = []
+        lista_module4 = []
+        lista_module5 = []
+        lista_module6 = []
+        mod1counter = 0
+        mod2counter = 0
+        mod3counter = 0
+        mod4counter = 0
+        mod5counter = 0
+        mod6counter = 0
+        if array_diagmod[i][2] is not None:
+            for q in range(len(array_diagmod[i][2].split("/"))):
+                lista_module1.append(array_diagmod[i][2].split("/")[q])
+            mod1counter = 1
+        if array_diagmod[i][3] is not None:
+            for q in range(len(array_diagmod[i][3].split("/"))):
+                lista_module2.append(array_diagmod[i][3].split("/")[q])
+            mod2counter = 1
+        if array_diagmod[i][4] is not None:
+            for q in range(len(array_diagmod[i][4].split("/"))):
+                lista_module3.append(array_diagmod[i][4].split("/")[q])
+            mod3counter = 1
+        if array_diagmod[i][5] is not None:
+            for q in range(len(array_diagmod[i][5].split("/"))):
+                lista_module4.append(array_diagmod[i][5].split("/")[q])
+            mod4counter = 1
+        if array_diagmod[i][6] is not None:
+            for q in range(len(array_diagmod[i][6].split("/"))):
+                lista_module5.append(array_diagmod[i][6].split("/")[q])
+            mod5counter = 1
+        if array_diagmod[i][7] is not None:
+            for q in range(len(array_diagmod[i][7].split("/"))):
+                lista_module6.append(array_diagmod[i][7].split("/")[q])
+            mod6counter = 1
+        if mod1counter > 0 and mod2counter == 0 and mod3counter == 0 and mod4counter == 0 and mod5counter == 0:
+            for x in range(len(lista_module1)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], lista_module1[x]])
+        if mod1counter > 0 and mod2counter > 0 and mod3counter == 0 and mod4counter == 0 and mod5counter == 0:
+            array_combinatii = list(itertools.product(lista_module1, lista_module2))
+            for x in range(len(array_combinatii)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], array_combinatii[x][0],
+                                          array_combinatii[x][1]])
+        if mod1counter > 0 and mod2counter > 0 and mod3counter > 0 and mod4counter == 0 and mod5counter == 0:
+            array_combinatii = list(itertools.product(lista_module1, lista_module2, lista_module3))
+            for x in range(len(array_combinatii)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], array_combinatii[x][0],
+                                          array_combinatii[x][1], array_combinatii[x][2]])
+        if mod1counter > 0 and mod2counter > 0 and mod3counter > 0 and mod4counter > 0 and mod5counter == 0:
+            array_combinatii = list(itertools.product(lista_module1, lista_module2, lista_module3, lista_module4))
+            for x in range(len(array_combinatii)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], array_combinatii[x][0],
+                                          array_combinatii[x][1], array_combinatii[x][2], array_combinatii[x][3]])
+        if mod1counter > 0 and mod2counter > 0 and mod3counter > 0 and mod4counter > 0 and mod5counter > 0:
+            array_combinatii = list(itertools.product(lista_module1, lista_module2, lista_module3, lista_module4,
+                                                      lista_module5))
+            for x in range(len(array_combinatii)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], array_combinatii[x][0],
+                                          array_combinatii[x][1], array_combinatii[x][2], array_combinatii[x][3],
+                                          array_combinatii[x][4]])
+        if mod1counter > 0 and mod2counter > 0 and mod3counter > 0 and mod4counter > 0 and mod5counter > 0 and \
+                mod6counter > 0:
+            array_combinatii = list(itertools.product(lista_module1, lista_module2, lista_module3, lista_module4,
+                                                      lista_module5, lista_module6))
+            for x in range(len(array_combinatii)):
+                array_output_temp.append([array_diagmod[i][0], array_diagmod[i][1], array_combinatii[x][0],
+                                          array_combinatii[x][1], array_combinatii[x][2], array_combinatii[x][3],
+                                          array_combinatii[x][4], array_combinatii[x][5]])
+        array_output.extend(array_output_temp)
+        file_progres = file_progres + 1
+        statuslabel["text"] = str(file_progres) + " randuri din " + str(file_counter)
+        pbar['value'] += 2
+        pbargui.update_idletasks()
+    statuslabel["text"] = "Printing file . . . "
+    prn_excel_asocierediagramemodule(array_output)
     pbar.destroy()
     pbargui.destroy()
     end = time.time()
