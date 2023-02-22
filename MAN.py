@@ -100,7 +100,9 @@ submenu5 = tk.Menu(menu5, tearoff=0, background="DarkSeaGreen1", font="Arial 15 
 submenu5.add_command(label="Raport KSK Light", command=lambda: [statusbusy(), raport_light(), statusidle()])
 submenu5.add_separator()
 submenu5.add_command(label="Lista taiere KSK Light", command=lambda: [statusbusy(), cutting_ksklight(), statusidle()])
+submenu5.add_command(label="Lista SuperSleeve KSK Light", command=lambda: [statusbusy(), ss_ksklight(), statusidle()])
 submenu5.add_separator()
+
 menu5.configure(menu=submenu5)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++a
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")

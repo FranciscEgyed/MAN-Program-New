@@ -131,6 +131,8 @@ def databasecontent():
                         arraywrite.append([ksk, module, "BODYL", 1, "PC", data, data, trailerno])
                     elif array_module_active[i][0] == module and "RHD" in array_module_active[i][3]:
                         arraywrite.append([ksk, module, "BODYR", 1, "PC", data, data, trailerno])
+                    elif array_module_active[i][0] == module:
+                        arraywrite.append([ksk, module, "XXXX", 1, "PC", data, data, trailerno])
             with open(os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/" + ksk + ".csv", 'w', newline='',
                       encoding='utf-8') as myfile:
                 wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
@@ -199,11 +201,6 @@ def databasecontent():
     bexp.grid(row=4, column=3)
     bexpall = Button(ws, text="Export All", command=exportall)
     bexpall.grid(row=5, column=3)
-
-
-
-
-
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     ksk_lb = Listbox(ws, exportselection=0, selectmode="multiple")

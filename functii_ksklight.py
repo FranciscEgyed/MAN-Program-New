@@ -214,7 +214,7 @@ def ss_ksklight():
         drawings = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt", newline='') as csvfile:
         compover = list(csv.reader(csvfile, delimiter=';'))
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/"
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
     normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
               "81.25484-5272", "81.25484-5267", "81.25484-5268"]
     ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
@@ -256,7 +256,6 @@ def ss_ksklight():
                             if ssdatabase_de_prelucrat[i][8] != 0]
             ss_prelucrat.insert(0, ["Basic_Module", "Module", "Index", "Module", "Part Number", "NORMAL_COD", "Nume",
                                     "Lungime mm"])
-
             df1 = pd.DataFrame(ss_prelucrat)
             df1.columns = df1.iloc[0]
             df1 = df1[1:]

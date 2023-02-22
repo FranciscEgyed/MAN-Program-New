@@ -348,6 +348,8 @@ def golire_directoare():
     dir_output_separare = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/"
     dir_output_separare2 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
     dir_output_separare3 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"
+    dir_output_separare4 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/"
+    dir_output_separare5 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
     dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
     dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
     dir_ldorado = os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"
@@ -437,6 +439,16 @@ def golire_directoare():
     for file_all in os.listdir(dir_output_separare3):
         try:
             os.remove(dir_output_separare3 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare4):
+        try:
+            os.remove(dir_output_separare4 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare5):
+        try:
+            os.remove(dir_output_separare5 + file_all)
         except:
             continue
     messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
