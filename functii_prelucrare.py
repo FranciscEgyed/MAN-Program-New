@@ -183,15 +183,17 @@ def sortare_jit():
         pbar['value'] += 2
         pbargui.update_idletasks()
     conn.close()
-    pbar.destroy()
-    pbargui.destroy()
     log_file("Sortate  8000 = " + str(c8000) + ", 8011 = " + str(c8011) + ", 8023 = " + str(c8023) +
              "Necunoscute = " + str(cnec))
     messagebox.showinfo("Finalizat", "Sortate  8000 = " + str(c8000) + ", 8011 = " + str(c8011) + ", 8023 = " +
                         str(c8023) + ", Necunoscute = " + str(cnec))
+    pbar.destroy()
+    pbargui.destroy()
     if is_error:
         messagebox.showinfo("Erori in fisiere", "Verificati fisierul === Error file.txt === !")
         os.startfile(os.path.abspath(os.curdir) + "/MAN/Error file.txt")
+        pbar.destroy()
+        pbargui.destroy()
     return None
 
 
@@ -453,7 +455,8 @@ def wires():
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -491,7 +494,8 @@ def wires():
                                 for verwires in range(len(array_wires[0])):
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 array_out_temp = []
                                 index_ltgno = array_wires[0].index('Ltg-Nr.')
@@ -526,9 +530,9 @@ def wires():
                         log_file("Creat " + nume_fisier)
 
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -716,9 +720,9 @@ def boms():
                         wr.writerows(array_output)
     log_file("Creat " + nume_fisier)
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -804,7 +808,8 @@ def wires_complet():
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -827,7 +832,8 @@ def wires_complet():
                                 for verwires in range(len(array_wires[0])):
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -843,9 +849,9 @@ def wires_complet():
                                 array_output.extend(array_out_temp)
                     prn_excel_wires_complete(array_output, nume_fisier)
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -929,7 +935,6 @@ def wires_pnleoni():
                     for i in range(1, len(array_incarcat)):
                         if i == len(array_incarcat) - 1:
                             array_wires.append(array_incarcat[i])
-
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
@@ -985,9 +990,9 @@ def wires_pnleoni():
 
                     prn_excel_wires_complete_leoni(array_output, array_output_comp1, array_output_comp2, nume_fisier)
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -1181,9 +1186,9 @@ def boms_pnleoni():
                                 array_output[x].append(array_componente[y][2])
                     prn_excel_bom_complete(array_output, nume_fisier)
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -1367,9 +1372,9 @@ def boms_cumulat():
                                 array_output.extend(array_out_temp)
     prn_excel_boomcumulat(array_output)
     end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     return None
 
 
@@ -1451,7 +1456,8 @@ def wires_cumulat():
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1511,7 +1517,8 @@ def wires_cumulat():
                                 for verwires in range(len(array_wires[0])):
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1563,7 +1570,7 @@ def wires_cumulat():
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
+    prn_excel_wirelistsallinone(array_output)
     pbar.destroy()
     pbargui.destroy()
-    prn_excel_wirelistsallinone(array_output)
     return None

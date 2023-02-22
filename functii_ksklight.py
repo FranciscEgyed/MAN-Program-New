@@ -443,10 +443,7 @@ def raport_light():
         messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
     dfstock = pd.read_sql_query("SELECT * FROM KSKStocks", cnx)
-
     contain_values = df[df['KSKNo'].str.contains('0006K-0H19')]
-    print(contain_values)
-    print(dfstock.loc[2])
 
     def scankey(event):
         val = event.widget.get()

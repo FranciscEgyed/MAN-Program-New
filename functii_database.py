@@ -5,7 +5,6 @@ from tkinter import *
 from tkinter import messagebox, filedialog
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
-
 from functii_print import prn_excel_export_database
 
 
@@ -16,7 +15,12 @@ def databasecontent():
     except sqlite3.OperationalError:
         cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
-    df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+    try:
+        df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
+    except:
+        messagebox.showerror("Eroare baza de date", "Nici o baza de date nu este disponibila")
+        return None
+
     listaallksk = df['KSKNo'].unique()
 
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Sortare Module.txt", newline='') as csvfile:
@@ -78,6 +82,12 @@ def databasecontent():
             ksk_lb.insert('end', item)
 
     list3 = listaallksk
+
+    def select_all():
+        ksk_lb.select_set(0, END)
+
+    def deselect_all():
+        ksk_lb.selection_clear(0, END)
 
     def searchksk():
         valuesdatalivrare_lb = [datalivrare_lb.get(idx) for idx in datalivrare_lb.curselection()]
@@ -181,10 +191,18 @@ def databasecontent():
 
     bsch1 = Button(ws, text="Search", command=searchksk)
     bsch1.grid(row=4, column=2)
+    bsall = Button(ws, text="Select all", command=select_all)
+    bsall.grid(row=5, column=2)
+    bdsall = Button(ws, text="Deselect all", command=deselect_all)
+    bdsall.grid(row=6, column=2)
     bexp = Button(ws, text="Export", command=exportksk)
     bexp.grid(row=4, column=3)
     bexpall = Button(ws, text="Export All", command=exportall)
     bexpall.grid(row=5, column=3)
+
+
+
+
 
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
