@@ -3,7 +3,6 @@ import os
 import time
 from tkinter import filedialog, messagebox, Tk, ttk, Label, HORIZONTAL
 from collections import Counter
-
 import globale
 from diverse import skip_file, pivotare
 from functii_print import prn_excel_bom, prn_excel_wires, prn_excel_wires_light

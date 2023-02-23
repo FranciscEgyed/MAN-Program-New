@@ -1,9 +1,11 @@
+import csv
 import itertools
 import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
 from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule
+import pandas as pd
 
 
 def comparatiediagrame():
@@ -78,9 +80,9 @@ def asocierediagramemodule():
     start = time.time()
     file_counter = 0
     file_progres = 0
-    array_diagmod = [["Platforma", "Diagrama", "Module 1", "Module 2", "Module 3", "Module 4", "Module 5"]]
+    array_diagmod = [["Platforma", "Diagrama", "Module 1", "Module 2", "Module 3", "Module 4", "Module 5", "Module 6"]]
     array_diagmod_my23 = ["Platforma", "Diagrama", "Module 1", "Module 2", "Module 3", "Module 4", "Module 5"]
-    array_output = [["Platforma", "Diagrama", "Module"]]
+    array_output = [["Platforma", "Diagrama", "Module", "Module", "Module", "Module", "Module", "Module"]]
     wb = load_workbook(file_load)
     ws1 = wb.active
     for row in ws1['C']:
@@ -167,9 +169,69 @@ def asocierediagramemodule():
         statuslabel["text"] = str(file_progres) + " randuri din " + str(file_counter)
         pbar['value'] += 2
         pbargui.update_idletasks()
+    array_output[0].append("Index")
+    for i in range(len(array_output)):
+        if len(array_output[i]) < 8:
+            for x in range(len(array_output[i]), 8):
+                array_output[i].append("")
+    for i in range(1, len(array_output)):
+        array_output[i].append(sum(1 for n in array_output[i] if n != "") - 2)
     statuslabel["text"] = "Printing file . . . "
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", 'w', newline='') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+        wr.writerows(array_output)
     prn_excel_asocierediagramemodule(array_output)
     pbar.destroy()
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+
+
+def diagrameinksk():
+    pbargui = Tk()
+    pbargui.title("Lista diagrame in KSK")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
+                                           title="Incarcati fisierul KSK:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    try:
+        with open(file_load, newline='') as csvfile:
+            array_module_file = list(csv.reader(csvfile, delimiter=';'))
+        if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
+            messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
+            return
+        moduleinksk = [row[1] for row in array_module_file]
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='') as csvfile:
+            array_diagrame = list(csv.reader(csvfile, delimiter=';'))
+        for i in range(len(array_diagrame)):
+            for x in range(len(moduleinksk)):
+                if moduleinksk[x] in array_diagrame[i]:
+                    array_diagrame[i].append(sum(1 for n in array_diagrame[i] if n == moduleinksk[x]))
+        for i in range(0, 150):
+            print(array_diagrame[i])
+        dfdiagrame = pd.DataFrame(array_diagrame)
+        print(dfdiagrame)
+
+
+        #statuslabel["text"] = "Printing file . . . "
+        #prn_excel_asocierediagramemodule(array_output)
+        pbar.destroy()
+        pbargui.destroy()
+        end = time.time()
+        messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+
+
+
+    except FileNotFoundError:
+        pbar.destroy()
+        pbargui.destroy()
+        return None
+
+
+

@@ -1,4 +1,5 @@
 import csv
+import fnmatch
 import os
 import time
 from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
@@ -456,7 +457,9 @@ def wires():
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
                                             array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_wires[0][verwires],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -495,7 +498,9 @@ def wires():
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
                                                 array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_wires[0][verwires],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 array_out_temp = []
                                 index_ltgno = array_wires[0].index('Ltg-Nr.')
@@ -528,7 +533,6 @@ def wires():
                         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
                         wr.writerows(array_output)
                         log_file("Creat " + nume_fisier)
-
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
@@ -809,7 +813,9 @@ def wires_complet():
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
                                             array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_wires[0][verwires],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -833,7 +839,9 @@ def wires_complet():
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
                                                 array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_wires[0][verwires],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -938,7 +946,10 @@ def wires_pnleoni():
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_wires[0][verwires],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -961,7 +972,10 @@ def wires_pnleoni():
                                 for verwires in range(len(array_wires[0])):
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_wires[0][verwires],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1455,9 +1469,12 @@ def wires_cumulat():
                             array_wires.append(array_incarcat[i])
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
+
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
                                             array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                            array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_wires[0][verwires],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_wires[0][verwires] = array_module[vermodule][2]
                             pot_position = array_wires[0].index('Pot.') + 1
                             ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1518,7 +1535,9 @@ def wires_cumulat():
                                     for vermodule in range(len(array_module)):
                                         if array_wires[0][verwires] == array_module[vermodule][1] or \
                                                 array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
-                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1]:
+                                                array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_wires[0][verwires],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_wires[0][verwires] = array_module[vermodule][2]
                                 pot_position = array_wires[0].index('Pot.') + 1
                                 ltgno_position = array_wires[0][pot_position:].index('Ltg-Nr.') + pot_position
@@ -1570,6 +1589,7 @@ def wires_cumulat():
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
+
     prn_excel_wirelistsallinone(array_output)
     pbar.destroy()
     pbargui.destroy()

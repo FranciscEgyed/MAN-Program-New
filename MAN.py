@@ -119,6 +119,8 @@ submenu7.add_command(label="Prelucrare masterdata",
 submenu7.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(), comparatiediagrame(), statusidle()])
 submenu7.add_command(label="Asociere diagrame cu module din matrix",
                      command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
+submenu7.add_command(label="Extragere diagrame pentru KSK",
+                     command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()
