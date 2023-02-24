@@ -4,13 +4,13 @@ import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
-from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule
+from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk
 import pandas as pd
 
 
 def comparatiediagrame():
     pbargui = Tk()
-    pbargui.title("Prelucrare BOM-uri")
+    pbargui.title("Comparatie diagrame")
     pbargui.geometry("500x50+50+550")
     pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
     statuslabel = Label(pbargui, text="Waiting . . .")
@@ -198,36 +198,43 @@ def diagrameinksk():
     file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
                                            title="Incarcati fisierul KSK:")
     start = time.time()
-    file_counter = 0
-    file_progres = 0
+    array_output = []
     try:
         with open(file_load, newline='') as csvfile:
             array_module_file = list(csv.reader(csvfile, delimiter=';'))
         if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
             messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
             return
+        file_name = array_module_file[2][0]
         moduleinksk = [row[1] for row in array_module_file]
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='') as csvfile:
             array_diagrame = list(csv.reader(csvfile, delimiter=';'))
-        for i in range(len(array_diagrame)):
+        array_diagrame[0].append("Nota")
+        statuslabel = Label(pbargui, text="Working . . .")
+        for i in range(1, len(array_diagrame)):
+            counter = 0
             for x in range(len(moduleinksk)):
                 if moduleinksk[x] in array_diagrame[i]:
-                    array_diagrame[i].append(sum(1 for n in array_diagrame[i] if n == moduleinksk[x]))
-        for i in range(0, 150):
-            print(array_diagrame[i])
+                    counter += 1
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+            array_diagrame[i].append(counter)
         dfdiagrame = pd.DataFrame(array_diagrame)
-        print(dfdiagrame)
-
-
-        #statuslabel["text"] = "Printing file . . . "
-        #prn_excel_asocierediagramemodule(array_output)
+        dfdiagrame.columns = dfdiagrame.iloc[0]
+        dfdiagrame = dfdiagrame[1:]
+        df_max = dfdiagrame.groupby('Diagrama', as_index=False)['Nota'].max()
+        array_output_temp = df_max.values.tolist()
+        for i in range(len(array_output_temp)):
+            if array_output_temp[i][1] != 0:
+                array_output.append(array_output_temp[i])
+        statuslabel["text"] = "Printing file . . . "
+        pbar['value'] += 2
+        pbargui.update_idletasks()
+        prn_excel_diagrameinksk(array_output, file_name)
         pbar.destroy()
         pbargui.destroy()
         end = time.time()
         messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
-
-
     except FileNotFoundError:
         pbar.destroy()
         pbargui.destroy()

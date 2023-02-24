@@ -975,3 +975,23 @@ def prn_excel_asocierediagramemodule(sheet1):
         log_file("Eroare salvare. Nu am salvat Asociere diagrame cu module din matrix.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Asociere diagrame cu module din matrix.xlsx este read-only!")
         return None
+
+
+def prn_excel_diagrameinksk(sheet1, file_name):
+    wb = Workbook()
+    ws1 = wb.active
+
+    ws1.title = file_name
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame " + file_name + ".xlsx")
+        log_file("Creat Diagrame " + file_name + ".xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Diagrame " + file_name + ".xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Diagrame " + file_name + ".xlsx este read-only!")
+        return None
