@@ -825,6 +825,7 @@ def wires_complet():
                                     if array_wires[wire][index] != "-":
                                         temp_list = array_wires[wire][1:pot_position]
                                         temp_list.append(array_wires[wire][index])
+                                        temp_list.append(array_wires[0][index])
                                         array_out_temp.append(temp_list)
                             array_module = []
                             array_wires = []
@@ -851,10 +852,12 @@ def wires_complet():
                                         if array_wires[wire][index] != "-":
                                             temp_list = array_wires[wire][1:pot_position]
                                             temp_list.append(array_wires[wire][index])
+                                            temp_list.append(array_wires[0][index])
                                             array_out_temp.append(temp_list)
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
+                    array_output[0].append("Module ID")
                     prn_excel_wires_complete(array_output, nume_fisier)
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
@@ -959,6 +962,7 @@ def wires_pnleoni():
                                     if array_wires[wire][index] != "-":
                                         temp_list = array_wires[wire][1:pot_position]
                                         temp_list.append(array_wires[wire][index])
+                                        temp_list.append(array_wires[0][index])
                                         array_out_temp.append(temp_list)
                             array_module = []
                             array_wires = []
@@ -985,10 +989,12 @@ def wires_pnleoni():
                                         if array_wires[wire][index] != "-":
                                             temp_list = array_wires[wire][1:pot_position]
                                             temp_list.append(array_wires[wire][index])
+                                            temp_list.append(array_wires[0][index])
                                             array_out_temp.append(temp_list)
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
+                    array_output[0].append("Module ID")
                     array_output_comp1 = array_output
                     for x in range(len(array_output_comp1)):
                         for y in range(len(array_output_comp1[x])):

@@ -140,6 +140,7 @@ submenu8.add_separator()
 menu8.configure(menu=submenu8)
 
 menu_frame.grid(row=0, column=0)
+
 container.grid(row=1, column=0)
 label.grid(row=2, column=0)
 statuslabel.grid(row=12, column=0)
