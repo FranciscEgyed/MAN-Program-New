@@ -44,7 +44,8 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)

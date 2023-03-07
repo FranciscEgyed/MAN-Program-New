@@ -107,6 +107,7 @@ menu5.configure(menu=submenu5)
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
@@ -115,14 +116,20 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire(), statusidle()])
-submenu7.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(), comparatiediagrame(), statusidle()])
-submenu7.add_command(label="Asociere diagrame cu module din matrix",
-                     command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
-submenu7.add_command(label="Extragere diagrame pentru KSK",
-                     command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()
+
+submenu7.add_cascade(label="Diagrame . . . ", menu=submenucascade)
+submenucascade.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(),
+                                                                         comparatiediagrame(), statusidle()])
+submenucascade.add_command(label="Asociere diagrame cu module din matrix",
+                           command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
+submenucascade.add_command(label="Extragere diagrame pentru KSK",
+                           command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
+submenucascade.add_command(label="Extragere informatii din diagrame",
+                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
+
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")

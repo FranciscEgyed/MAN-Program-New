@@ -389,8 +389,7 @@ def cmcsrnew():
     if fisier_cm[-3:] == "csv":
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
-
-        if "8014" in array_sortare[0]:
+        if "8014" in array_sortare[0] or "8O14" in array_sortare[0]:
             for i, j in enumerate(array_sortare[5]):
                 if j == 'Kurzname':
                     idx_conector.append(i)
@@ -449,10 +448,10 @@ def cmcsrnew():
                     for x in range(0, len(idx_module)):
                         if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
                             array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -468,30 +467,10 @@ def cmcsrnew():
                             pbargui.update_idletasks()
                         elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
                             array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "OPERATIE",
-                                                array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
-                                                array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
-                                                array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
-                                                array_sortare[i][idx_ferc], array_sortare[i][idx_xy],
-                                                array_sortare[i][idx_twist],
-                                                array_sortare[i][idx_pbplace], array_sortare[i][idx_mydwg],
-                                                array_sortare[i][idx_dwg], array_sortare[i][idx_apab1],
-                                                array_sortare[i][idx_apab2], array_sortare[i][idx_apab3],
-                                                array_sortare[i][idx_apab4], array_sortare[i][idx_apab5],
-                                                array_sortare[i][idx_aem1], array_sortare[i][idx_aem2],
-                                                array_sortare[i][idx_aem3]])
-                            pbar['value'] += 2
-                            pbargui.update_idletasks()
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                                and array_sortare[i][idx_realname] not in listatwist:
-                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
-                                                array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "COMPONENT",
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -508,10 +487,10 @@ def cmcsrnew():
                         elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
                                 and array_sortare[i][idx_realname] in listatwist:
                             array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i + 4][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i + 4][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i + 4][idx_knname], array_sortare[3][idx_module[x]],
-                                                array_sortare[i + 4][idx_leadset].replace("23U", "23W"), "FIR",
+                                                array_sortare[i + 4][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -523,6 +502,26 @@ def cmcsrnew():
                                                 array_sortare[i][idx_apab4], array_sortare[i][idx_apab5],
                                                 array_sortare[i][idx_aem1], array_sortare[i][idx_aem2],
                                                 array_sortare[i][idx_aem3]])
+                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                                and array_sortare[i][idx_realname] not in listatwist:
+                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
+                                                array_sortare[i][idx_realname].lower(),
+                                                array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                                array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                                array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
+                                                array_sortare[i][idx_ferc], array_sortare[i][idx_xy],
+                                                array_sortare[i][idx_twist],
+                                                array_sortare[i][idx_pbplace], array_sortare[i][idx_mydwg],
+                                                array_sortare[i][idx_dwg], array_sortare[i][idx_apab1],
+                                                array_sortare[i][idx_apab2], array_sortare[i][idx_apab3],
+                                                array_sortare[i][idx_apab4], array_sortare[i][idx_apab5],
+                                                array_sortare[i][idx_aem1], array_sortare[i][idx_aem2],
+                                                array_sortare[i][idx_aem3]])
+                            pbar['value'] += 2
+                            pbargui.update_idletasks()
                 except:
                     pbar.destroy()
                     pbargui.destroy()
@@ -601,7 +600,7 @@ def cmcslnew():
     if fisier_cm[-3:] == "csv":
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
-
+        print(array_sortare[5][27])
         if "8011" in array_sortare[0]:
             for i, j in enumerate(array_sortare[2]):
                 if j == 'von' or j == 'nach':
@@ -659,10 +658,10 @@ def cmcslnew():
                     for x in range(0, len(idx_module)):
                         if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
                             array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[1][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_knname].upper(), array_sortare[1][idx_module[x]],
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -677,29 +676,10 @@ def cmcslnew():
                             pbargui.update_idletasks()
                         elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
                             array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[1][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "OPERATIE",
-                                                array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
-                                                array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
-                                                array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
-                                                array_sortare[i][idx_ferc], array_sortare[i][idx_xy],
-                                                array_sortare[i][idx_twist], array_sortare[i][idx_coiling],
-                                                array_sortare[i][idx_pbplace], array_sortare[i][idx_8011],
-                                                array_sortare[i][idx_8012], array_sortare[i][idx_apab1],
-                                                array_sortare[i][idx_apab2], array_sortare[i][idx_apab3],
-                                                array_sortare[i][idx_apab4], array_sortare[i][idx_aem1],
-                                                array_sortare[i][idx_aem2], array_sortare[i][idx_aem3]])
-                            pbar['value'] += 2
-                            pbargui.update_idletasks()
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
-                                and array_sortare[i][idx_realname] not in listatwist:
-                            array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_kanbanag].replace("23U", "23W"),
-                                                array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[1][idx_module[x]],
-                                                array_sortare[i][idx_leadset].replace("23U", "23W"), "COMPONENT",
+                                                array_sortare[i][idx_knname].upper(), array_sortare[1][idx_module[x]],
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -715,10 +695,10 @@ def cmcslnew():
                         elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
                                 and array_sortare[i][idx_realname] in listatwist:
                             array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i + 4][idx_kanbanag].replace("23U", "23W"),
+                                                array_sortare[i + 4][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i + 4][idx_knname], array_sortare[1][idx_module[x]],
-                                                array_sortare[i + 4][idx_leadset].replace("23U", "23W"), "FIR",
+                                                array_sortare[i + 4][idx_knname].upper(), array_sortare[1][idx_module[x]],
+                                                array_sortare[i + 4][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -729,6 +709,28 @@ def cmcslnew():
                                                 array_sortare[i][idx_apab2], array_sortare[i][idx_apab3],
                                                 array_sortare[i][idx_apab4], array_sortare[i][idx_aem1],
                                                 array_sortare[i][idx_aem2], array_sortare[i][idx_aem3]])
+                            pbar['value'] += 2
+                            pbargui.update_idletasks()
+                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                                and array_sortare[i][idx_realname] not in listatwist:
+                            array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                                                array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
+                                                array_sortare[i][idx_realname].lower(),
+                                                array_sortare[i][idx_knname].upper(), array_sortare[1][idx_module[x]],
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
+                                                array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
+                                                array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
+                                                array_sortare[i][idx_ferc], array_sortare[i][idx_xy],
+                                                array_sortare[i][idx_twist], array_sortare[i][idx_coiling],
+                                                array_sortare[i][idx_pbplace], array_sortare[i][idx_8011],
+                                                array_sortare[i][idx_8012], array_sortare[i][idx_apab1],
+                                                array_sortare[i][idx_apab2], array_sortare[i][idx_apab3],
+                                                array_sortare[i][idx_apab4], array_sortare[i][idx_aem1],
+                                                array_sortare[i][idx_aem2], array_sortare[i][idx_aem3]])
+                            pbar['value'] += 2
+                            pbargui.update_idletasks()
+
                 except:
                     pbar.destroy()
                     pbargui.destroy()

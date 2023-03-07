@@ -4,7 +4,8 @@ import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
-from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk
+from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk, \
+    prn_excel_infoindiagrame
 import pandas as pd
 
 
@@ -241,4 +242,43 @@ def diagrameinksk():
         return None
 
 
-
+def extragere_informatii_diagrame():
+    pbargui = Tk()
+    pbargui.title("Extragere informatii din diagrame")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    dir_diagrame = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                           title="Selectati directorul cu diagramele:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_diagrame):
+        if file_all.endswith(".xlsx"):
+            file_counter = file_counter + 1
+    if file_counter == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showwarning('Eroare!', "Directorul selectat este gol.")
+    array_informatii = []
+    for file_all in os.listdir(dir_diagrame):
+        if file_all.endswith(".xlsx"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            wb1 = load_workbook(dir_diagrame + "/" + file_all)
+            sheet1 = wb1.worksheets[0]
+            for row in range(1, sheet1.max_row + 1):
+                for col in range(1, sheet1.max_column + 1):
+                    cell1 = sheet1.cell(row, col)
+                    if cell1.value is not None:
+                        array_informatii.append([file_all, cell1.value, row, col])
+    array_informatii.insert(0, ["Nume Diagrama", "Text celula", "Rand", "Coloana"])
+    prn_excel_infoindiagrame(array_informatii)
+    pbar.destroy()
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")

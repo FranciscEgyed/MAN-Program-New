@@ -995,3 +995,44 @@ def prn_excel_diagrameinksk(sheet1, file_name):
         log_file("Eroare salvare. Nu am salvat Diagrame " + file_name + ".xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Diagrame " + file_name + ".xlsx este read-only!")
         return None
+
+
+def prn_excel_infoindiagrame(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Informatii extrase"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Extras din diagrame.xlsx")
+        log_file("Creat Extras din diagrame.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Extras din diagrame.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Extras din diagrame.xlsx este read-only!")
+        return None
+
+
+def prn_excel_module_LDorado(sheet1, title):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = title
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+
+    try:
+        #wb.save("D:\Fertzy\Python Projects\MAN 2022" + title + ".xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/" + title + ".xlsx")
+        log_file("Creat")
+        messagebox.showinfo('Finalizat!')
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat ")
+        messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
+        quit()
