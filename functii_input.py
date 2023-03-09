@@ -203,6 +203,15 @@ def load_source():
               encoding='utf-8') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
         wr.writerows(array_write)
+    array_write = [[]]
+    for row in ws14['B']:
+        if row.value != "CKD" and row.value is not None:
+            array_write[0].append(row.value)
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight+.txt", 'w', newline='',
+              encoding='utf-8') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+        wr.writerows(array_write)
+
     log_file("Incarcat excel KSKLight")
 
     'load_Supersleeve'

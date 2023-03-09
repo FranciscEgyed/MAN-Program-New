@@ -297,6 +297,29 @@ def prn_excel_separare_ksk(sheet, nume_fisier):
             return None
 
 
+def prn_excel_separare_ksk_plus(sheet, nume_fisier):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = nume_fisier
+    for i in range(len(sheet)):
+        ws1.cell(column=1, row=i + 1, value=str(sheet[i]))
+    if globale.director_salvare_raport == "":
+        try:
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light+/" +
+                    nume_fisier + ".xlsx")
+            log_file("Creat Error file " + nume_fisier + ".xlsx")
+        except PermissionError:
+            log_file("Eroare scriere. Nu am salvat Error file " + nume_fisier + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
+            return None
+    else:
+        try:
+            wb.save(globale.director_salvare_raport + "/Error file " + nume_fisier + ".xlsx")
+        except PermissionError:
+            messagebox.showerror('Eroare scriere', "Fisierul Error file " + nume_fisier + "este read-only!")
+            return None
+
+
 def prn_excel_bom_complete(sheet1, nume_fisier):
     wb = Workbook()
     ws1 = wb.active

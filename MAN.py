@@ -6,6 +6,7 @@ from functii_diverse import *
 from functii_input import *
 from diverse import *
 from functii_ksklight import *
+from functii_ldorado import *
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
 from functii_rapoarte import *
@@ -108,6 +109,7 @@ menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", fo
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade2 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
@@ -130,6 +132,10 @@ submenucascade.add_command(label="Extragere diagrame pentru KSK",
 submenucascade.add_command(label="Extragere informatii din diagrame",
                            command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
 
+submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
+submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(),
+                                                                         segment_test(), statusidle()])
+
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")
@@ -151,6 +157,7 @@ menu_frame.grid(row=0, column=0)
 container.grid(row=1, column=0)
 label.grid(row=2, column=0)
 statuslabel.grid(row=12, column=0)
+databasebackup()
 structura_directoare()
 file_checker()
 databesemerge()

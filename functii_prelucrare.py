@@ -7,7 +7,8 @@ from typing import Any
 from openpyxl import load_workbook
 from diverse import log_file, error_file
 from functii_print import prn_excel_separare_ksk, prn_excel_wires_complete_leoni, prn_excel_ksk_neprelucrate, \
-    prn_excel_wires_complete, prn_excel_bom_complete, prn_excel_boomcumulat, prn_excel_wirelistsallinone
+    prn_excel_wires_complete, prn_excel_bom_complete, prn_excel_boomcumulat, prn_excel_wirelistsallinone, \
+    prn_excel_separare_ksk_plus
 import sqlite3
 
 
@@ -33,6 +34,12 @@ def sortare_jit():
         array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
         array_module_active = list(csv.reader(csvfile, delimiter=';'))
+    try:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight+.txt", newline='') as csvfile:
+            array_sortare_light_plus = list(csv.reader(csvfile, delimiter=';'))
+    except FileNotFoundError:
+        array_sortare_light_plus = [[]]
+        messagebox.showerror("Lipsa fisier", "Lipsa fisierul KSKLight+. Se va folosi doar KSKLight!")
     normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
               "81.25484-5272", "81.25484-5267", "81.25484-5268"]
     ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
@@ -136,6 +143,10 @@ def sortare_jit():
         if set(array_temporar_module).issubset(array_sortare_light[0]):
             prn_excel_separare_ksk(array_temporar_module, element[1:])
             is_light = "YES"
+        # Chech KSK if part of KSK Light+ project
+        if set(array_temporar_module).issubset(array_sortare_light_plus[0]):
+            prn_excel_separare_ksk_plus(array_temporar_module, element[1:])
+            is_light = "YES+"
         # Check harness type
         harnesstype = []
         for m in range(len(array_temporar_module)):
@@ -215,6 +226,12 @@ def sortare_jit_dir():
         array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
         array_module_active = list(csv.reader(csvfile, delimiter=';'))
+    try:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight+.txt", newline='') as csvfile:
+            array_sortare_light_plus = list(csv.reader(csvfile, delimiter=';'))
+    except FileNotFoundError:
+        array_sortare_light_plus = [[]]
+        messagebox.showerror("Lipsa fisier", "Lipsa fisierul KSKLight+. Se va folosi doar KSKLight!")
     normal = ["04.37161-9100", "81.25484-5259", "81.25484-5263", "81.25484-5260", "81.25484-5264", "81.25484-5273",
               "81.25484-5272", "81.25484-5267", "81.25484-5268"]
     ADR = ["04.37161-9000", "81.25484-5261", "81.25484-5265", "81.25484-5262", "81.25484-5266", "81.25484-5275",
@@ -322,8 +339,10 @@ def sortare_jit_dir():
                 if set(array_temporar_module).issubset(array_sortare_light[0]):
                     prn_excel_separare_ksk(array_temporar_module, element[1:])
                     is_light = "YES"
-                else:
-                    prn_excel_ksk_neprelucrate(array_temporar_module, element[1:])
+                # Chech KSK if part of KSK Light+ project
+                if set(array_temporar_module).issubset(array_sortare_light_plus[0]):
+                    prn_excel_separare_ksk_plus(array_temporar_module, element[1:])
+                    is_light = "YES"
                 # Check harness type
                 harnesstype = []
                 for m in range(len(array_temporar_module)):

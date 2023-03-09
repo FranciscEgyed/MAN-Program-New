@@ -42,6 +42,7 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light+/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/",
@@ -350,6 +351,7 @@ def golire_directoare():
     dir_output_separare2 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
     dir_output_separare3 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"
     dir_output_separare4 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/"
+    dir_output_separare41 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light+/"
     dir_output_separare5 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
     dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
     dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
@@ -447,6 +449,11 @@ def golire_directoare():
             os.remove(dir_output_separare4 + file_all)
         except:
             continue
+    for file_all in os.listdir(dir_output_separare41):
+        try:
+            os.remove(dir_output_separare41 + file_all)
+        except:
+            continue
     for file_all in os.listdir(dir_output_separare5):
         try:
             os.remove(dir_output_separare5 + file_all)
@@ -481,5 +488,13 @@ def databasecopy():
     try:
         shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
                      os.path.abspath(os.curdir) + "/MAN/Input/Others/")
+    except FileNotFoundError:
+        return None
+
+
+def databasebackup():
+    try:
+        shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
+                     "//SVRO8FILE01/Groups/General/EFI/DBMAN/BACKUP/database.db")
     except FileNotFoundError:
         return None
