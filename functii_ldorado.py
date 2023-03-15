@@ -1,7 +1,7 @@
 import os
 from tkinter import filedialog
 from xml.etree.ElementTree import parse
-from functii_print import prn_excel_module_LDorado
+from functii_print import prn_excel_module_ldorado
 
 
 def segment_test():
@@ -14,7 +14,8 @@ def segment_test():
     array_module = [['Module ID', 'CustomerPartNo', 'AscertainedPPSPartNo', 'Description', 'Signature']]
     array_conectorpmd = [['ConnectorPMD ID', 'Abbreviation', 'Description', 'HousingColour', 'HousingType',
                           'NumberOfCavities', 'Cavity ID', 'Terminal Type', 'CustomerPartNo']]
-    array_slots = []
+    array_wires = [["Wire ID", "ElementID", "PMD", "WireNo", "MultiCoreID", "WireModuleRef ModuleID"]]
+    array_wirepmd = [["WirePMD ID", "Abbreviation", "Description", "WireType", "CSA", "Colour"]]
 
     # drawing number
     drawing_number = root.find("Harness/TitleBlock").attrib['CustomerPartNo']
@@ -26,9 +27,10 @@ def segment_test():
                     for slot in slots:
                         for cavities in slot:
                             for cavity in cavities:
-                                array_conector.append([connectors.attrib['ID'].strip(), connectors.attrib['ElementID'].strip(),
-                                      connectors.attrib['PMD'].strip(), cavities.attrib['PinNo'].strip(),
-                                      cavity.attrib['WireID'].strip()])
+                                array_conector.append(
+                                    [connectors.attrib['ID'].strip(), connectors.attrib['ElementID'].strip(),
+                                     connectors.attrib['PMD'].strip(), cavities.attrib['PinNo'].strip(),
+                                     cavity.attrib['WireID'].strip()])
 
     for module in root.find("Harness/Modules"):
         for titleblock in module:
@@ -60,18 +62,31 @@ def segment_test():
             if cpn[x][0] == array_conectorpmd[i][0]:
                 array_conectorpmd[i].append(cpn[x][1])
                 break
-    for i in range(len(array_conectorpmd)):
-        print(array_conectorpmd[i])
 
+    for wire in root.find("Harness/Wires"):
+        for node in wire:
+            if node.tag == "WireModuleRefs":
+                for wiremoduleref in node:
+                    array_wires.append([wire.attrib['ID'].strip(), wire.attrib['ElementID'].strip(),
+                                        wire.attrib['PMD'].strip(), wire.attrib['WireNo'].strip(),
+                                        wire.attrib['MultiCoreID'].strip(), wiremoduleref.attrib['ModuleID'].strip()])
 
+    for generalspecialwirepmd in root.find("PMDs/GeneralSpecialWirePMDs"):
+        array_wirepmd.append([generalspecialwirepmd.attrib['ID'].strip(),
+                              generalspecialwirepmd.attrib['Abbreviation'].strip(),
+                              generalspecialwirepmd.attrib['Description'].strip(),
+                              generalspecialwirepmd.attrib['WireType'].strip(),
+                              generalspecialwirepmd.attrib['CSA'].strip(),
+                              generalspecialwirepmd.attrib['Colour'].strip()])
+    for generalwirepmd in root.find("PMDs/GeneralWirePMDs"):
+        array_wirepmd.append([generalwirepmd.attrib['ID'].strip(),
+                              generalwirepmd.attrib['Abbreviation'].strip(),
+                              generalwirepmd.attrib['Description'].strip(),
+                              generalwirepmd.attrib['WireType'].strip(),
+                              generalwirepmd.attrib['CSA'].strip(),
+                              generalwirepmd.attrib['Colour'].strip()])
 
+    for i in range(len(array_wires)):
+        print(array_wires[i])
 
-
-    #prn_excel_module_LDorado(array_print, "SegAttTubes " + drawing_number)
-
-
-
-
-
-
-
+    prn_excel_module_ldorado(array_conector, array_module, array_conectorpmd, array_wires, array_wirepmd)

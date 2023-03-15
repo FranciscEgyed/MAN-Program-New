@@ -622,8 +622,16 @@ def boms():
                             array_out_temp = []
                             for vercomp in range(len(array_comp[0])):
                                 for vermodule in range(len(array_module)):
-                                    if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                    if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_comp[0][vercomp],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_comp[0][vercomp] = array_module[vermodule][2]
+                            # eliminare
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -654,7 +662,7 @@ def boms():
                             index_einh = array_comp[0].index('Einh.')
                             for comp in range(1, len(array_comp)):
                                 for index in range(index_einh + 1, last_position):
-                                    if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                    if array_comp[comp][index] != "-":
                                         array_out_temp.append([array_comp[0][index], array_comp[comp][index],
                                                                array_comp[comp][index_beze],
                                                                array_comp[comp][index_VID],
@@ -683,8 +691,16 @@ def boms():
                             elif array_incarcat[i][0] == "1":
                                 for vercomp in range(len(array_comp[0])):
                                     for vermodule in range(len(array_module)):
-                                        if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                        if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_comp[0][vercomp],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_comp[0][vercomp] = array_module[vermodule][2]
+                                # eliminare
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')
@@ -717,7 +733,7 @@ def boms():
 
                                 for comp in range(1, len(array_comp)):
                                     for index in range(index_einh + 1, last_position):
-                                        if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                        if array_comp[comp][index] != "-":
                                             array_out_temp.append([array_comp[0][index], array_comp[comp][index],
                                                                    array_comp[comp][index_beze],
                                                                    array_comp[comp][index_VID],
@@ -1101,8 +1117,16 @@ def boms_pnleoni():
                             array_out_temp = []
                             for vercomp in range(len(array_comp[0])):
                                 for vermodule in range(len(array_module)):
-                                    if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                    if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_comp[0][vercomp],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_comp[0][vercomp] = array_module[vermodule][2]
+                            # eliminare fuse text in plus
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -1162,8 +1186,16 @@ def boms_pnleoni():
                             elif array_incarcat[i][0] == "1":
                                 for vercomp in range(len(array_comp[0])):
                                     for vermodule in range(len(array_module)):
-                                        if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                        if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_comp[0][vercomp],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_comp[0][vercomp] = array_module[vermodule][2]
+                                # eliminare fuse text in plus
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')
@@ -1246,7 +1278,6 @@ def boms_cumulat():
                      "Kurzname", "xy", "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe",
                      "E-Komponente", "E-Komponente Part-Nr.", "Einh.", "Platforma"]]
     dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
-    start = time.time()
     file_counter = 0
     file_progres = 0
     for file_all in os.listdir(dir_BOM):
@@ -1285,7 +1316,6 @@ def boms_cumulat():
                         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
                         return
                     nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
-
                     array_module = []
                     array_comp = []
                     for i in range(1, len(array_incarcat)):
@@ -1294,8 +1324,16 @@ def boms_cumulat():
                             array_out_temp = []
                             for vercomp in range(len(array_comp[0])):
                                 for vermodule in range(len(array_module)):
-                                    if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                    if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                            array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                            fnmatch.fnmatch(array_comp[0][vercomp],
+                                                            "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_comp[0][vercomp] = array_module[vermodule][2]
+                            # eliminare fuse text in plus
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -1326,7 +1364,7 @@ def boms_cumulat():
                             index_einh = array_comp[0].index('Einh.')
                             for comp in range(1, len(array_comp)):
                                 for index in range(index_einh + 1, last_position):
-                                    if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                    if array_comp[comp][index] != "-":
                                         array_out_temp.append([array_comp[0][index], array_comp[comp][index],
                                                                array_comp[comp][index_beze],
                                                                array_comp[comp][index_VID],
@@ -1355,8 +1393,16 @@ def boms_cumulat():
                             elif array_incarcat[i][0] == "1":
                                 for vercomp in range(len(array_comp[0])):
                                     for vermodule in range(len(array_module)):
-                                        if array_module[vermodule][1] in array_comp[0][vercomp]:
+                                        if array_comp[0][vercomp] == array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "Length  " + array_module[vermodule][1] or \
+                                                array_comp[0][vercomp] == "LÃ¤nge  " + array_module[vermodule][1] or \
+                                                fnmatch.fnmatch(array_comp[0][vercomp],
+                                                                "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_comp[0][vercomp] = array_module[vermodule][2]
+                                # eliminare
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')
@@ -1386,10 +1432,9 @@ def boms_cumulat():
                                 except ValueError:
                                     index_ekomppn = index_VID
                                 index_einh = array_comp[0].index('Einh.')
-
                                 for comp in range(1, len(array_comp)):
                                     for index in range(index_einh + 1, last_position):
-                                        if array_comp[comp][index] != "0" and array_comp[comp][index] != "-":
+                                        if array_comp[comp][index] != "-":
                                             array_out_temp.append([array_comp[0][index], array_comp[comp][index],
                                                                    array_comp[comp][index_beze],
                                                                    array_comp[comp][index_VID],
@@ -1409,11 +1454,13 @@ def boms_cumulat():
                                 array_module = []
                                 array_comp = []
                                 array_output.extend(array_out_temp)
+    statuslabel["text"] = "Printing EXCEL file . . . "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
     prn_excel_boomcumulat(array_output)
-    end = time.time()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
     pbar.destroy()
     pbargui.destroy()
+
     return None
 
 
@@ -1494,7 +1541,6 @@ def wires_cumulat():
                             array_wires.append(array_incarcat[i])
                             for verwires in range(len(array_wires[0])):
                                 for vermodule in range(len(array_module)):
-
                                     if array_wires[0][verwires] == array_module[vermodule][1] or \
                                             array_wires[0][verwires] == "Length  " + array_module[vermodule][1] or \
                                             array_wires[0][verwires] == "LÃ¤nge  " + array_module[vermodule][1] or \
@@ -1614,7 +1660,9 @@ def wires_cumulat():
                                 array_module = []
                                 array_wires = []
                                 array_output.extend(array_out_temp)
-
+    statuslabel["text"] = "Printing EXCEL file . . . "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
     prn_excel_wirelistsallinone(array_output)
     pbar.destroy()
     pbargui.destroy()
