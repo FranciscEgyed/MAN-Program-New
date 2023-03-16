@@ -7,6 +7,7 @@ from openpyxl import load_workbook
 from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk, \
     prn_excel_infoindiagrame
 import pandas as pd
+import datetime
 
 
 def comparatiediagrame():
@@ -278,6 +279,66 @@ def extragere_informatii_diagrame():
                         array_informatii.append([file_all, cell1.value, row, col])
     array_informatii.insert(0, ["Nume Diagrama", "Text celula", "Rand", "Coloana"])
     prn_excel_infoindiagrame(array_informatii)
+    pbar.destroy()
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+
+
+def diagrameinkskfolder():
+    pbargui = Tk()
+    pbargui.title("Lista diagrame in KSK")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    dir_files = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
+    start = time.time()
+    file_counter = 0
+    file_progres = 0
+    array_output = []
+    array_output_total = []
+    for file_all in os.listdir(dir_files):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    for file_all in os.listdir(dir_files):
+        if file_all.endswith(".csv"):
+            file_progres = file_progres + 1
+            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            with open(dir_files + "/" + file_all, newline='') as csvfile:
+                array_module_file = list(csv.reader(csvfile, delimiter=';'))
+            if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
+                return
+            file_name = array_module_file[2][0]
+            moduleinksk = [row[1] for row in array_module_file]
+            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='') as csvfile:
+                array_diagrame = list(csv.reader(csvfile, delimiter=';'))
+            array_diagrame[0].append("Nota")
+            for i in range(1, len(array_diagrame)):
+                counter = 0
+                for x in range(len(moduleinksk)):
+                    if moduleinksk[x] in array_diagrame[i]:
+                        counter += 1
+                array_diagrame[i].append(counter)
+            dfdiagrame = pd.DataFrame(array_diagrame)
+            dfdiagrame.columns = dfdiagrame.iloc[0]
+            dfdiagrame = dfdiagrame[1:]
+            df_max = dfdiagrame.groupby('Diagrama', as_index=False)['Nota'].max()
+            array_output_temp = df_max.values.tolist()
+            for i in range(len(array_output_temp)):
+                if array_output_temp[i][1] != 0:
+                    array_output.append(array_output_temp[i])
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            prn_excel_diagrameinksk(array_output, file_name)
+            for x in range(len(array_output)):
+                array_output_total.append(array_output[0])
+    save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
+    prn_excel_diagrameinksk(array_output_total, save_time + " - " + str(file_counter))
     pbar.destroy()
     pbargui.destroy()
     end = time.time()

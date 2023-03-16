@@ -628,10 +628,16 @@ def boms():
                                             fnmatch.fnmatch(array_comp[0][vercomp],
                                                             "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                         array_comp[0][vercomp] = array_module[vermodule][2]
-                            # eliminare
+                            # eliminare fuse text in plus
                             for q in range(len(array_comp)):
                                 if "Colour" in array_comp[q][4]:
                                     array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][6]:
+                                    array_comp[q].pop(6)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -697,10 +703,16 @@ def boms():
                                                 fnmatch.fnmatch(array_comp[0][vercomp],
                                                                 "LÃ¤nge  " + array_module[vermodule][1] + " (KSW*"):
                                             array_comp[0][vercomp] = array_module[vermodule][2]
-                                # eliminare
+                                # eliminare fuse text in plus
                                 for q in range(len(array_comp)):
                                     if "Colour" in array_comp[q][4]:
                                         array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][6]:
+                                        array_comp[q].pop(6)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')
@@ -1127,6 +1139,12 @@ def boms_pnleoni():
                             for q in range(len(array_comp)):
                                 if "Colour" in array_comp[q][4]:
                                     array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][6]:
+                                    array_comp[q].pop(6)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -1196,6 +1214,12 @@ def boms_pnleoni():
                                 for q in range(len(array_comp)):
                                     if "Colour" in array_comp[q][4]:
                                         array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][6]:
+                                        array_comp[q].pop(6)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')
@@ -1334,6 +1358,12 @@ def boms_cumulat():
                             for q in range(len(array_comp)):
                                 if "Colour" in array_comp[q][4]:
                                     array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][4]:
+                                    array_comp[q].pop(4)
+                            for q in range(len(array_comp)):
+                                if "Colour" in array_comp[q][6]:
+                                    array_comp[q].pop(6)
                             last_position = len(array_comp[0])
                             index_beze = array_comp[0].index('Bezeichnung')
                             index_VID = array_comp[0].index('VOBES-ID')
@@ -1403,6 +1433,12 @@ def boms_cumulat():
                                 for q in range(len(array_comp)):
                                     if "Colour" in array_comp[q][4]:
                                         array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][4]:
+                                        array_comp[q].pop(4)
+                                for q in range(len(array_comp)):
+                                    if "Colour" in array_comp[q][6]:
+                                        array_comp[q].pop(6)
                                 array_out_temp = []
                                 last_position = len(array_comp[0])
                                 index_beze = array_comp[0].index('Bezeichnung')

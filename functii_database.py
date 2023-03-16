@@ -171,6 +171,46 @@ def databasecontent():
                 wr.writerows(arraywrite)
         messagebox.showinfo('Finalizat!')
 
+    def exportlist():
+        exportlist = []
+        file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
+                                               title="Incarcati fisierul lista de KSK-uri:")
+        wb = load_workbook(file_load)
+        ws1 = wb.active
+        for row in ws1['A']:
+            if row.value is not None:
+                exportlist.append(ws1.cell(row=row.row, column=1).value)
+        for ksk in exportlist:
+            exp = df.loc[df['KSKNo'] == ksk]
+            moduleksk = list(exp.iloc[0, 9].split(";"))
+            trailerno = exp.iloc[0, 7]
+            data = exp.iloc[0, 4]
+
+            for item in moduleksk:
+                if item in array_sortare_module[0]:
+                    tip = "8000"
+                    break
+                elif item in array_sortare_module[1]:
+                    tip = "8011"
+                    break
+                elif item in array_sortare_module[2]:
+                    tip = "8023"
+                    break
+                else:
+                    tip = "Necunoscut"
+            arraywrite = [['Harness', 'Module', 'Side', 'Quantity', tip, "Date", "Time", "Trailer No"]]
+            for module in moduleksk:
+                for i in range(len(array_module_active)):
+                    if array_module_active[i][0] == module and "LHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYL", 1, "PC", data, data, trailerno])
+                    elif array_module_active[i][0] == module and "RHD" in array_module_active[i][3]:
+                        arraywrite.append([ksk, module, "BODYR", 1, "PC", data, data, trailerno])
+            with open(os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/" + ksk + ".csv", 'w', newline='',
+                      encoding='utf-8') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+                wr.writerows(arraywrite)
+        messagebox.showinfo('Finalizat!')
+
     ws = Tk()
     ws.title("2022 MAN KSK Light reports")
     ws.geometry("+570+50")
@@ -201,6 +241,9 @@ def databasecontent():
     bexp.grid(row=4, column=3)
     bexpall = Button(ws, text="Export All", command=exportall)
     bexpall.grid(row=5, column=3)
+    bexplist = Button(ws, text="Export List", command=exportlist)
+    bexplist.grid(row=6, column=3)
+
     datalivrare_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     datajit_lb = Listbox(ws, exportselection=0, selectmode="multiple")
     ksk_lb = Listbox(ws, exportselection=0, selectmode="multiple")

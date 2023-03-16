@@ -129,6 +129,8 @@ submenucascade.add_command(label="Asociere diagrame cu module din matrix",
                            command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
 submenucascade.add_command(label="Extragere diagrame pentru KSK",
                            command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
+submenucascade.add_command(label="Extragere diagrame pentru KSK din folder",
+                           command=lambda: [statusbusy(), diagrameinkskfolder(), statusidle()])
 submenucascade.add_command(label="Extragere informatii din diagrame",
                            command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
 
