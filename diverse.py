@@ -252,7 +252,7 @@ def istsoll(sheet, sheet2):
                             if dateheck[0] == float(listainlocuitori[q][11]) and dateheck[1] == float(
                                     listainlocuitori[q][12]) and dateheck[2] == float(listainlocuitori[q][13]) and \
                                     dateheck[3] == float(listainlocuitori[q][14]) and dateheck[4] == float(
-                                listainlocuitori[q][15]):
+                                    listainlocuitori[q][15]):
                                 inlocuitori.append(
                                     ["SOLL", listainlocuitori[q][0], listainlocuitori[q][10], listainlocuitori[q][1],
                                      listainlocuitori[q][9], "RIGHT", listainlocuitori[q][11], listainlocuitori[q][12],
@@ -289,7 +289,7 @@ def istsoll(sheet, sheet2):
                             if dateheck2[0] == float(listainlocuitori[q][11]) and dateheck2[1] == float(
                                     listainlocuitori[q][12]) and dateheck2[2] == float(listainlocuitori[q][13]) and \
                                     dateheck2[3] == float(listainlocuitori[q][14]) and dateheck2[4] == float(
-                                listainlocuitori[q][15]):
+                                    listainlocuitori[q][15]):
                                 inlocuitori.append(
                                     ["SOLL", listainlocuitori[q][0], listainlocuitori[q][10], listainlocuitori[q][1],
                                      listainlocuitori[q][9], "LEFT", listainlocuitori[q][11], listainlocuitori[q][12],
@@ -479,16 +479,12 @@ def databesemerge():
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", final_result)
         conn.commit()
         conn.close()
+        cursor2.execute('DELETE FROM KSKDatabase;', )
+        conn2.commit()
+        conn2.close()
+
     except sqlite3.OperationalError:
         # messagebox.showerror("Database Error", "Online database unreachable, using local database")
-        return None
-
-
-def databasecopy():
-    try:
-        shutil.copy2("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db",
-                     os.path.abspath(os.curdir) + "/MAN/Input/Others/")
-    except FileNotFoundError:
         return None
 
 

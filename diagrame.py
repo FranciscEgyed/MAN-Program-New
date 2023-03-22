@@ -5,7 +5,7 @@ import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
 from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk, \
-    prn_excel_infoindiagrame
+    prn_excel_infoindiagrame, prn_excel_diagrameinksk_total
 import pandas as pd
 import datetime
 
@@ -293,17 +293,18 @@ def diagrameinkskfolder():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    dir_files = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
+    dir_files = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
+                                        title="Selectati directorul cu fisiere:")
     start = time.time()
     file_counter = 0
     file_progres = 0
-    array_output = []
     array_output_total = []
     for file_all in os.listdir(dir_files):
         if file_all.endswith(".csv"):
             file_counter = file_counter + 1
     for file_all in os.listdir(dir_files):
         if file_all.endswith(".csv"):
+            array_output = []
             file_progres = file_progres + 1
             statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
             pbar['value'] += 2
@@ -336,9 +337,9 @@ def diagrameinkskfolder():
             pbargui.update_idletasks()
             prn_excel_diagrameinksk(array_output, file_name)
             for x in range(len(array_output)):
-                array_output_total.append(array_output[0])
+                array_output_total.append(array_output[x][0])
     save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
-    prn_excel_diagrameinksk(array_output_total, save_time + " - " + str(file_counter))
+    prn_excel_diagrameinksk_total(array_output_total, save_time + " - " + str(file_counter))
     pbar.destroy()
     pbargui.destroy()
     end = time.time()

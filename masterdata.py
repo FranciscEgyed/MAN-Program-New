@@ -3,7 +3,7 @@ import os
 from tkinter import filedialog, messagebox
 
 
-def inlocuire():
+def inlocuire_masterdata():
     indexro = ""
     array_ete_prelucrat = []
     path = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
@@ -12,6 +12,7 @@ def inlocuire():
                                        title="Selectati directorul pentru salvare:")
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/ETE.txt", newline='') as csvfile:
         array_ete = list(csv.reader(csvfile, delimiter=';'))
+
     for i in range(len(array_ete[0])):
         array_ete_prelucrat.append([array_ete[0][i][0:10], array_ete[0][i][-1]])
     i = 0

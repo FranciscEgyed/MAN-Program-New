@@ -493,7 +493,7 @@ def cmcsrnew():
                                                 array_sortare[i][idx_aem3]])
                             pbar['value'] += 2
                             pbargui.update_idletasks()
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                        elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] in listatwist:
                             array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i + 4][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
@@ -511,13 +511,13 @@ def cmcsrnew():
                                                 array_sortare[i][idx_apab4], array_sortare[i][idx_apab5],
                                                 array_sortare[i][idx_aem1], array_sortare[i][idx_aem2],
                                                 array_sortare[i][idx_aem3]])
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                        elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] not in listatwist:
                             array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
-                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIRCOMP",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
@@ -575,7 +575,7 @@ def cmcslnew():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    listatwist = ["131_002", "131_102", "131_102", "grau_047"]
+    listatwist = ["131_002", "131_102", "grau_047"]
     fisier_cm = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                            title="Incarcati fisierul control matrix:")
     array_print = [["Module ID+REAL NAME", "KANBAN-AG", "REAL NAME", "Kanban name", "Module ID", "Ledset",
@@ -701,7 +701,7 @@ def cmcslnew():
                                                 array_sortare[i][idx_aem2], array_sortare[i][idx_aem3]])
                             pbar['value'] += 2
                             pbargui.update_idletasks()
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                        elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] in listatwist:
                             array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i + 4][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
@@ -720,13 +720,13 @@ def cmcslnew():
                                                 array_sortare[i][idx_aem2], array_sortare[i][idx_aem3]])
                             pbar['value'] += 2
                             pbargui.update_idletasks()
-                        elif array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s" \
+                        elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] not in listatwist:
                             array_print.append([array_sortare[1][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_knname].upper(), array_sortare[1][idx_module[x]],
-                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
+                                                array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIRCOMP",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
                                                 array_sortare[i][idx_pin[1]], array_sortare[i][idx_splice],
