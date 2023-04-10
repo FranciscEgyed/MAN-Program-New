@@ -1021,7 +1021,7 @@ def prn_excel_asocierediagramemodule(sheet1):
     wb = Workbook()
     ws1 = wb.active
 
-    ws1.title = "Acociere"
+    ws1.title = "Indexare"
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
             try:
@@ -1029,7 +1029,7 @@ def prn_excel_asocierediagramemodule(sheet1):
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Asociere diagrame cu module din matrix.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Indexare Diagrame Matrix Module.xlsx")
         log_file("Creat Asociere diagrame cu module din matrix.xlsx")
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat Asociere diagrame cu module din matrix.xlsx")

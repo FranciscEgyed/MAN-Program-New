@@ -30,6 +30,12 @@ def cutting_ksklight():
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='',
                   encoding="utf8") as csvfile:
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLML.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLMR.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
     except FileNotFoundError:
         pbar.destroy()
         pbargui.destroy()

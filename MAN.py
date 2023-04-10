@@ -41,12 +41,12 @@ menu1.grid(row=0, column=0)
 submenu1 = tk.Menu(menu1, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu1.add_command(label="Incarcare Fisier Sursa", command=lambda: [statusbusy(), load_source(), statusidle()])
 submenu1.add_separator()
-submenu1.add_command(label="Control Matrix CSR", command=lambda: [statusbusy(), cmcsrnew(), statusidle()])
-submenu1.add_command(label="Control Matrix CSL", command=lambda: [statusbusy(), cmcslnew(), statusidle()])
-submenu1.add_command(label="Control Matrix TGLM L", command=lambda: [statusbusy(), cmtglmlnew(), statusidle()])
-submenu1.add_command(label="Control Matrix TGLM R", command=lambda: [statusbusy(), cmtglmrnew(), statusidle()])
-submenu1.add_command(label="Control Matrix 4AXEL L(8025)", command=lambda: [statusbusy(), cm4axellnew(), statusidle()])
-submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [statusbusy(), cm4axelrnew(), statusidle()])
+submenu1.add_command(label="Control Matrix CSR(8012)", command=lambda: [statusbusy(), cmcsrnew(), statusidle()])
+submenu1.add_command(label="Control Matrix CSL(8011)", command=lambda: [statusbusy(), cmcslnew(), statusidle()])
+submenu1.add_command(label="Control Matrix TGLM L(8023)", command=lambda: [statusbusy(), cmtglml(), statusidle()])
+submenu1.add_command(label="Control Matrix TGLM R(8024)", command=lambda: [statusbusy(), cmtglmr(), statusidle()])
+submenu1.add_command(label="Control Matrix 4AXEL L(8025)", command=lambda: [statusbusy(), cm4axell(), statusidle()])
+submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [statusbusy(), cm4axelr(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
@@ -127,6 +127,8 @@ submenucascade.add_command(label="Comparatie diagrame", command=lambda: [statusb
                                                                          comparatiediagrame(), statusidle()])
 submenucascade.add_command(label="Asociere diagrame cu module din matrix",
                            command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
+submenucascade.add_command(label="Indexare diagrame dupa matrix",
+                           command=lambda: [statusbusy(), indexarediagrame(), statusidle()])
 submenucascade.add_command(label="Extragere diagrame pentru KSK",
                            command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
 submenucascade.add_command(label="Extragere diagrame pentru KSK din folder",
@@ -137,7 +139,6 @@ submenucascade.add_command(label="Extragere informatii din diagrame",
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(),
                                                                          segment_test(), statusidle()])
-
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")
