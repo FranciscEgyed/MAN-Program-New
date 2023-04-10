@@ -32,10 +32,16 @@ def cutting_ksklight():
             control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLML.txt", newline='',
                   encoding="utf8") as csvfile:
-            control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
+            control_matrix_tgl = list(csv.reader(csvfile, delimiter=';'))
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLMR.txt", newline='',
                   encoding="utf8") as csvfile:
-            control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
+            control_matrix_tgr = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXELL.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_4al = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXELR.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_4ar = list(csv.reader(csvfile, delimiter=';'))
     except FileNotFoundError:
         pbar.destroy()
         pbargui.destroy()
@@ -51,6 +57,26 @@ def cutting_ksklight():
     pbargui.update_idletasks()
     for i in range(len(control_matrix_csr)):
         if control_matrix_csr[i][1] != "":
+            control_matrix.append(control_matrix_csr[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_tgl)):
+        if control_matrix_tgl[i][1] != "":
+            control_matrix.append(control_matrix_csl[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_tgr)):
+        if control_matrix_tgr[i][1] != "":
+            control_matrix.append(control_matrix_csr[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_4al)):
+        if control_matrix_4al[i][1] != "":
+            control_matrix.append(control_matrix_csl[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_4ar)):
+        if control_matrix_4ar[i][1] != "":
             control_matrix.append(control_matrix_csr[i])
     pbar['value'] += 2
     pbargui.update_idletasks()
