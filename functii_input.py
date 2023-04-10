@@ -1242,7 +1242,7 @@ def cm4axell():
                     idx_conector.append(i)
                 elif 'Cavity' in j:
                     idx_pin.append(i)
-                elif j == 'W_M_I':
+                elif 'KANBAN ' in j:
                     idx_knname = i
                 elif j == 'WireNo':
                     idx_realname = i
@@ -1441,7 +1441,6 @@ def cm4axelr():
     idx_aem1 = 3
     idx_aem2 = 3
     idx_aem3 = 3
-
     if fisier_cm[-3:] == "csv":
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
@@ -1451,7 +1450,7 @@ def cm4axelr():
                     idx_conector.append(i)
                 elif 'Cavity' in j:
                     idx_pin.append(i)
-                elif j == 'W_M_I':
+                elif 'KANBAN ' in j:
                     idx_knname = i
                 elif j == 'WireNo':
                     idx_realname = i

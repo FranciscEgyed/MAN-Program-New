@@ -62,22 +62,22 @@ def cutting_ksklight():
     pbargui.update_idletasks()
     for i in range(len(control_matrix_tgl)):
         if control_matrix_tgl[i][1] != "":
-            control_matrix.append(control_matrix_csl[i])
+            control_matrix.append(control_matrix_tgl[i])
     pbar['value'] += 2
     pbargui.update_idletasks()
     for i in range(len(control_matrix_tgr)):
         if control_matrix_tgr[i][1] != "":
-            control_matrix.append(control_matrix_csr[i])
+            control_matrix.append(control_matrix_tgr[i])
     pbar['value'] += 2
     pbargui.update_idletasks()
     for i in range(len(control_matrix_4al)):
         if control_matrix_4al[i][1] != "":
-            control_matrix.append(control_matrix_csl[i])
+            control_matrix.append(control_matrix_4al[i])
     pbar['value'] += 2
     pbargui.update_idletasks()
     for i in range(len(control_matrix_4ar)):
         if control_matrix_4ar[i][1] != "":
-            control_matrix.append(control_matrix_csr[i])
+            control_matrix.append(control_matrix_4ar[i])
     pbar['value'] += 2
     pbargui.update_idletasks()
 
@@ -95,6 +95,18 @@ def cutting_ksklight():
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8014.Wirelist.csv",
                   newline='') as csvfile:
             array_wires_8014 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8023.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8023 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8024.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8024 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8025.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8025 = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/8026.Wirelist.csv",
+                  newline='') as csvfile:
+            array_wires_8026 = list(csv.reader(csvfile, delimiter=';'))
     except:
         pbar.destroy()
         pbargui.destroy()
@@ -104,6 +116,10 @@ def cutting_ksklight():
     array_wires_all.extend(array_wires_8013)
     array_wires_all.extend(array_wires_8012)
     array_wires_all.extend(array_wires_8014)
+    array_wires_all.extend(array_wires_8023)
+    array_wires_all.extend(array_wires_8024)
+    array_wires_all.extend(array_wires_8025)
+    array_wires_all.extend(array_wires_8026)
 
     lista_cutting = [["CC", "KSK No", "Module ID", "Wire No.", "LTG PMD", "Color", "Cross Sec", "Conector 1", "Pin 1",
                       "Conector 2", "Pin 2", "Sonderltg", "Length", "KANBAN-AG", "REAL NAME", "Ledset"]]
