@@ -708,3 +708,125 @@ def indexarediagrame():
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
+
+
+def crearematrixmodule():
+    pbargui = Tk()
+    pbargui.title("Matrix module complet")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    array_output = ["Drawing", "Place", "PB", "Group", "Module ID", "Name Normal", "Name ADR", "Conector", "Wire Print",
+                    "Wire Number", "XCode1", "Cavity1", "XCode2", "Cavity2", "All Supersleeve", "Module ID ADR",
+                    "Module ID NonADR", "Module 1",	"Module 2",	"Module 3",	"Module 4",	"Module 5",	"Module 6",
+                    "Module 7", "Module 8", "MY23 Module 1", "MY23 Module 2", "MY23 Module 3", "MY23 Module 4",
+                    "MY23 Module 5", "MY23 Module 6", "MY23 Module 7", "MY23 Module 8"]
+
+    place_index = 0
+    pb_index = 0
+    group_index = 0
+    modid_index = 0
+    normal_index = 0
+    adr_index = 0
+    con_index = 0
+    wirep_index = 0
+    wiren_index = 0
+    Xcode1_index = 0
+    cavity1_index = 0
+    xcode2_index = 0
+    cavity2_index = 0
+    allss_index = 0
+    modidadr_index = 0
+    modidnonadr_index = 0
+    module1 = 0
+    module2 = 0
+    module3 = 0
+    module4 = 0
+    module5 = 0
+    module6 = 0
+    module7 = 0
+    module8 = 0
+    my23module1 = 0
+    my23module2 = 0
+    my23module3 = 0
+    my23module4 = 0
+    my23module5 = 0
+    my23module6 = 0
+    my23module7 = 0
+    my23module8 = 0
+    dir_matrix = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir) + '/MAN',
+                                         title="Selectati directorul cu fisiere Matrix Module:")
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_matrix):
+        if file_all.endswith(".xlsm"):
+            file_counter = file_counter + 1
+    if file_counter == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
+        return None
+    for file_all in os.listdir(dir_matrix):
+        try:
+            if file_all.endswith(".xlsm"):
+                array_output_temp = []
+                wb = load_workbook(dir_matrix + "/" + file_all)
+                ws = wb.active
+                for row in ws.iter_rows():
+                    array_temp = []
+                    for cell in row:
+                        array_temp.append(cell.value)
+                    array_output_temp.append(array_temp)
+                for i in range(len(array_output_temp)):
+                    if array_output_temp[i][0] == "№":
+                        for x, y in enumerate(array_output_temp[i]):
+                            if y == 'Місце' or y == 'Place':
+                                place_index = x
+                            elif y == '№ПБ/Ст.' or y == 'PB':
+                                pb_index = x
+                            elif y == 'GROUP' or y == 'Group':
+                                group_index = x
+                            elif y == 'Назва модуля':
+                                modid_index = x
+                            elif y == 'Name_Norm' or y == 'NAME_norm' or y == 'Name':
+                                normal_index = x
+                            elif y == 'Name_ADR' or y == 'NAME_AD':
+                                adr_index = x
+                            elif y == "Роз"єм":
+                                con_index = x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        print(place_index, pb_index, group_index, adr_index, con_index)
+                        break
+
+
+
+
+
+
+
+
+        except PermissionError:
+            messagebox.showerror('Eroare scriere', "Fisierul " + file_all + "este read-only!")
+            quit()
+
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', 'Prelucrate  fisiere.')

@@ -125,16 +125,18 @@ submenu7.add_separator()
 submenu7.add_cascade(label="Diagrame . . . ", menu=submenucascade)
 submenucascade.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(),
                                                                          comparatiediagrame(), statusidle()])
-submenucascade.add_command(label="Asociere diagrame cu module din matrix",
-                           command=lambda: [statusbusy(), asocierediagramemodule(), statusidle()])
+submenucascade.add_command(label="Extragere informatii din diagrame",
+                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
+submenucascade.add_separator()
+submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
+                           command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
 submenucascade.add_command(label="Indexare diagrame dupa matrix",
                            command=lambda: [statusbusy(), indexarediagrame(), statusidle()])
 submenucascade.add_command(label="Extragere diagrame pentru KSK",
                            command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
 submenucascade.add_command(label="Extragere diagrame pentru KSK din folder",
                            command=lambda: [statusbusy(), diagrameinkskfolder(), statusidle()])
-submenucascade.add_command(label="Extragere informatii din diagrame",
-                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
+
 
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(),

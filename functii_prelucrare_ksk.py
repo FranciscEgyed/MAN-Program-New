@@ -747,6 +747,7 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
 
+
 # BOM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 def prelucrare_individuala_bom():
     try:
