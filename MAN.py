@@ -118,7 +118,7 @@ submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Generare cod QR",
-                           command=lambda: [statusbusy(), eticheteqr(), statusidle()])
+                     command=lambda: [statusbusy(), eticheteqr(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
@@ -137,7 +137,6 @@ submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
 submenucascade.add_command(label="Basic Module",
                            command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
 
-
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
 menu7.configure(menu=submenu7)
@@ -145,19 +144,19 @@ menu7.configure(menu=submenu7)
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")
 menu8.grid(row=0, column=6)
 submenu8 = tk.Menu(menu8, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
-submenu8.add_command(label="Extragere KSK din database", command=lambda: [statusbusy(), databasecontent(), statusidle()])
+submenu8.add_command(label="Extragere KSK din database",
+                     command=lambda: [statusbusy(), databasecontent(), statusidle()])
 submenu8.add_separator()
 submenu8.add_command(label="Incarcare stock pentru comparatie", command=stockcompa)
 submenu8.add_separator()
-submenu8.add_command(label="Extragere database completa", command=lambda: [statusbusy(), exportdatabase(), statusidle()])
+submenu8.add_command(label="Extragere database completa",
+                     command=lambda: [statusbusy(), exportdatabase(), statusidle()])
 submenu8.add_separator()
 submenu8.add_command(label="Stergere inregistrari din database",
                      command=lambda: [statusbusy(), database_delete_record(), statusidle()], background="red")
 submenu8.add_separator()
 menu8.configure(menu=submenu8)
-
 menu_frame.grid(row=0, column=0)
-
 container.grid(row=1, column=0)
 label.grid(row=2, column=0)
 statuslabel.grid(row=12, column=0)
@@ -166,3 +165,10 @@ structura_directoare()
 file_checker()
 databesemerge()
 root.mainloop()
+
+# This is a Python script that imports several modules and creates a GUI using the tkinter library.
+# The GUI consists of a window with a title, an icon, and a size of 600x450 pixels. It contains a frame with an image,
+# a menu bar with three drop-down menus (Fisiere Sursa, Fisiere Input, and Prelucrare KSK), and a status label.
+# Each drop-down menu contains several options that can be clicked to perform different functions related to the
+# corresponding category. The script also defines two functions, "statusbusy()" and "statusidle()", which update the
+# text of the status label to indicate whether the program is working on a task or has finished.

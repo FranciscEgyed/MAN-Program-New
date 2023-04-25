@@ -73,7 +73,6 @@ def prelucrare_wirelist_faza1(array_prelucrare):
             arr_module_file[y].append("Not OK")
 
     for i in range(1, len(arr_module_file)):
-        # if not arr_module_file[i][5] in lista_module_extragere and arr_module_file[i][5] != "XXXX":
         if arr_module_file[i][5] != "XXXX":
             lista_module_extrageret.append(arr_module_file[i][5])
     lista_module_extrageret = Counter(lista_module_extrageret).most_common(2)

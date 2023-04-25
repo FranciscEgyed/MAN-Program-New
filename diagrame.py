@@ -62,7 +62,13 @@ def comparatiediagrame():
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
+# this code defines a function called "comparatiediagrame" that creates a GUI window using the tkinter library.
+# Within the GUI, the function prompts the user to select two directories containing Excel files, and then compares
+# the cells of each Excel file in the two directories to see if they have the same values. If a difference is found,
+# the function logs the file name, the old and new cell values, and the row and column where the difference occurred.
+# The function then calls another function called "prn_excel_diagrame" and passes in the logged data. Finally, the GUI
+# window is destroyed and a message box appears to inform the user that the operation is completed, along with the time
+# it took to complete the operation.
 
 def extragere_informatii_diagrame():
     pbargui = Tk()
@@ -104,7 +110,16 @@ def extragere_informatii_diagrame():
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
+# This is a Python script that extracts information from Excel charts. It allows the user to select a directory
+# containing Excel chart files, and then extracts the text from each cell of each chart, along with the row and
+# column numbers.
+# The script uses the tkinter library to create a simple GUI with a progress bar and a status label. It then uses the
+# os library to iterate over all files in the selected directory, and the openpyxl library to load each Excel file and
+# access its worksheets and cells.
+# The extracted information is stored in a two-dimensional array called array_informatii, which is then written to an
+# Excel file using the prn_excel_infoindiagrame function.
+# The script is well-documented and easy to follow. Overall, it provides a useful tool for quickly extracting
+# information from Excel charts.
 
 def asocierediagramemodule():
     pbargui = Tk()
