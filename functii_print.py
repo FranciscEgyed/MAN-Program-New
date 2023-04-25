@@ -1093,3 +1093,41 @@ def prn_excel_infoindiagrame(sheet1):
         return None
 
 
+def prn_excel_matrixmodule(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+
+    ws1.title = "Matrix"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Matrix Module.xlsx")
+        log_file("Creat Matrix Module.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Matrix Module.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Matrix Module.xlsx este read-only!")
+        return None
+
+
+def prn_excel_bmmodule(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+
+    ws1.title = "Basic"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Basic Module.xlsx")
+        log_file("Creat Basic Module.xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat Basic Module.xlsx")
+        messagebox.showerror('Eroare scriere', "Fisierul Basic Module.xlsx este read-only!")
+        return None

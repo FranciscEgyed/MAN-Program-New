@@ -151,7 +151,7 @@ def sortare_jit():
         harnesstype = []
         for m in range(len(array_temporar_module)):
             for n in range(len(array_module_active)):
-                if array_temporar_module[m] == array_module_active[n][0] and array_module_active[n][3] != "XXXX":
+                if array_temporar_module[m] == array_module_active[n][0]:
                     harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
         harnesstype = list(set(harnesstype))
         # Check ss type
@@ -174,6 +174,9 @@ def sortare_jit():
         cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
                           (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
                           DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
+        cursor.execute("""CREATE TABLE IF NOT EXISTS KSKStocks
+                                  (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                                  DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
         # insert multiple records using the more secure "?" method
         cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
         conn.commit()
@@ -347,8 +350,7 @@ def sortare_jit_dir():
                 harnesstype = []
                 for m in range(len(array_temporar_module)):
                     for n in range(len(array_module_active)):
-                        if array_temporar_module[m] == array_module_active[n][0] and \
-                                array_module_active[n][3] != "XXXX":
+                        if array_temporar_module[m] == array_module_active[n][0]:
                             harnesstype.append(array_module_active[n][3].replace(' LHD', '').replace(' RHD', ''))
                 harnesstype = list(set(harnesstype))
                 # Check ss type
@@ -365,11 +367,13 @@ def sortare_jit_dir():
                 array_database.append([primarykey, os.path.basename(fisier_calloff), ';'.join(harnesstype), is_light,
                                        array_temporar[1][8], data_download, element[1:], array_temporar[1][7], sstype,
                                        ';'.join(array_temporar_module)])
-
                 # create a table
                 cursor.execute("""CREATE TABLE IF NOT EXISTS KSKDatabase
                                   (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
                                   DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
+                cursor.execute("""CREATE TABLE IF NOT EXISTS KSKStocks
+                                          (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                                          DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
                 # insert multiple records using the more secure "?" method
                 cursor.executemany("INSERT OR IGNORE INTO KSKDatabase VALUES (?,?,?,?,?,?,?,?,?,?)", array_database)
                 conn.commit()

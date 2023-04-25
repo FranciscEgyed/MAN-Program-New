@@ -3,10 +3,7 @@ import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 from openpyxl import load_workbook
-from functii_print import prn_excel_diagrame, prn_excel_asocierediagramemodule, prn_excel_diagrameinksk, \
-    prn_excel_infoindiagrame, prn_excel_diagrameinksk_total
-import pandas as pd
-import datetime
+from functii_print import prn_excel_diagrame, prn_excel_infoindiagrame, prn_excel_matrixmodule, prn_excel_bmmodule
 
 
 def comparatiediagrame():
@@ -67,60 +64,6 @@ def comparatiediagrame():
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
 
 
-def diagrameinksk():
-    pbargui = Tk()
-    pbargui.title("Lista diagrame in KSK")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
-                                           title="Incarcati fisierul KSK:")
-    start = time.time()
-    array_output = []
-    try:
-        with open(file_load, newline='') as csvfile:
-            array_module_file = list(csv.reader(csvfile, delimiter=';'))
-        if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
-            messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
-            return
-        file_name = array_module_file[2][0]
-        moduleinksk = [row[1] for row in array_module_file]
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='') as csvfile:
-            array_diagrame = list(csv.reader(csvfile, delimiter=';'))
-        array_diagrame[0].append("Nota")
-        statuslabel = Label(pbargui, text="Working . . .")
-        for i in range(1, len(array_diagrame)):
-            counter = 0
-            for x in range(len(moduleinksk)):
-                if moduleinksk[x] in array_diagrame[i]:
-                    counter += 1
-                    pbar['value'] += 2
-                    pbargui.update_idletasks()
-            array_diagrame[i].append(counter)
-        dfdiagrame = pd.DataFrame(array_diagrame)
-        dfdiagrame.columns = dfdiagrame.iloc[0]
-        dfdiagrame = dfdiagrame[1:]
-        df_max = dfdiagrame.groupby('Diagrama', as_index=False)['Nota'].max()
-        array_output_temp = df_max.values.tolist()
-        for i in range(len(array_output_temp)):
-            if array_output_temp[i][1] != 0:
-                array_output.append(array_output_temp[i])
-        statuslabel["text"] = "Printing file . . . "
-        pbar['value'] += 2
-        pbargui.update_idletasks()
-        prn_excel_diagrameinksk(array_output, file_name)
-        pbar.destroy()
-        pbargui.destroy()
-        end = time.time()
-        messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-    except FileNotFoundError:
-        pbar.destroy()
-        pbargui.destroy()
-        return None
-
-
 def extragere_informatii_diagrame():
     pbargui = Tk()
     pbargui.title("Extragere informatii din diagrame")
@@ -157,67 +100,6 @@ def extragere_informatii_diagrame():
                         array_informatii.append([file_all, cell1.value, row, col])
     array_informatii.insert(0, ["Nume Diagrama", "Text celula", "Rand", "Coloana"])
     prn_excel_infoindiagrame(array_informatii)
-    pbar.destroy()
-    pbargui.destroy()
-    end = time.time()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
-
-def diagrameinkskfolder():
-    pbargui = Tk()
-    pbargui.title("Lista diagrame in KSK")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    dir_files = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files",
-                                        title="Selectati directorul cu fisiere:")
-    start = time.time()
-    file_counter = 0
-    file_progres = 0
-    array_output_total = []
-    for file_all in os.listdir(dir_files):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    for file_all in os.listdir(dir_files):
-        if file_all.endswith(".csv"):
-            array_output = []
-            file_progres = file_progres + 1
-            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 2
-            pbargui.update_idletasks()
-            with open(dir_files + "/" + file_all, newline='') as csvfile:
-                array_module_file = list(csv.reader(csvfile, delimiter=';'))
-            if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
-                return
-            file_name = array_module_file[2][0]
-            moduleinksk = [row[1] for row in array_module_file]
-            with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='') as csvfile:
-                array_diagrame = list(csv.reader(csvfile, delimiter=';'))
-            array_diagrame[0].append("Nota")
-            for i in range(1, len(array_diagrame)):
-                counter = 0
-                for x in range(len(moduleinksk)):
-                    if moduleinksk[x] in array_diagrame[i]:
-                        counter += 1
-                array_diagrame[i].append(counter)
-            dfdiagrame = pd.DataFrame(array_diagrame)
-            dfdiagrame.columns = dfdiagrame.iloc[0]
-            dfdiagrame = dfdiagrame[1:]
-            df_max = dfdiagrame.groupby('Diagrama', as_index=False)['Nota'].max()
-            array_output_temp = df_max.values.tolist()
-            for i in range(len(array_output_temp)):
-                if array_output_temp[i][1] != 0:
-                    array_output.append(array_output_temp[i])
-            pbar['value'] += 2
-            pbargui.update_idletasks()
-            prn_excel_diagrameinksk(array_output, file_name)
-            for x in range(len(array_output)):
-                array_output_total.append(array_output[x][0])
-    save_time = datetime.datetime.now().strftime("%d.%m.%Y_%H.%M.%S")
-    prn_excel_diagrameinksk_total(array_output_total, save_time + " - " + str(file_counter))
     pbar.destroy()
     pbargui.destroy()
     end = time.time()
@@ -601,7 +483,8 @@ def asocierediagramemodule():
     statuslabel["text"] = "Printing file . . . "
     pbar['value'] += 2
     pbargui.update_idletasks()
-    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", 'w', newline='', encoding='utf8') as myfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", 'w', newline='',
+              encoding='utf8') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
         wr.writerows(array_output)
     pbar.destroy()
@@ -610,107 +493,8 @@ def asocierediagramemodule():
     messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
 
 
-def indexarediagrame():
-    pbargui = Tk()
-    pbargui.title("Indexare Matrix_Module")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    start = time.time()
-    file_progres = 0
-    array_output = [["Drawing", "Nr Crt", "Nota", "CT", "AEM", "Nota pentru AEM", "Loc", "Nr. PB/Art.", "GROUP",
-                     "Numele modulului", "Nume_Norm", "Nume_ADR", "Conector", "Fir", "KN", "XCode1", "Cavity1",
-                     "XCode2", "Cavity2", "Patrunderea modulului", "adr module",
-                     "ALL_Supersleeve", "Module_ADR", "Module_NonADR", "Module", "Index"]]
-    try:
-        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", newline='', encoding='utf8') as csvfile:
-            matrix = list(csv.reader(csvfile, delimiter=';'))
-    except FileNotFoundError:
-        messagebox.showerror("Missing file", "Fisierul MatrixDiagrame nu exista!")
-        pbar.destroy()
-        pbargui.destroy()
-    statuslabel["text"] = "Loading CSV file . . . "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    for i in range(len(matrix)):
-        if len(matrix[i]) < 38:
-            for x in range(0, 38 - len(matrix[i])):
-                matrix[i].append("")
-                pbar['value'] += 2
-                pbargui.update_idletasks()
-    statuslabel["text"] = "Indexing diagrams . . . "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    file_counter = len(matrix)
-    for i in range(1, len(matrix)):  # len(matrix)
-        file_progres = file_progres + 1
-        statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + "                       "
-        pbar['value'] += 2
-        pbargui.update_idletasks()
-        for x in range(24, 38):
-            modulelist = matrix[i][x].split("/")
-            for module in modulelist:
-                if (x == 22 and matrix[i][x] != "") or (x == 23 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(1)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 24 and matrix[i][x] != "") or (x == 32 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(2)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 25 and matrix[i][x] != "") or (x == 33 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(3)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 26 and matrix[i][x] != "") or (x == 34 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(4)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 27 and matrix[i][x] != "") or (x == 35 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(5)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 28 and matrix[i][x] != "") or (x == 36 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(6)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 29 and matrix[i][x] != "") or (x == 37 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(7)
-                    array_output.append(temp_array)
-                    del temp_array
-                elif (x == 30 and matrix[i][x] != "") or (x == 38 and matrix[i][x] != ""):
-                    temp_array = matrix[i][0:24]
-                    temp_array.append(module)
-                    temp_array.append(8)
-                    array_output.append(temp_array)
-                    del temp_array
-    statuslabel["text"] = "Printing file . . . "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    prn_excel_asocierediagramemodule(array_output)
-    pbar.destroy()
-    pbargui.destroy()
-    end = time.time()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
-
 def crearematrixmodule():
+    global headerrow
     pbargui = Tk()
     pbargui.title("Matrix module complet")
     pbargui.geometry("500x50+50+550")
@@ -718,45 +502,13 @@ def crearematrixmodule():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_output = ["Drawing", "Place", "PB", "Group", "Module ID", "Name Normal", "Name ADR", "Conector", "Wire Print",
-                    "Wire Number", "XCode1", "Cavity1", "XCode2", "Cavity2", "All Supersleeve", "Module ID ADR",
-                    "Module ID NonADR", "Module 1",	"Module 2",	"Module 3",	"Module 4",	"Module 5",	"Module 6",
-                    "Module 7", "Module 8", "MY23 Module 1", "MY23 Module 2", "MY23 Module 3", "MY23 Module 4",
-                    "MY23 Module 5", "MY23 Module 6", "MY23 Module 7", "MY23 Module 8"]
+    array_output = [
+        ["Drawing", "Place", "PB", "Group", "Module ID", "Name Normal", "Name ADR", "Conector", "Wire Print",
+         "Wire Number", "XCode1", "Cavity1", "XCode2", "Cavity2", "All Supersleeve", "Module ID SuperSleeve",
+         "Module ID"]]
+    array_output_basic = [["Basic_Module", "Module", "Index", "Group", ]]
 
-    place_index = 0
-    pb_index = 0
-    group_index = 0
-    modid_index = 0
-    normal_index = 0
-    adr_index = 0
-    con_index = 0
-    wirep_index = 0
-    wiren_index = 0
-    Xcode1_index = 0
-    cavity1_index = 0
-    xcode2_index = 0
-    cavity2_index = 0
-    allss_index = 0
-    modidadr_index = 0
-    modidnonadr_index = 0
-    module1 = 0
-    module2 = 0
-    module3 = 0
-    module4 = 0
-    module5 = 0
-    module6 = 0
-    module7 = 0
-    module8 = 0
-    my23module1 = 0
-    my23module2 = 0
-    my23module3 = 0
-    my23module4 = 0
-    my23module5 = 0
-    my23module6 = 0
-    my23module7 = 0
-    my23module8 = 0
-    dir_matrix = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir) + '/MAN',
+    dir_matrix = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                          title="Selectati directorul cu fisiere Matrix Module:")
     file_counter = 0
     file_progres = 0
@@ -770,9 +522,37 @@ def crearematrixmodule():
         return None
     for file_all in os.listdir(dir_matrix):
         try:
+            statuslabel["text"] = "Loading " + file_all + " . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
             if file_all.endswith(".xlsm"):
+                place_index = 0
+                pb_index = 0
+                group_index = 0
+                modid_index = 0
+                normal_index = 0
+                adr_index = 0
+                con_index = 0
+                wirep_index = 0
+                wiren_index = 0
+                xcode1_index = 0
+                cavity1_index = 0
+                xcode2_index = 0
+                cavity2_index = 0
+                allss_index = 0
+                modidadr_index = 0
+                modidnonadr_index = 0
+                module1 = []
+                module2 = []
+                module3 = []
+                module4 = []
+                module5 = []
+                module6 = []
+                module7 = []
+                module8 = []
+                drwno = file_all[8:12]
                 array_output_temp = []
-                wb = load_workbook(dir_matrix + "/" + file_all)
+                wb = load_workbook(dir_matrix + "/" + file_all, data_only=True)
                 ws = wb.active
                 for row in ws.iter_rows():
                     array_temp = []
@@ -780,7 +560,10 @@ def crearematrixmodule():
                         array_temp.append(cell.value)
                     array_output_temp.append(array_temp)
                 for i in range(len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
                     if array_output_temp[i][0] == "№":
+                        headerrow = i + 1
                         for x, y in enumerate(array_output_temp[i]):
                             if y == 'Місце' or y == 'Place':
                                 place_index = x
@@ -794,39 +577,1797 @@ def crearematrixmodule():
                                 normal_index = x
                             elif y == 'Name_ADR' or y == 'NAME_AD':
                                 adr_index = x
-                            elif y == "Роз"єм":
+                            elif y == "Роз'єм":
                                 con_index = x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                        print(place_index, pb_index, group_index, adr_index, con_index)
+                            elif y == "Провід":
+                                wirep_index = x
+                            elif y == "KN":
+                                wiren_index = x
+                            elif y == "XCode1":
+                                xcode1_index = x
+                            elif y == "Cavity1":
+                                cavity1_index = x
+                            elif y == "XCode2":
+                                xcode2_index = x
+                            elif y == "Cavity2":
+                                cavity2_index = x
+                            elif y == "ALL_Supersleeve":
+                                allss_index = x
+                            elif y == "Module_ADR" or y == "Adr" or y == "ADR":
+                                modidadr_index = x
+                            elif y == "Module_NonADR" or y == "NotADR" or y == "normal":
+                                modidnonadr_index = x
+                            elif y == "Module 1" or y == "Варіант_в'язки_1" or y == "Module1":
+                                module1.append(x)
+                            elif y == "Module 2" or y == "Варіант_в'язки_2" or y == "Module2":
+                                module2.append(x)
+                            elif y == "Module 3" or y == "Варіант_в'язки_3" or y == "Module3":
+                                module3.append(x)
+                            elif y == "Module 4" or y == "Варіант_в'язки_4" or y == "Module4":
+                                module4.append(x)
+                            elif y == "Module 5" or y == "Варіант_в'язки_5" or y == "Module5":
+                                module5.append(x)
+                            elif y == "Module 6" or y == "Варіант_в'язки_6" or y == "Module6":
+                                module6.append(x)
+                            elif y == "Module 7" or y == "Варіант_в'язки_7" or y == "Module7":
+                                module7.append(x)
+                            elif y == "Module 8" or y == "Варіант_в'язки_8" or y == "Module8":
+                                module8.append(x)
                         break
+                statuslabel["text"] = "Extracting informations . . ."
+                pbar['value'] += 2
+                pbargui.update_idletasks()
+                print(drwno)
+                print(module1, module2, module3, module4, module5, module6)
+                for i in range(headerrow, len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][modidadr_index] is not None:
+                        for element in array_output_temp[i][modidadr_index].split("/"):
+                            # Module1 split
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module2 split
+                            try:
+                                if array_output_temp[i][module2[0]] is not None:
+                                    for module in array_output_temp[i][module2[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module3 split
+                            try:
+                                if array_output_temp[i][module3[0]] is not None:
+                                    for module in array_output_temp[i][module3[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module4 split
+                            try:
+                                if array_output_temp[i][module4[0]] is not None:
+                                    for module in array_output_temp[i][module4[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module5 split
+                            try:
+                                if array_output_temp[i][module5[0]] is not None:
+                                    for module in array_output_temp[i][module5[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module6 split
+                            try:
+                                if array_output_temp[i][module6[0]] is not None:
+                                    for module in array_output_temp[i][module6[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module7 split
+                            try:
+                                if array_output_temp[i][module7[0]] is not None:
+                                    for module in array_output_temp[i][module7[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module8 split
+                            try:
+                                if array_output_temp[i][module8[0]] is not None:
+                                    for module in array_output_temp[i][module8[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                for i in range(headerrow, len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][modidnonadr_index] is not None:
+                        for element in array_output_temp[i][modidnonadr_index].split("/"):
+                            # Module1 split
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module2 split
+                            try:
+                                if array_output_temp[i][module2[0]] is not None:
+                                    for module in array_output_temp[i][module2[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module3 split
+                            try:
+                                if array_output_temp[i][module3[0]] is not None:
+                                    for module in array_output_temp[i][module3[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module4 split
+                            try:
+                                if array_output_temp[i][module4[0]] is not None:
+                                    for module in array_output_temp[i][module4[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module5 split
+                            try:
+                                if array_output_temp[i][module5[0]] is not None:
+                                    for module in array_output_temp[i][module5[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module6 split
+                            try:
+                                if array_output_temp[i][module6[0]] is not None:
+                                    for module in array_output_temp[i][module6[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module7 split
+                            try:
+                                if array_output_temp[i][module7[0]] is not None:
+                                    for module in array_output_temp[i][module7[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module8 split
+                            try:
+                                if array_output_temp[i][module8[0]] is not None:
+                                    for module in array_output_temp[i][module8[0]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
 
-
-
-
-
+                # MY23
+                drwno = file_all[8:12] + "MY23"
+                for i in range(headerrow, len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][modidadr_index] is not None:
+                        for element in array_output_temp[i][modidadr_index].split("/"):
+                            # Module1 split
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module2 split
+                            try:
+                                if array_output_temp[i][module2[1]] is not None:
+                                    for module in array_output_temp[i][module2[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module3 split
+                            try:
+                                if array_output_temp[i][module3[1]] is not None:
+                                    for module in array_output_temp[i][module3[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module4 split
+                            try:
+                                if array_output_temp[i][module4[1]] is not None:
+                                    for module in array_output_temp[i][module4[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module5 split
+                            try:
+                                if array_output_temp[i][module5[1]] is not None:
+                                    for module in array_output_temp[i][module5[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module6 split
+                            try:
+                                if array_output_temp[i][module6[1]] is not None:
+                                    for module in array_output_temp[i][module6[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module7 split
+                            try:
+                                if array_output_temp[i][module7[1]] is not None:
+                                    for module in array_output_temp[i][module7[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module8 split
+                            try:
+                                if array_output_temp[i][module8[1]] is not None:
+                                    for module in array_output_temp[i][module8[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                for i in range(headerrow, len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][modidnonadr_index] is not None:
+                        for element in array_output_temp[i][modidnonadr_index].split("/"):
+                            # Module1 split
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module2 split
+                            try:
+                                if array_output_temp[i][module2[1]] is not None:
+                                    for module in array_output_temp[i][module2[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module3 split
+                            try:
+                                if array_output_temp[i][module3[1]] is not None:
+                                    for module in array_output_temp[i][module3[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module4 split
+                            try:
+                                if array_output_temp[i][module4[1]] is not None:
+                                    for module in array_output_temp[i][module4[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module5 split
+                            try:
+                                if array_output_temp[i][module5[1]] is not None:
+                                    for module in array_output_temp[i][module5[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module6 split
+                            try:
+                                if array_output_temp[i][module6[1]] is not None:
+                                    for module in array_output_temp[i][module6[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module7 split
+                            try:
+                                if array_output_temp[i][module7[1]] is not None:
+                                    for module in array_output_temp[i][module7[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
+                            # Module8 split
+                            try:
+                                if array_output_temp[i][module8[1]] is not None:
+                                    for module in array_output_temp[i][module8[1]].split("/"):
+                                        array_output.append([drwno, array_output_temp[i][place_index],
+                                                             array_output_temp[i][pb_index],
+                                                             array_output_temp[i][group_index],
+                                                             array_output_temp[i][modid_index],
+                                                             array_output_temp[i][normal_index],
+                                                             array_output_temp[i][adr_index],
+                                                             array_output_temp[i][con_index],
+                                                             array_output_temp[i][wirep_index],
+                                                             array_output_temp[i][wiren_index],
+                                                             array_output_temp[i][xcode1_index],
+                                                             array_output_temp[i][cavity1_index],
+                                                             array_output_temp[i][xcode2_index],
+                                                             array_output_temp[i][cavity2_index],
+                                                             array_output_temp[i][allss_index], element, module])
+                                else:
+                                    array_output.append([drwno, array_output_temp[i][place_index],
+                                                         array_output_temp[i][pb_index],
+                                                         array_output_temp[i][group_index],
+                                                         array_output_temp[i][modid_index],
+                                                         array_output_temp[i][normal_index],
+                                                         array_output_temp[i][adr_index],
+                                                         array_output_temp[i][con_index],
+                                                         array_output_temp[i][wirep_index],
+                                                         array_output_temp[i][wiren_index],
+                                                         array_output_temp[i][xcode1_index],
+                                                         array_output_temp[i][cavity1_index],
+                                                         array_output_temp[i][xcode2_index],
+                                                         array_output_temp[i][cavity2_index],
+                                                         array_output_temp[i][allss_index], element, ""])
+                            except IndexError:
+                                continue
 
 
 
         except PermissionError:
             messagebox.showerror('Eroare scriere', "Fisierul " + file_all + "este read-only!")
             quit()
-
+    statuslabel["text"] = "Printing EXCEL file . . ."
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    prn_excel_matrixmodule(array_output)
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', 'Prelucrate  fisiere.')
+
+
+def crearebasicmodule():
+    global headerrow
+    pbargui = Tk()
+    pbargui.title("Matrix module complet")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    array_output_basic = [["Basic_Module", "Module", "Index", "Group", "Place (delete)"]]
+    dir_matrix = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                         title="Selectati directorul cu fisiere Matrix Module:")
+    file_counter = 0
+    file_progres = 0
+
+    for file_all in os.listdir(dir_matrix):
+        if file_all.endswith(".xlsm"):
+            file_counter = file_counter + 1
+    if file_counter == 0:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showinfo("Fisier invalid", "Nu am gasit fisiere de prelucrat!")
+        return None
+    bmgroup = 0
+    for file_all in os.listdir(dir_matrix):
+        try:
+            statuslabel["text"] = "Loading " + file_all + " . . . "
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+            if file_all.endswith(".xlsm"):
+                place_index = 0
+                pb_index = 0
+                group_index = 0
+                modid_index = 0
+                normal_index = 0
+                adr_index = 0
+                con_index = 0
+                wirep_index = 0
+                wiren_index = 0
+                xcode1_index = 0
+                cavity1_index = 0
+                xcode2_index = 0
+                cavity2_index = 0
+                allss_index = 0
+                modidadr_index = 0
+                modidnonadr_index = 0
+                module1 = []
+                module2 = []
+                module3 = []
+                module4 = []
+                module5 = []
+                module6 = []
+                module7 = []
+                module8 = []
+                drwno = file_all[8:12]
+                array_output_temp = []
+                wb = load_workbook(dir_matrix + "/" + file_all, data_only=True)
+                ws = wb.active
+                for row in ws.iter_rows():
+                    array_temp = []
+                    for cell in row:
+                        array_temp.append(cell.value)
+                    array_output_temp.append(array_temp)
+                for i in range(len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][0] == "№":
+                        headerrow = i + 1
+                        for x, y in enumerate(array_output_temp[i]):
+                            if y == 'Місце' or y == 'Place':
+                                place_index = x
+                            elif y == '№ПБ/Ст.' or y == 'PB':
+                                pb_index = x
+                            elif y == 'GROUP' or y == 'Group':
+                                group_index = x
+                            elif y == 'Назва модуля':
+                                modid_index = x
+                            elif y == 'Name_Norm' or y == 'NAME_norm' or y == 'Name':
+                                normal_index = x
+                            elif y == 'Name_ADR' or y == 'NAME_AD':
+                                adr_index = x
+                            elif y == "Роз'єм":
+                                con_index = x
+                            elif y == "Провід":
+                                wirep_index = x
+                            elif y == "KN":
+                                wiren_index = x
+                            elif y == "XCode1":
+                                xcode1_index = x
+                            elif y == "Cavity1":
+                                cavity1_index = x
+                            elif y == "XCode2":
+                                xcode2_index = x
+                            elif y == "Cavity2":
+                                cavity2_index = x
+                            elif y == "ALL_Supersleeve":
+                                allss_index = x
+                            elif y == "Module_ADR" or y == "Adr" or y == "ADR":
+                                modidadr_index = x
+                            elif y == "Module_NonADR" or y == "NotADR" or y == "normal":
+                                modidnonadr_index = x
+                            elif y == "Module 1" or y == "Варіант_в'язки_1" or y == "Module1":
+                                module1.append(x)
+                            elif y == "Module 2" or y == "Варіант_в'язки_2" or y == "Module2":
+                                module2.append(x)
+                            elif y == "Module 3" or y == "Варіант_в'язки_3" or y == "Module3":
+                                module3.append(x)
+                            elif y == "Module 4" or y == "Варіант_в'язки_4" or y == "Module4":
+                                module4.append(x)
+                            elif y == "Module 5" or y == "Варіант_в'язки_5" or y == "Module5":
+                                module5.append(x)
+                            elif y == "Module 6" or y == "Варіант_в'язки_6" or y == "Module6":
+                                module6.append(x)
+                            elif y == "Module 7" or y == "Варіант_в'язки_7" or y == "Module7":
+                                module7.append(x)
+                            elif y == "Module 8" or y == "Варіант_в'язки_8" or y == "Module8":
+                                module8.append(x)
+                        break
+                for i in range(headerrow, len(array_output_temp)):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if array_output_temp[i][modid_index] is not None:
+                        bmgroup = bmgroup + 1
+                        if array_output_temp[i][modidadr_index] is None and \
+                                array_output_temp[i][modidnonadr_index] is None:
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][modid_index], module, 1,
+                                                                   bmgroup, array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][modid_index], module, 1,
+                                                                   bmgroup, array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                        # ADR adr_index normal_index
+                        elif array_output_temp[i][modidadr_index] is not None and \
+                                array_output_temp[i][modidnonadr_index] is not None:
+                            for ssmodule in array_output_temp[i][modidadr_index].split("/"):
+                                array_output_basic.append([array_output_temp[i][adr_index], ssmodule, 1, bmgroup,
+                                                           array_output_temp[i][place_index]])
+                            for ssmodule in array_output_temp[i][modidnonadr_index].split("/"):
+                                array_output_basic.append([array_output_temp[i][normal_index], ssmodule, 1, bmgroup,
+                                                           array_output_temp[i][place_index]])
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 2, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append([array_output_temp[i][normal_index], module, 2,
+                                                                   bmgroup, array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 2, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[0]] is not None:
+                                    for module in array_output_temp[i][module2[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 3, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[1]] is not None:
+                                    for module in array_output_temp[i][module2[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 3, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[0]] is not None:
+                                    for module in array_output_temp[i][module3[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 4, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[1]] is not None:
+                                    for module in array_output_temp[i][module3[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 4, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[0]] is not None:
+                                    for module in array_output_temp[i][module4[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 5, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[1]] is not None:
+                                    for module in array_output_temp[i][module4[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 5, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[0]] is not None:
+                                    for module in array_output_temp[i][module5[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 6, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[1]] is not None:
+                                    for module in array_output_temp[i][module5[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 6, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[0]] is not None:
+                                    for module in array_output_temp[i][module6[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 7, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[1]] is not None:
+                                    for module in array_output_temp[i][module6[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 7, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[0]] is not None:
+                                    for module in array_output_temp[i][module7[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 8, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[1]] is not None:
+                                    for module in array_output_temp[i][module7[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 8, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[0]] is not None:
+                                    for module in array_output_temp[i][module8[0]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 9, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[1]] is not None:
+                                    for module in array_output_temp[i][module8[1]].split("/"):
+                                        array_output_basic.append([array_output_temp[i][adr_index], module, 9, bmgroup,
+                                                                   array_output_temp[i][place_index]])
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                        # ADR adr_index normal_index
+                        elif array_output_temp[i][modidadr_index] is None and \
+                                array_output_temp[i][modidnonadr_index] is not None:
+                            for ssmodule in array_output_temp[i][modidnonadr_index].split("/"):
+                                array_output_basic.append(
+                                    [array_output_temp[i][normal_index], ssmodule, 1, bmgroup,
+                                     array_output_temp[i][place_index]])
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[0]] is not None:
+                                    for module in array_output_temp[i][module2[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[1]] is not None:
+                                    for module in array_output_temp[i][module2[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[0]] is not None:
+                                    for module in array_output_temp[i][module3[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[1]] is not None:
+                                    for module in array_output_temp[i][module3[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[0]] is not None:
+                                    for module in array_output_temp[i][module4[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[1]] is not None:
+                                    for module in array_output_temp[i][module4[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[0]] is not None:
+                                    for module in array_output_temp[i][module5[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[1]] is not None:
+                                    for module in array_output_temp[i][module5[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[0]] is not None:
+                                    for module in array_output_temp[i][module6[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[1]] is not None:
+                                    for module in array_output_temp[i][module6[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[0]] is not None:
+                                    for module in array_output_temp[i][module7[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[1]] is not None:
+                                    for module in array_output_temp[i][module7[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[0]] is not None:
+                                    for module in array_output_temp[i][module8[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[1]] is not None:
+                                    for module in array_output_temp[i][module8[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][normal_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                        # ADR adr_index normal_index
+                        elif array_output_temp[i][modidadr_index] is not None and \
+                                array_output_temp[i][modidnonadr_index] is None:
+                            for ssmodule in array_output_temp[i][modidadr_index].split("/"):
+                                array_output_basic.append(
+                                    [array_output_temp[i][adr_index], ssmodule, 1, bmgroup,
+                                     array_output_temp[i][place_index]])
+                            try:
+                                if array_output_temp[i][module1[0]] is not None:
+                                    for module in array_output_temp[i][module1[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module1[1]] is not None:
+                                    for module in array_output_temp[i][module1[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[0]] is not None:
+                                    for module in array_output_temp[i][module2[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module2[1]] is not None:
+                                    for module in array_output_temp[i][module2[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[0]] is not None:
+                                    for module in array_output_temp[i][module3[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module3[1]] is not None:
+                                    for module in array_output_temp[i][module3[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[0]] is not None:
+                                    for module in array_output_temp[i][module4[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module4[1]] is not None:
+                                    for module in array_output_temp[i][module4[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[0]] is not None:
+                                    for module in array_output_temp[i][module5[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module5[1]] is not None:
+                                    for module in array_output_temp[i][module5[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[0]] is not None:
+                                    for module in array_output_temp[i][module6[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module6[1]] is not None:
+                                    for module in array_output_temp[i][module6[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[0]] is not None:
+                                    for module in array_output_temp[i][module7[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module7[1]] is not None:
+                                    for module in array_output_temp[i][module7[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[0]] is not None:
+                                    for module in array_output_temp[i][module8[0]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                            try:
+                                if array_output_temp[i][module8[1]] is not None:
+                                    for module in array_output_temp[i][module8[1]].split("/"):
+                                        array_output_basic.append(
+                                            [array_output_temp[i][adr_index], module, 2, bmgroup,
+                                             array_output_temp[i][place_index]])
+                            except IndexError:
+                                continue
+                statuslabel["text"] = "Extracting informations . . ."
+                pbar['value'] += 2
+                pbargui.update_idletasks()
+                print(drwno)
+                print(module1, module2, module3, module4, module5, module6)
+
+        except PermissionError:
+            messagebox.showerror('Eroare scriere', "Fisierul " + file_all + "este read-only!")
+            quit()
+    statuslabel["text"] = "Printing EXCEL file . . ."
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    prn_excel_bmmodule(array_output_basic)
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', 'Prelucrate  fisiere.')
+

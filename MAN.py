@@ -3,6 +3,7 @@ from PIL import ImageTk, Image
 from diagrame import *
 from functii_database import databasecontent, exportdatabase, database_delete_record
 from functii_diverse import *
+from functii_etichete import *
 from functii_input import *
 from diverse import *
 from functii_ksklight import *
@@ -116,6 +117,9 @@ submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), e
 submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
 submenu7.add_separator()
+submenu7.add_command(label="Generare cod QR",
+                           command=lambda: [statusbusy(), eticheteqr(), statusidle()])
+submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
 submenu7.add_separator()
@@ -130,17 +134,12 @@ submenucascade.add_command(label="Extragere informatii din diagrame",
 submenucascade.add_separator()
 submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
                            command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
-submenucascade.add_command(label="Indexare diagrame dupa matrix",
-                           command=lambda: [statusbusy(), indexarediagrame(), statusidle()])
-submenucascade.add_command(label="Extragere diagrame pentru KSK",
-                           command=lambda: [statusbusy(), diagrameinksk(), statusidle()])
-submenucascade.add_command(label="Extragere diagrame pentru KSK din folder",
-                           command=lambda: [statusbusy(), diagrameinkskfolder(), statusidle()])
+submenucascade.add_command(label="Basic Module",
+                           command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
 
 
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
-submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(),
-                                                                         segment_test(), statusidle()])
+submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")

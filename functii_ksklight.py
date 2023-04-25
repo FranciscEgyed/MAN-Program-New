@@ -488,6 +488,10 @@ def raport_light():
     except sqlite3.OperationalError:
         cnx = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
         messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
+    cnx.execute("""CREATE TABLE IF NOT EXISTS KSKStocks
+                              (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
+                              DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
+
     df = pd.read_sql_query("SELECT * FROM KSKDatabase", cnx)
     dfstock = pd.read_sql_query("SELECT * FROM KSKStocks", cnx)
     contain_values = df[df['KSKNo'].str.contains('0006K-0H19')]
@@ -756,7 +760,7 @@ def stockcompa():
     except sqlite3.OperationalError:
         pass
 
-    cursor.execute("""CREATE TABLE KSKStocks
+    cursor.execute("""CREATE TABLE IF NOT EXISTS KSKStocks
                               (primarykey text UNIQUE, numejit text, TipHarness text, Light text, DataLivrare text, 
                               DataJIT text, KSKNo text, TrailerNO text, SSType text, Module text) """)
     # insert multiple records using the more secure "?" method
