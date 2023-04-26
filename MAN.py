@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from diagrame import *
-from functii_database import databasecontent, exportdatabase, database_delete_record
+from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
 from functii_etichete import *
 from functii_input import *
@@ -154,6 +154,9 @@ submenu8.add_command(label="Extragere database completa",
 submenu8.add_separator()
 submenu8.add_command(label="Stergere inregistrari din database",
                      command=lambda: [statusbusy(), database_delete_record(), statusidle()], background="red")
+submenu8.add_command(label="!!! Stergere database !!!",
+                     command=lambda: [statusbusy(), database_delete_all_records(), statusidle()], background="red")
+
 submenu8.add_separator()
 menu8.configure(menu=submenu8)
 menu_frame.grid(row=0, column=0)

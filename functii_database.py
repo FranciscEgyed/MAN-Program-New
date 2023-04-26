@@ -308,3 +308,23 @@ def database_delete_record():
         conn.commit()
     conn.close()
     messagebox.showinfo("Finalizat", "Sterse " + str(counter) + " inregistrari")
+
+
+def database_delete_all_records():
+    msg_box = messagebox.askquestion('Exit Application', 'Are you sure you want to delete all database records ?',
+                                     icon='warning')
+    if msg_box == 'yes':
+        # Create your connection.
+        try:
+            conn = sqlite3.connect("//SVRO8FILE01/Groups/General/EFI/DBMAN/database.db")
+        except sqlite3.OperationalError:
+            conn = sqlite3.connect(os.path.abspath(os.curdir) + "/MAN/Input/Others/database.db")
+            messagebox.showinfo("Local database", "Network database unavailable. Using local database.")
+        cursor = conn.cursor()
+        # delete all rows from table
+        conn.execute('DELETE FROM KSKDatabase;', )
+
+        conn.close()
+        messagebox.showinfo("Finalizat", "Sterse toate inregistrarile")
+    else:
+        messagebox.showinfo('Return', 'You will now return to the application screen')

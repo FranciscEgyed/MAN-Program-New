@@ -2372,9 +2372,6 @@ def crearebasicmodule():
                 statuslabel["text"] = "Extracting informations . . ."
                 pbar['value'] += 2
                 pbargui.update_idletasks()
-                print(drwno)
-                print(module1, module2, module3, module4, module5, module6)
-
         except PermissionError:
             messagebox.showerror('Eroare scriere', "Fisierul " + file_all + "este read-only!")
             quit()

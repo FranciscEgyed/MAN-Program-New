@@ -211,14 +211,15 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
                                                       array_scriere_sheet2[x][9][:3] == "X10" or
                                                       array_scriere_sheet2[x][9][:2] == "SP" or
                                                       array_scriere_sheet2[x][9][:3] == "X11" or
-                                                      array_scriere_sheet2[x][9][:3] == "X12") :
-            array_scriere_sheet2[x].append("Error 1")
+                                                      array_scriere_sheet2[x][9][:3] == "X12"):
+
+            array_scriere_sheet2[x].append("Error")
         elif int(array_scriere_sheet2[x][10]) >= 3 and (array_scriere_sheet2[x][9][:2] != "X9" and
                                                         array_scriere_sheet2[x][9][:3] != "X10" and
                                                         array_scriere_sheet2[x][9][:2] != "SP" and
-                                                        array_scriere_sheet2[x][9][:3] != "X11" or
-                                                        array_scriere_sheet2[x][9][:3] == "X12"):
-            array_scriere_sheet2[x].append("Error 3")
+                                                        array_scriere_sheet2[x][9][:3] != "X11" and
+                                                        array_scriere_sheet2[x][9][:3] != "X12"):
+            array_scriere_sheet2[x].append("Error")
         else:
             array_scriere_sheet2[x].append("OK")
     for x in range(1, len(array_scriere_sheet3)):
@@ -226,13 +227,14 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
                                                       array_scriere_sheet3[x][9][:3] == "X10" or
                                                       array_scriere_sheet3[x][9][:2] == "SP" or
                                                       array_scriere_sheet3[x][9][:3] == "X11" or
-                                                      array_scriere_sheet3[x][9][:3] == "X11"):
+                                                      array_scriere_sheet3[x][9][:3] == "X12"):
             array_scriere_sheet3[x].append("Error")
         elif int(array_scriere_sheet3[x][10]) >= 3 and (array_scriere_sheet3[x][9][:2] != "X9" and
                                                         array_scriere_sheet3[x][9][:3] != "X10" and
                                                         array_scriere_sheet3[x][9][:2] != "SP" and
-                                                        array_scriere_sheet3[x][9][:3] != "X11" or
-                                                        array_scriere_sheet3[x][9][:3] == "X12"):
+                                                        array_scriere_sheet3[x][9][:3] != "X11" and
+                                                        array_scriere_sheet3[x][9][:3] != "X12"):
+
             array_scriere_sheet3[x].append("Error")
         else:
             array_scriere_sheet3[x].append("OK")

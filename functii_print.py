@@ -1127,6 +1127,7 @@ def prn_excel_bmmodule(sheet1):
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Basic Module.xlsx")
         log_file("Creat Basic Module.xlsx")
+        os.startfile(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame")
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat Basic Module.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Basic Module.xlsx este read-only!")
