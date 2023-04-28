@@ -4,6 +4,7 @@ from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
 import time
 from openpyxl.reader.excel import load_workbook
 from diverse import log_file
+from functii_print import prn_cm_to_excel
 
 
 def load_source():
@@ -282,6 +283,78 @@ def load_source():
     log_file("Incarcat excel ETE")
     messagebox.showinfo("Finalizat", "Finalizat!")
     return None
+
+
+def cmtoexcel():
+    pbargui = Tk()
+    pbargui.title("Trasfer CM to one EXCEL file")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    control_matrix = []
+    try:
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSL.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_csl = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_CSR.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_csr = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLML.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_tgl = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_TGLMR.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_tgr = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXELL.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_4al = list(csv.reader(csvfile, delimiter=';'))
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Control_Matrix_4AXELR.txt", newline='',
+                  encoding="utf8") as csvfile:
+            control_matrix_4ar = list(csv.reader(csvfile, delimiter=';'))
+    except FileNotFoundError:
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showerror('Eroare fisier', 'Lipsa fisier Control_Matrix din INPUT')
+        return None
+    for i in range(len(control_matrix_csl)):
+        if control_matrix_csl[i][1] != "":
+            control_matrix.append(control_matrix_csl[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_csr)):
+        if control_matrix_csr[i][1] != "":
+            control_matrix.append(control_matrix_csr[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_tgl)):
+        if control_matrix_tgl[i][1] != "":
+            control_matrix.append(control_matrix_tgl[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_tgr)):
+        if control_matrix_tgr[i][1] != "":
+            control_matrix.append(control_matrix_tgr[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_4al)):
+        if control_matrix_4al[i][1] != "":
+            control_matrix.append(control_matrix_4al[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(len(control_matrix_4ar)):
+        if control_matrix_4ar[i][1] != "":
+            control_matrix.append(control_matrix_4ar[i])
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    pbar['value'] += 2
+    statuslabel["text"] = "Printing file                     "
+    pbargui.update_idletasks()
+    prn_cm_to_excel(control_matrix)
+    pbar.destroy()
+    pbargui.destroy()
+    messagebox.showinfo('Finalizat!', "Fisierul este gata !")
 
 
 def cmss():

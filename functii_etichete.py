@@ -1,10 +1,14 @@
 import os
 from tkinter import filedialog, messagebox
+from tkinter.colorchooser import askcolor
+
 from openpyxl.reader.excel import load_workbook
 import qrcode
 
 
 def eticheteqr():
+    colors = askcolor(title="Code Color Chooser")
+    bcolors = askcolor(title="Background Color Chooser")
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -18,12 +22,13 @@ def eticheteqr():
         ws1 = wb.active
         for row in ws1['A']:
             if row.value is not None:
-                # img = qrcode.make(ws1.cell(row=row.row, column=1).value)
+                # img = qrcode.make(ws1.cell(row=row.row, column=1).value, back_color=bcolors[1], fill_color=colors[1])
                 qr.add_data(ws1.cell(row=row.row, column=1).value)
-                img = qr.make_image(back_color="white", fill_color="blue")
-                img = img.resize((100, 100))
+                img = qr.make_image(back_color=bcolors[1], fill_color=colors[1])
+                img = img.resize((200, 200))
                 img.save(os.path.abspath(os.curdir) + "/MAN/Output/QR Images/" +
                          str(ws1.cell(row=row.row, column=1).value) + ".jpg")
+                qr.clear()
         messagebox.showinfo("Finalizat", "Finalizat!")
     except:
         messagebox.showerror("No file . . . ", "Nu ati selectat nici un fisier!!")
