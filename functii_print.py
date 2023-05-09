@@ -370,7 +370,7 @@ def prn_excel_wirelistsallinone(sheet1):
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Wirelists All.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelists All.xlsx")
         log_file("Creat wire Wirelists All.xlsx")
         messagebox.showinfo('Finalizat!')
     except PermissionError:
@@ -390,7 +390,7 @@ def prn_excel_boomcumulat(sheet1):
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/BOM All.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM All.xlsx")
         log_file("Creat wire BOM All.xlsx")
         messagebox.showinfo('Finalizat!')
     except PermissionError:
@@ -1009,7 +1009,7 @@ def prn_excel_diagrame(sheet1, sheet2):
             except:
                 ws2.cell(column=x + 1, row=i + 1, value=str(float(sheet2[i][x])))
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diferente diagrame.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diferente diagrame.xlsx")
         log_file("Creat Diferente diagrame.xlsx")
     except PermissionError:
         log_file("Eroare salvare. Nu am salvat Diferente diagrame.xlsx")
@@ -1042,11 +1042,10 @@ def prn_excel_diagrameinksk(sheet1, file_name):
     ws1 = wb.active
     ws1.title = file_name
     for i in range(len(sheet1)):
-        for x in range(len(sheet1[i])):
             try:
-                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+                ws1.cell(column=1, row=i + 1, value=sheet1[i])
             except:
-                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+                ws1.cell(column=1, row=i + 1, value=str(float(sheet1[i])))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame " + file_name + ".xlsx")
         log_file("Creat Diagrame " + file_name + ".xlsx")

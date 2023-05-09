@@ -51,6 +51,9 @@ submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [stat
 submenu1.add_command(label="Control Matrix to EXCEL",
                      command=lambda: [statusbusy(), cmtoexcel(), statusidle()])
 submenu1.add_separator()
+submenu1.add_command(label="Control Matrix ALL",
+                     command=lambda: [statusbusy(), cmall(), statusidle()])
+submenu1.add_separator()
 submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
 submenu1.add_separator()
@@ -138,6 +141,8 @@ submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
                            command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
 submenucascade.add_command(label="Basic Module",
                            command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
+submenucascade.add_command(label="Lista diagrame in KSK",
+                           command=lambda: [statusbusy(), digrame_in_ksk(), statusidle()])
 
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])

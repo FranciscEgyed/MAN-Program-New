@@ -2,8 +2,11 @@ import csv
 import os
 import time
 from tkinter import Tk, ttk, HORIZONTAL, Label, filedialog, messagebox
+
+import pandas as pd
 from openpyxl import load_workbook
-from functii_print import prn_excel_diagrame, prn_excel_infoindiagrame, prn_excel_matrixmodule, prn_excel_bmmodule
+from functii_print import prn_excel_diagrame, prn_excel_infoindiagrame, prn_excel_matrixmodule, prn_excel_bmmodule, \
+    prn_excel_diagrameinksk
 
 
 def comparatiediagrame():
@@ -124,393 +127,6 @@ def extragere_informatii_diagrame():
 # Excel file using the prn_excel_infoindiagrame function.
 # The script is well-documented and easy to follow. Overall, it provides a useful tool for quickly extracting
 # information from Excel charts.
-
-def asocierediagramemodule():
-    pbargui = Tk()
-    pbargui.title("Creare Matrix Diagrame (Matrix_Module)")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    dir_files = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
-                                        title="Selectati directorul cu fisierele Matrix_Module:")
-    start = time.time()
-    file_counter = 0
-    file_progres = 0
-    array_output = [["Drawing", "Nr Crt", "Nota", "CT", "AEM", "Nota pentru AEM", "Loc", "Nr. PB/Art.", "GROUP",
-                     "Numele modulului", "Nume_Norm", "Nume_ADR", "Conector", "Fir", "KN", "XCode1", "Cavity1",
-                     "XCode2", "Cavity2", "Patrunderea modulului", "adr module",
-                     "ALL_Supersleeve", "Module_ADR", "Module_NonADR", "Module 1", "Module 2",
-                     "Module 3", "Module 4", "Module 5", "Module 6", "Module 7", "Module 1", "Module 2", "Module 3",
-                     "Module 4", "Module 5", "Module 6", "Module 7"]]
-    for file_all in os.listdir(dir_files):
-        if file_all.endswith(".xlsm"):
-            file_counter = file_counter + 1
-    for file_all in os.listdir(dir_files):
-        if file_all.endswith(".xlsm"):
-            file_progres = file_progres + 1
-            statuslabel["text"] = str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 2
-            pbargui.update_idletasks()
-            wb = load_workbook(dir_files + "/" + file_all)
-            ws = wb.active
-            mod1counter = 0
-            mod2counter = 0
-            mod3counter = 0
-            mod4counter = 0
-            mod5counter = 0
-            mod6counter = 0
-            mod7counter = 0
-            pbart = False
-            pb = False
-            index_mod6 = 0
-            index_mod7 = 0
-            for row in ws['A']:
-                if row.value == "№":
-                    index_nrcrt = row.row
-                    for column_cells in ws.iter_cols(min_row=index_nrcrt, max_row=index_nrcrt):
-                        for cell in column_cells:
-                            if cell.value == "№ПБ/Ст.":
-                                pbart = True
-                            if cell.value == "PB":
-                                pb = True
-                    if pbart is True:
-                        for row_cells in ws.iter_rows(min_row=row.row, max_row=row.row):
-                            for cell in row_cells:
-                                if cell.value == "Примітка":
-                                    index_nota = cell.column
-                                if cell.value == "СТ.":
-                                    index_ct = cell.column
-                                else:
-                                    index_ct = 1
-                                if cell.value == "АЕМ":
-                                    index_aem = cell.column
-                                if cell.value == "Примітка до АЕМ" or cell.value == "Прим до АЕМ":
-                                    index_notaaem = cell.column
-                                if cell.value == "Місце":
-                                    index_loc = cell.column
-                                elif cell.value == "№ПБ/Ст.":
-                                    index_pbart = cell.column
-                                if cell.value == "GROUP":
-                                    index_group = cell.column
-                                if cell.value == "Назва модуля":
-                                    index_modul = cell.column
-                                if cell.value == "Name_Norm":
-                                    index_numenormal = cell.column
-                                if cell.value == "Name_ADR":
-                                    index_numeadr = cell.column
-                                if cell.value == "Роз'єм":
-                                    index_conector = cell.column
-                                if cell.value == "Провід":
-                                    index_fir = cell.column
-                                if cell.value == "KN":
-                                    index_kn = cell.column
-                                if cell.value == "XCode1":
-                                    index_xc1 = cell.column
-                                if cell.value == "Cavity1":
-                                    index_cav1 = cell.column
-                                if cell.value == "XCode2":
-                                    index_xc2 = cell.column
-                                if cell.value == "Cavity2":
-                                    index_cav2 = cell.column
-                                if cell.value == "Пенетрація модуля":
-                                    index_patrundere = cell.column
-                                if cell.value == "adr module":
-                                    index_adrmod = cell.column
-                                if cell.value == "ALL_Supersleeve":
-                                    index_allss = cell.column
-                                if cell.value == "Module_ADR" or cell.value == "Adr":
-                                    index_modadr = cell.column
-                                if cell.value == "Module_NonADR" or cell.value == "normal":
-                                    index_modnonadr = cell.column
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 0:
-                                    index_mod1 = cell.column
-                                    mod1counter = 1
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 0:
-                                    index_mod2 = cell.column
-                                    mod2counter = 1
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 0:
-                                    index_mod3 = cell.column
-                                    mod3counter = 1
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 0:
-                                    index_mod4 = cell.column
-                                    mod4counter = 1
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 0:
-                                    index_mod5 = cell.column
-                                    mod5counter = 1
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 0:
-                                    index_mod6 = cell.column
-                                    mod6counter = 1
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 0:
-                                    index_mod7 = cell.column
-                                    mod7counter = 1
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 1:
-                                    index_mod11 = cell.column
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 1:
-                                    index_mod22 = cell.column
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 1:
-                                    index_mod33 = cell.column
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 1:
-                                    index_mod44 = cell.column
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 1:
-                                    index_mod55 = cell.column
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 1:
-                                    index_mod66 = cell.column
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 1:
-                                    index_mod77 = cell.column
-                    if pb is True:
-                        for row_cells in ws.iter_rows(min_row=row.row, max_row=row.row):
-                            for cell in row_cells:
-                                if cell.value == "Примітка":
-                                    index_nota = cell.column
-                                if cell.value == "СТ.":
-                                    index_ct = cell.column
-                                if cell.value == "АЕМ":
-                                    index_aem = cell.column
-                                if cell.value == "Примітка до АЕМ":
-                                    index_notaaem = cell.column
-                                if cell.value == "Місце":
-                                    index_loc = cell.column
-                                elif cell.value == "PB":
-                                    index_pbart = cell.column
-                                if cell.value == "GROUP":
-                                    index_group = cell.column
-                                if cell.value == "Назва модуля":
-                                    index_modul = cell.column
-                                if cell.value == "Name_Norm":
-                                    index_numenormal = cell.column
-                                if cell.value == "Name_ADR":
-                                    index_numeadr = cell.column
-                                if cell.value == "Роз'єм":
-                                    index_conector = cell.column
-                                if cell.value == "Провід":
-                                    index_fir = cell.column
-                                if cell.value == "KN":
-                                    index_kn = cell.column
-                                if cell.value == "XCode1":
-                                    index_xc1 = cell.column
-                                if cell.value == "Cavity1":
-                                    index_cav1 = cell.column
-                                if cell.value == "XCode2":
-                                    index_xc2 = cell.column
-                                if cell.value == "Cavity2":
-                                    index_cav2 = cell.column
-                                if cell.value == "Пенетрація модуля":
-                                    index_patrundere = cell.column
-                                if cell.value == "adr module":
-                                    index_adrmod = cell.column
-                                if cell.value == "ALL_Supersleeve":
-                                    index_allss = cell.column
-                                if cell.value == "Module_ADR" or cell.value == "Adr":
-                                    index_modadr = cell.column
-                                if cell.value == "Module_NonADR" or cell.value == "normal":
-                                    index_modnonadr = cell.column
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 0:
-                                    index_mod1 = cell.column
-                                    mod1counter = 1
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 0:
-                                    index_mod2 = cell.column
-                                    mod2counter = 1
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 0:
-                                    index_mod3 = cell.column
-                                    mod3counter = 1
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 0:
-                                    index_mod4 = cell.column
-                                    mod4counter = 1
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 0:
-                                    index_mod5 = cell.column
-                                    mod5counter = 1
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 0:
-                                    index_mod6 = cell.column
-                                    mod6counter = 1
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 0:
-                                    index_mod7 = cell.column
-                                    mod7counter = 1
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 1:
-                                    index_mod11 = cell.column
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 1:
-                                    index_mod22 = cell.column
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 1:
-                                    index_mod33 = cell.column
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 1:
-                                    index_mod44 = cell.column
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 1:
-                                    index_mod55 = cell.column
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 1:
-                                    index_mod66 = cell.column
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 1:
-                                    index_mod77 = cell.column
-                    if pbart is False and pb is False:
-                        for row_cells in ws.iter_rows(min_row=row.row, max_row=row.row):
-                            for cell in row_cells:
-                                if cell.value == "Примітка":
-                                    index_nota = cell.column
-                                if cell.value == "СТ.":
-                                    index_ct = cell.column
-                                if cell.value == "АЕМ":
-                                    index_aem = cell.column
-                                if cell.value == "Примітка до АЕМ":
-                                    index_notaaem = cell.column
-                                if cell.value == "Place":
-                                    index_loc = cell.column
-                                elif cell.value == "Місце":
-                                    index_pbart = cell.column
-                                if cell.value == "GROUP":
-                                    index_group = cell.column
-                                if cell.value == "Назва модуля":
-                                    index_modul = cell.column
-                                if cell.value == "Name_Norm":
-                                    index_numenormal = cell.column
-                                if cell.value == "Name_ADR":
-                                    index_numeadr = cell.column
-                                if cell.value == "Роз'єм":
-                                    index_conector = cell.column
-                                if cell.value == "Провід":
-                                    index_fir = cell.column
-                                if cell.value == "KN":
-                                    index_kn = cell.column
-                                if cell.value == "XCode1":
-                                    index_xc1 = cell.column
-                                if cell.value == "Cavity1":
-                                    index_cav1 = cell.column
-                                if cell.value == "XCode2":
-                                    index_xc2 = cell.column
-                                if cell.value == "Cavity2":
-                                    index_cav2 = cell.column
-                                if cell.value == "Пенетрація модуля":
-                                    index_patrundere = cell.column
-                                if cell.value == "adr module":
-                                    index_adrmod = cell.column
-                                if cell.value == "ALL_Supersleeve":
-                                    index_allss = cell.column
-                                if cell.value == "Module_ADR" or cell.value == "Adr":
-                                    index_modadr = cell.column
-                                if cell.value == "Module_NonADR" or cell.value == "normal":
-                                    index_modnonadr = cell.column
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 0:
-                                    index_mod1 = cell.column
-                                    mod1counter = 1
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 0:
-                                    index_mod2 = cell.column
-                                    mod2counter = 1
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 0:
-                                    index_mod3 = cell.column
-                                    mod3counter = 1
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 0:
-                                    index_mod4 = cell.column
-                                    mod4counter = 1
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 0:
-                                    index_mod5 = cell.column
-                                    mod5counter = 1
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 0:
-                                    index_mod6 = cell.column
-                                    mod6counter = 1
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 0:
-                                    index_mod7 = cell.column
-                                    mod7counter = 1
-                                if (cell.value == "Module 1" or cell.value == "Module1") and mod1counter == 1:
-                                    index_mod11 = cell.column
-                                if (cell.value == "Module 2" or cell.value == "Module2") and mod2counter == 1:
-                                    index_mod22 = cell.column
-                                if (cell.value == "Module 3" or cell.value == "Module3") and mod3counter == 1:
-                                    index_mod33 = cell.column
-                                if (cell.value == "Module 4" or cell.value == "Module4") and mod4counter == 1:
-                                    index_mod44 = cell.column
-                                if (cell.value == "Module 5" or cell.value == "Module5") and mod5counter == 1:
-                                    index_mod55 = cell.column
-                                if (cell.value == "Module 6" or cell.value == "Module6") and mod6counter == 1:
-                                    index_mod66 = cell.column
-                                if (cell.value == "Module 7" or cell.value == "Module7") and mod7counter == 1:
-                                    index_mod77 = cell.column
-
-            for row in range(index_nrcrt + 1, ws.max_row):
-                if index_mod6 != 0 and index_mod7 != 0 and ws.cell(row, index_loc).value != "":
-                    array_output.append([file_all,
-                                         ws.cell(row, index_nrcrt).value, ws.cell(row, index_nota).value,
-                                         ws.cell(row, index_ct).value, ws.cell(row, index_aem).value,
-                                         ws.cell(row, index_notaaem).value, ws.cell(row, index_loc).value,
-                                         ws.cell(row, index_pbart).value, ws.cell(row, index_group).value,
-                                         ws.cell(row, index_modul).value,
-                                         ws.cell(row, index_numenormal).value,
-                                         ws.cell(row, index_numeadr).value,
-                                         ws.cell(row, index_conector).value,
-                                         ws.cell(row, index_fir).value, ws.cell(row, index_kn).value,
-                                         ws.cell(row, index_xc1).value, ws.cell(row, index_cav1).value,
-                                         ws.cell(row, index_xc2).value, ws.cell(row, index_cav2).value,
-                                         ws.cell(row, index_patrundere).value,
-                                         ws.cell(row, index_adrmod).value,
-                                         ws.cell(row, index_allss).value, ws.cell(row, index_modadr).value,
-                                         ws.cell(row, index_modnonadr).value,
-                                         ws.cell(row, index_mod1).value,
-                                         ws.cell(row, index_mod2).value, ws.cell(row, index_mod3).value,
-                                         ws.cell(row, index_mod4).value, ws.cell(row, index_mod5).value,
-                                         ws.cell(row, index_mod6).value, ws.cell(row, index_mod7).value,
-                                         ws.cell(row, index_mod11).value, ws.cell(row, index_mod22).value,
-                                         ws.cell(row, index_mod33).value, ws.cell(row, index_mod44).value,
-                                         ws.cell(row, index_mod55).value, ws.cell(row, index_mod66).value,
-                                         ws.cell(row, index_mod77).value])
-                if index_mod6 != 0 and index_mod7 == 0 and ws.cell(row, index_loc).value != "":
-                    array_output.append([file_all,
-                                         ws.cell(row, index_nrcrt).value, ws.cell(row, index_nota).value,
-                                         ws.cell(row, index_ct).value, ws.cell(row, index_aem).value,
-                                         ws.cell(row, index_notaaem).value, ws.cell(row, index_loc).value,
-                                         ws.cell(row, index_pbart).value, ws.cell(row, index_group).value,
-                                         ws.cell(row, index_modul).value,
-                                         ws.cell(row, index_numenormal).value,
-                                         ws.cell(row, index_numeadr).value,
-                                         ws.cell(row, index_conector).value,
-                                         ws.cell(row, index_fir).value, ws.cell(row, index_kn).value,
-                                         ws.cell(row, index_xc1).value, ws.cell(row, index_cav1).value,
-                                         ws.cell(row, index_xc2).value, ws.cell(row, index_cav2).value,
-                                         ws.cell(row, index_patrundere).value,
-                                         ws.cell(row, index_adrmod).value,
-                                         ws.cell(row, index_allss).value, ws.cell(row, index_modadr).value,
-                                         ws.cell(row, index_modnonadr).value,
-                                         ws.cell(row, index_mod1).value,
-                                         ws.cell(row, index_mod2).value, ws.cell(row, index_mod3).value,
-                                         ws.cell(row, index_mod4).value, ws.cell(row, index_mod5).value,
-                                         ws.cell(row, index_mod6).value,
-                                         ws.cell(row, index_mod11).value, ws.cell(row, index_mod22).value,
-                                         ws.cell(row, index_mod33).value, ws.cell(row, index_mod44).value,
-                                         ws.cell(row, index_mod55).value, ws.cell(row, index_mod66).value])
-                elif ws.cell(row, index_loc).value != "":
-                    array_output.append([file_all,
-                                         ws.cell(row, index_nrcrt).value, ws.cell(row, index_nota).value,
-                                         ws.cell(row, index_ct).value, ws.cell(row, index_aem).value,
-                                         ws.cell(row, index_notaaem).value, ws.cell(row, index_loc).value,
-                                         ws.cell(row, index_pbart).value, ws.cell(row, index_group).value,
-                                         ws.cell(row, index_modul).value,
-                                         ws.cell(row, index_numenormal).value,
-                                         ws.cell(row, index_numeadr).value,
-                                         ws.cell(row, index_conector).value,
-                                         ws.cell(row, index_fir).value, ws.cell(row, index_kn).value,
-                                         ws.cell(row, index_xc1).value, ws.cell(row, index_cav1).value,
-                                         ws.cell(row, index_xc2).value, ws.cell(row, index_cav2).value,
-                                         ws.cell(row, index_patrundere).value,
-                                         ws.cell(row, index_adrmod).value,
-                                         ws.cell(row, index_allss).value, ws.cell(row, index_modadr).value,
-                                         ws.cell(row, index_modnonadr).value,
-                                         ws.cell(row, index_mod1).value,
-                                         ws.cell(row, index_mod2).value, ws.cell(row, index_mod3).value,
-                                         ws.cell(row, index_mod4).value, ws.cell(row, index_mod5).value,
-                                         ws.cell(row, index_mod11).value, ws.cell(row, index_mod22).value,
-                                         ws.cell(row, index_mod33).value, ws.cell(row, index_mod44).value,
-                                         ws.cell(row, index_mod55).value])
-    for i in range(0, 100):
-        print(array_output[i])
-    statuslabel["text"] = "Printing file . . . "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/MatrixDiagrame.txt", 'w', newline='',
-              encoding='utf8') as myfile:
-        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
-        wr.writerows(array_output)
-    pbar.destroy()
-    pbargui.destroy()
-    end = time.time()
-    messagebox.showinfo('Finalizat!', "Prelucrate in " + str(end - start)[:6] + " secunde.")
-
 
 def crearematrixmodule():
     global headerrow
@@ -1492,7 +1108,6 @@ def crearematrixmodule():
                         except IndexError:
                             continue
 
-
                 # MY23
                 drwno = file_all[8:12] + "MY23"
                 for i in range(headerrow, len(array_output_temp)):
@@ -2068,7 +1683,7 @@ def crearematrixmodule():
                 for i in range(headerrow, len(array_output_temp)):
                     pbar['value'] += 2
                     pbargui.update_idletasks()
-                    if array_output_temp[i][modidnonadr_index] is None and\
+                    if array_output_temp[i][modidnonadr_index] is None and \
                             array_output_temp[i][modidadr_index] is None:
                         # Module1 split
                         try:
@@ -2954,3 +2569,105 @@ def crearebasicmodule():
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', 'Prelucrate  fisiere.')
+
+
+def digrame_in_ksk():
+    pbargui = Tk()
+    pbargui.title("Lista diagrame in KSK")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    array_print = []
+    basic_module = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                              title="Selectati fisierul Basic Module:")
+    statuslabel["text"] = "Loading Basic Module file         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    with open(basic_module, newline='') as csvfile:
+        array_bm = list(csv.reader(csvfile, delimiter=','))
+    if array_bm[0][0] != "Basic_Module":
+        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
+        pbar.destroy()
+        pbargui.destroy()
+        return
+    ksk = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                     title="Selectati fisierul KSK:")
+    nume_fisier = os.path.splitext(os.path.basename(ksk))[0]
+    statuslabel["text"] = "Loading KSK file         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    with open(ksk, newline='') as csvfile:
+        array_ksk = list(csv.reader(csvfile, delimiter=';'))
+    if array_ksk[0][0] != "Harness" and array_ksk[0][0] != "Module":
+        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
+        pbar.destroy()
+        pbargui.destroy()
+        return
+    statuslabel["text"] = "Loading corespondence list         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Corespondenta.txt", newline='') as csvfile:
+        arr_corespondenta = list(csv.reader(csvfile, delimiter=';'))
+    statuslabel["text"] = "Searching for diagrams         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    bm_groups = []
+    for i in range(1, len(array_bm)):
+        if array_bm[i][3] not in bm_groups:
+            bm_groups.append(array_bm[i][3])
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+    module_ksk = []
+    statuslabel["text"] = "Searching for corespondence         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    for i in range(1, len(array_ksk)):
+        for x in range(1, len(arr_corespondenta)):
+            if array_ksk[i][1] == arr_corespondenta[x][0]:
+                module_ksk.append(arr_corespondenta[x][1])
+                pbar['value'] += 2
+                pbargui.update_idletasks()
+    array_bm_ksk = []
+    statuslabel["text"] = "Data analisys in progress         "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
+    array_bm[0].append("Indice")
+    for i in range(1, len(array_bm)):
+        if array_bm[i][1] in module_ksk:
+            array_bm[i].append(1)
+        else:
+            array_bm[i].append(0)
+    groups_unique = []
+    for i in range(1, len(array_bm)):
+        if array_bm[i][3] not in groups_unique:
+            groups_unique.append(array_bm[i][3])
+            pbar['value'] += 2
+            pbargui.update_idletasks()
+    diagrame_ksk =[]
+    for q in range(len(groups_unique)):
+        diagrame_basicgroup = []
+        for w in range(len(array_bm)):
+            if array_bm[w][3] == groups_unique[q] and array_bm[w][0] not in diagrame_basicgroup:
+                diagrame_basicgroup.append(array_bm[w][0])
+        for e in range(len(diagrame_basicgroup)):
+            array_diagrama = []
+            for r in range(len(array_bm)):
+                if diagrame_basicgroup[e] == array_bm[r][0]:
+                    array_diagrama.append(array_bm[r])
+            index_unique = []
+            counter_index = 0
+            for z in range(len(array_diagrama)):
+                counter_index = counter_index + array_diagrama[z][5]
+                if array_diagrama[z][2] not in index_unique:
+                    index_unique.append(array_diagrama[z][2])
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+            if len(index_unique) == counter_index:
+                diagrame_ksk.append(array_diagrama[0][0])
+    prn_excel_diagrameinksk(diagrame_ksk, nume_fisier)
+    pbar.destroy()
+    pbargui.destroy()
+    end = time.time()
+    messagebox.showinfo('Finalizat!', 'Done')

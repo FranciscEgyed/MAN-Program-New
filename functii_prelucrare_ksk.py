@@ -12,7 +12,7 @@ from functii_print import prn_excel_bom, prn_excel_wires, prn_excel_wires_light
 def wirelist_individual():
     # try:
     globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
-                                               title="Selectati directorul pentru salvare")
+                                                       title="Selectati directorul pentru salvare")
     wire_file = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
     selected_dir_wire = os.path.dirname(os.path.realpath(wire_file)) + "/"
     start = time.time()
@@ -243,7 +243,7 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
         if int(array_scriere_sheet2[x][10]) == 2 and (array_scriere_sheet2[x][9][:2] != "X9" and
                                                       array_scriere_sheet2[x][9][:3] != "X10" and
                                                       array_scriere_sheet2[x][9][:2] != "SP" and
-                                                      array_scriere_sheet2[x][9][:3] != "X11"and
+                                                      array_scriere_sheet2[x][9][:3] != "X11" and
                                                       array_scriere_sheet2[x][9][:3] != "X12") and \
                 not array_scriere_sheet2[x][1] == "81.25480-5848" and array_scriere_sheet2[x][2] != "591003_1":
             array_scriere_sheet2[x].append("Error")
@@ -502,10 +502,10 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         for i in range(len(array_scriere_sheet6)):
             if lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
                     and array_scriere_sheet6[i][4] == "X":
-                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][4]
+                array_scriere_sheet6[x + 1][12] = array_scriere_sheet6[0][4]
             elif lista_klappschale[x][0] == array_scriere_sheet6[i][1] and array_scriere_sheet6[i][2] == sidebracket \
                     and array_scriere_sheet6[i][5] == "X":
-                array_scriere_sheet6[x+1][12] = array_scriere_sheet6[0][5]
+                array_scriere_sheet6[x + 1][12] = array_scriere_sheet6[0][5]
 
     lista_rl_klappschale = [["8011", "BODYL"], ["8012", "BODYL"], ["8013", "BODYR"], ["8014", "BODYR"],
                             ["8014", "BODYR"], ["8023", "BODYL"], ["8024", "BODYR"], ["8025", "BODYL"],
@@ -517,8 +517,8 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
 
     for i in range(len(array_scriere_sheet6)):
         for x in range(len(lista_rl_klappschale)):
-           if array_scriere_sheet6[i][12] == lista_rl_klappschale[x][0]:
-               array_scriere_sheet6[i][12] = lista_rl_klappschale[x][1]
+            if array_scriere_sheet6[i][12] == lista_rl_klappschale[x][0]:
+                array_scriere_sheet6[i][12] = lista_rl_klappschale[x][1]
 
     # Verificare integritate(sa nu fie platforme combinate)
     ch = 0
@@ -759,7 +759,7 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
 def prelucrare_individuala_bom():
     try:
         globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
-                                              title="Selectati directorul pentru salvare")
+                                                           title="Selectati directorul pentru salvare")
         file_single = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
         with open(file_single, newline='') as csvfile:
             array_modul = list(csv.reader(csvfile, delimiter=';'))
@@ -773,15 +773,14 @@ def prelucrare_individuala_bom():
 
 
 def prelucrare_bom_faza1(array_prelucrare):
-
-    #arr_sheet1 = [["Harness", "Module", "Module", "Drawing Number", "Module Check", "Comments", "Implemented", "Desen",
+    # arr_sheet1 = [["Harness", "Module", "Module", "Drawing Number", "Module Check", "Comments", "Implemented", "Desen",
     #               "Cantitate"]]
     lista_module_extragere = []
     arr_sheet1 = [[array_prelucrare[i][0], array_prelucrare[i][1]] for i in range(1, len(array_prelucrare))]
     arr_sheet1.insert(0, ["Harness", "Module", "Module", "Drawing Number", "Module Check", "Comments", "Implemented",
                           "Desen", "Cantitate"])
 
-    #for i in range(1, len(array_prelucrare)):
+    # for i in range(1, len(array_prelucrare)):
     #    arr_sheet1.append([array_prelucrare[i][0], array_prelucrare[i][1]])
     "Load required data files"
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Active.txt", newline='') as csvfile:
@@ -1004,7 +1003,8 @@ def wirelist_director():
     end = time.time()
     pbar.destroy()
     pbargui.destroy()
-    messagebox.showinfo('Finalizat!', 'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+    messagebox.showinfo('Finalizat!',
+                        'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
 
 
 def bom_director():
@@ -1113,4 +1113,5 @@ def bom_director():
     pbar.destroy()
     pbargui.destroy()
     end = time.time()
-    messagebox.showinfo('Finalizat!', 'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+    messagebox.showinfo('Finalizat!',
+                        'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
