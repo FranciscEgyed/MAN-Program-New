@@ -8,6 +8,7 @@ from functii_input import *
 from diverse import *
 from functii_ksklight import *
 from functii_ldorado import *
+from functii_pentruvalidare import wirelist_validare, bom_validare
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
 from functii_rapoarte import *
@@ -87,9 +88,11 @@ submenu3 = tk.Menu(menu3, tearoff=0, background="DarkSeaGreen1", font="Arial 15 
 submenu3.add_command(label="Wirelist individual",
                      command=lambda: [statusbusy(), wirelist_individual(), statusidle()])
 submenu3.add_command(label="Wirelist toate", command=lambda: [statusbusy(), wirelist_director(), statusidle()])
+submenu3.add_command(label="Wirelist all validare", command=lambda: [statusbusy(), wirelist_validare(), statusidle()])
 submenu3.add_separator()
 submenu3.add_command(label="BOM individual", command=lambda: [statusbusy(), prelucrare_individuala_bom(), statusidle()])
 submenu3.add_command(label="BOM toate", command=lambda: [statusbusy(), bom_director(), statusidle()])
+submenu3.add_command(label="BOM all validare", command=lambda: [statusbusy(), bom_validare(), statusidle()])
 menu3.configure(menu=submenu3)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu4 = tk.Menubutton(menu_frame, text="Rapoarte", background="DarkSeaGreen1", font="Arial 10 bold")

@@ -433,7 +433,7 @@ def prn_excel_cutting(sheet1, sheet2, sheet3):
         return None
 
 
-def prn_excel_module_ldorado(sheet1, sheet2, sheet3, sheet4, sheet5):
+def prn_excel_module_ldorado(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     wb = Workbook()
     ws1 = wb.active
     ws1.title = "array"
@@ -479,6 +479,15 @@ def prn_excel_module_ldorado(sheet1, sheet2, sheet3, sheet4, sheet5):
                 ws51.cell(column=x + 1, row=i + 1, value=str(sheet5[i][x]))
             except:
                 ws51.cell(column=x + 1, row=i + 1, value=str(float(sheet5[i][x])))
+    wb6 = Workbook()
+    ws61 = wb6.active
+    ws61.title = "array"
+    for i in range(len(sheet6)):
+        for x in range(len(sheet6[i])):
+            try:
+                ws61.cell(column=x + 1, row=i + 1, value=str(sheet6[i][x]))
+            except:
+                ws61.cell(column=x + 1, row=i + 1, value=str(float(sheet6[i][x])))
     try:
         # array_conector, array_module, array_conectorpmd
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/array_conector.xlsx")
@@ -486,6 +495,7 @@ def prn_excel_module_ldorado(sheet1, sheet2, sheet3, sheet4, sheet5):
         wb3.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/array_conectorpmd.xlsx")
         wb4.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/array_wires.xlsx")
         wb5.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/array_wirepmd.xlsx")
+        wb6.save(os.path.abspath(os.curdir) + "/MAN/Output/LDorado/array_conectori_module.xlsx")
         log_file("Creat")
         messagebox.showinfo('Finalizat!')
     except PermissionError:

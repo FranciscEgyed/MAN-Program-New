@@ -1,38 +1,277 @@
 import csv
 import os
 import time
-from tkinter import filedialog, messagebox, Tk, ttk, Label, HORIZONTAL
 from collections import Counter
+from tkinter import Tk, ttk, HORIZONTAL, Label, messagebox
+
+from openpyxl.styles import Border, Side, PatternFill, Alignment, Font
+from openpyxl.workbook import Workbook
+
 import globale
-from diverse import skip_file, pivotare
-from functii_print import prn_excel_bom, prn_excel_wires, prn_excel_wires_light
+from diverse import pivotare, skip_file, istsoll, log_file
 
 
-# WIRES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def wirelist_individual():
-    # try:
-    globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
-                                                       title="Selectati directorul pentru salvare")
-    wire_file = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
-    selected_dir_wire = os.path.dirname(os.path.realpath(wire_file)) + "/"
+def wirelist_validare():
+        pbargui = Tk()
+        pbargui.title("Wirelist toate")
+        pbargui.geometry("500x50+50+550")
+        pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+        statuslabel = Label(pbargui, text="Waiting . . .")
+        timelabel = Label(pbargui, text="Time . . .")
+        pbar.grid(row=1, column=1, padx=5, pady=5)
+        statuslabel.grid(row=1, column=2, padx=5, pady=5)
+        timelabel.grid(row=2, column=2)
+        dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
+        dir_output = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
+        with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
+            array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
+        counter = 0
+        start = time.time()
+        file_counter = 0
+        file_progres = 0
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+        pbar['value'] = 0
+        start0 = time.time()
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                globale.is_light_save = "0"
+                file_progres = file_progres + 1
+                statuslabel["text"] = "8000 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                pbar['value'] += 1
+                pbargui.update_idletasks()
+                with open(dir_selectat + file_all, newline='') as csvfile:
+                    array_modul = list(csv.reader(csvfile, delimiter=';'))
+                if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                    messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
+                    return
+                counter = counter + 1
+                array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+                if set(array_temporar_module).issubset(array_sortare_light[0]):
+                    globale.is_light_save = "1"
+                prelucrare_wirelist_faza1(array_modul)
+                end0 = time.time()
+                timelabel["text"] = "Estimated time to complete : " + \
+                                    str(((file_counter * 2) - (end0 - start0)) / 60)[:5] + " minutes."
+                pbargui.update_idletasks()
+                continue
+            else:
+                continue
+        dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
+        file_counter = 0
+        file_progres = 0
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+        pbar['value'] = 0
+        start1 = time.time()
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                globale.is_light_save = "0"
+                file_progres = file_progres + 1
+                statuslabel["text"] = "8011 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                pbar['value'] += 1
+                pbargui.update_idletasks()
+                with open(dir_selectat + file_all, newline='') as csvfile:
+                    array_modul = list(csv.reader(csvfile, delimiter=';'))
+                if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                    messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel11!')
+                    return
+                counter = counter + 1
+                array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+                if set(array_temporar_module).issubset(array_sortare_light[0]):
+                    globale.is_light_save = "1"
+                prelucrare_wirelist_faza1(array_modul)
+                end1 = time.time()
+                timelabel["text"] = "Estimated time to complete : " + \
+                                    str(((file_counter * 2) - (end1 - start1)) / 60)[:5] + " minutes."
+                pbargui.update_idletasks()
+                continue
+            else:
+                continue
+        dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
+        file_counter = 0
+        file_progres = 0
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+        pbar['value'] = 0
+        start2 = time.time()
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                globale.is_light_save = "0"
+                file_progres = file_progres + 1
+                statuslabel["text"] = "8023 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                pbar['value'] += 1
+                pbargui.update_idletasks()
+                with open(dir_selectat + file_all, newline='') as csvfile:
+                    array_modul = list(csv.reader(csvfile, delimiter=';'))
+                if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                    messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
+                    return
+                counter = counter + 1
+                array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+                if set(array_temporar_module).issubset(array_sortare_light[0]):
+                    globale.is_light_save = "1"
+                prelucrare_wirelist_faza1(array_modul)
+                end2 = time.time()
+                timelabel["text"] = "Estimated time to complete : " + \
+                                    str(((file_counter * 2) - (end2 - start2)) / 60)[:5] + " minutes."
+                pbargui.update_idletasks()
+                continue
+            else:
+                continue
+        dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Necunoscut/"
+        dir_output = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/Necunoscut/"
+        file_counter = 0
+        file_progres = 0
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+        pbar['value'] = 0
+        start3 = time.time()
+        for file_all in os.listdir(dir_selectat):
+            if file_all.endswith(".csv"):
+                globale.is_light_save = "0"
+                file_progres = file_progres + 1
+                statuslabel["text"] = "Necunoscut = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+                pbar['value'] += 1
+                pbargui.update_idletasks()
+                with open(dir_selectat + file_all, newline='') as csvfile:
+                    array_modul = list(csv.reader(csvfile, delimiter=';'))
+                if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                    messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
+                    return
+                counter = counter + 1
+                array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
+                if set(array_temporar_module).issubset(array_sortare_light[0]):
+                    globale.is_light_save = "1"
+                prelucrare_wirelist_faza1(array_modul)
+                end3 = time.time()
+                timelabel["text"] = "Estimated time to complete : " + \
+                                    str(((file_counter * 2) - (end3 - start3)) / 60)[:5] + " minutes."
+                pbargui.update_idletasks()
+                continue
+            else:
+                continue
+        end = time.time()
+        pbar.destroy()
+        pbargui.destroy()
+        messagebox.showinfo('Finalizat!',
+                            'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+
+
+def bom_validare():
+    pbargui = Tk()
+    pbargui.title("BOM toate")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
+    counter = 0
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    pbar['value'] = 0
     start = time.time()
-    globale.is_light_save = "0"
-    with open(wire_file, newline='') as csvfile:
-        array_module_file = list(csv.reader(csvfile, delimiter=';'))
-    if array_module_file[0][0] != "Harness" and array_module_file[0][0] != "Module":
-        messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
-        return
-    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
-        array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
-    array_temporar_module = [array_module_file[i][1] for i in range(1, len(array_module_file))]
-    if set(array_temporar_module).issubset(array_sortare_light[0]):
-        globale.is_light_save = "1"
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            with open(dir_selectat + file_all, newline='') as csvfile:
+                array_modul = list(csv.reader(csvfile, delimiter=';'))
+            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                return
+            file_progres = file_progres + 1
+            statuslabel["text"] = "8000 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+            counter = counter + 1
+            prelucrare_bom_faza1(array_modul)
+            continue
+        else:
+            continue
 
-    prelucrare_wirelist_faza1(array_module_file)
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    pbar['value'] = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            with open(dir_selectat + file_all, newline='') as csvfile:
+                array_modul = list(csv.reader(csvfile, delimiter=';'))
+            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
+                return
+            counter = counter + 1
+            file_progres = file_progres + 1
+            statuslabel["text"] = "8011 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+            prelucrare_bom_faza1(array_modul)
+            continue
+        else:
+            continue
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    pbar['value'] = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            with open(dir_selectat + file_all, newline='') as csvfile:
+                array_modul = list(csv.reader(csvfile, delimiter=';'))
+            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
+                return
+            counter = counter + 1
+            file_progres = file_progres + 1
+            statuslabel["text"] = "8023 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+            prelucrare_bom_faza1(array_modul)
+            continue
+        else:
+            continue
+    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Necunoscut/"
+    file_counter = 0
+    file_progres = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            file_counter = file_counter + 1
+    pbar['value'] = 0
+    for file_all in os.listdir(dir_selectat):
+        if file_all.endswith(".csv"):
+            with open(dir_selectat + file_all, newline='') as csvfile:
+                array_modul = list(csv.reader(csvfile, delimiter=';'))
+            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
+                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                return
+            counter = counter + 1
+            file_progres = file_progres + 1
+            statuslabel["text"] = "Necunoscut = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+            prelucrare_bom_faza1(array_modul)
+            continue
+        else:
+            continue
+    pbar.destroy()
+    pbargui.destroy()
     end = time.time()
-    messagebox.showinfo('Finalizat!', array_module_file[1][0] + "  " + str(end - start)[:6] + " secunde.")
-    # except:
-    #    return
+    messagebox.showinfo('Finalizat!',
+                        'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
+
+
 
 
 def prelucrare_wirelist_faza1(array_prelucrare):
@@ -124,10 +363,12 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
                       ["4AXEL MIL LHD", "8000"], ["4AXEL MIL RHD", "8001"], ["CHASSIS MIL RHD", "8030"],
                       ["CHASSIS MIL LHD", "8031"], ["MIL_SAT RHD", "8052"], ["MIL_SAT LHD", "8053"])
     lista_fisiere = []
-    array_scriere_sheet2 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Lange",
+    array_scriere_sheet2 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin",
+                             "Kurzname", "Pin", "Lange",
                              "Kurzname/Pin", "K/P Count", "One Wire Error", "DC Error", "Cross Sec Error",
                              "Combination Error", "Sonderltg."]]
-    array_scriere_sheet3 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Lange",
+    array_scriere_sheet3 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin",
+                             "Kurzname", "Pin", "Lange",
                              "Kurzname/Pin", "K/P Count", "One Wire Error", "DC Error", "Cross Sec Error",
                              "Combination Error", "Sonderltg."]]
     concatenare_2 = []
@@ -158,33 +399,37 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
     except FileNotFoundError:
         messagebox.showerror('Eroare fisier', 'Lipsa fisierul ' + lista_fisiere[1])
         quit()
-
+    print (array_wires_1[0:25])
     "Prelucrare efectiva"
     for x in range(1, len(arr_module_file2)):
         for y in range(1, len(array_wires_1)):
             if arr_module_file2[x][1] in array_wires_1[y]:
                 array_scriere_sheet2.append([lista_fisiere[0], arr_module_file2[x][1], array_wires_1[y][1],
                                              array_wires_1[y][2], array_wires_1[y][3], array_wires_1[y][4],
-                                             array_wires_1[y][5], array_wires_1[y][6], array_wires_1[y][10]])
+                                             array_wires_1[y][5], array_wires_1[y][6],
+                                             array_wires_1[y][7], array_wires_1[y][8], array_wires_1[y][10]])
 
     for x in range(1, len(arr_module_file2)):
         for y in range(1, len(array_wires_1)):
             if arr_module_file2[x][1] in array_wires_1[y]:
                 array_scriere_sheet2.append([lista_fisiere[0], arr_module_file2[x][1], array_wires_1[y][1],
                                              array_wires_1[y][2], array_wires_1[y][3], array_wires_1[y][4],
+                                             array_wires_1[y][5], array_wires_1[y][6],
                                              array_wires_1[y][7], array_wires_1[y][8], array_wires_1[y][10]])
     for x in range(1, len(arr_module_file2)):
         for y in range(1, len(array_wires_2)):
             if arr_module_file2[x][1] in array_wires_2[y]:
                 array_scriere_sheet3.append([lista_fisiere[1], arr_module_file2[x][1], array_wires_2[y][1],
                                              array_wires_2[y][2], array_wires_2[y][3], array_wires_2[y][4],
-                                             array_wires_2[y][5], array_wires_2[y][6], array_wires_2[y][10]])
+                                             array_wires_2[y][5], array_wires_2[y][6],
+                                             array_wires_2[y][7], array_wires_2[y][8], array_wires_2[y][10]])
     for x in range(1, len(arr_module_file2)):
         for y in range(1, len(array_wires_2)):
             if arr_module_file2[x][1] in array_wires_2[y]:
                 array_scriere_sheet3.append([lista_fisiere[1], arr_module_file2[x][1], array_wires_2[y][1],
                                              array_wires_2[y][2], array_wires_2[y][3], array_wires_2[y][4],
-                                             array_wires_2[y][7], array_wires_2[y][8], array_wires_2[y][10]])
+                                             array_wires_2[y][7], array_wires_2[y][8], array_wires_2[y][7],
+                                             array_wires_2[y][8], array_wires_2[y][10]])
     """creare sheet fantoma pentru cablaje cu un singur side"""
     if lista_fisiere[1] == "9999":
         array_scriere_sheet3.append([lista_fisiere[1], "1", "2", "3", "4", "0.5", "6", "7", "8"])
@@ -207,14 +452,14 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
     "erorare single"
 
     for x in range(1, len(array_scriere_sheet2)):
-        if int(array_scriere_sheet2[x][10]) == 1 and (array_scriere_sheet2[x][9][:2] == "X9" or
+        if int(array_scriere_sheet2[x][12]) == 1 and (array_scriere_sheet2[x][9][:2] == "X9" or
                                                       array_scriere_sheet2[x][9][:3] == "X10" or
                                                       array_scriere_sheet2[x][9][:2] == "SP" or
                                                       array_scriere_sheet2[x][9][:3] == "X11" or
                                                       array_scriere_sheet2[x][9][:3] == "X12"):
 
             array_scriere_sheet2[x].append("Error")
-        elif int(array_scriere_sheet2[x][10]) >= 3 and (array_scriere_sheet2[x][9][:2] != "X9" and
+        elif int(array_scriere_sheet2[x][12]) >= 3 and (array_scriere_sheet2[x][9][:2] != "X9" and
                                                         array_scriere_sheet2[x][9][:3] != "X10" and
                                                         array_scriere_sheet2[x][9][:2] != "SP" and
                                                         array_scriere_sheet2[x][9][:3] != "X11" and
@@ -223,13 +468,13 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
         else:
             array_scriere_sheet2[x].append("OK")
     for x in range(1, len(array_scriere_sheet3)):
-        if int(array_scriere_sheet3[x][10]) == 1 and (array_scriere_sheet3[x][9][:2] == "X9" or
+        if int(array_scriere_sheet3[x][12]) == 1 and (array_scriere_sheet3[x][9][:2] == "X9" or
                                                       array_scriere_sheet3[x][9][:3] == "X10" or
                                                       array_scriere_sheet3[x][9][:2] == "SP" or
                                                       array_scriere_sheet3[x][9][:3] == "X11" or
                                                       array_scriere_sheet3[x][9][:3] == "X12"):
             array_scriere_sheet3[x].append("Error")
-        elif int(array_scriere_sheet3[x][10]) >= 3 and (array_scriere_sheet3[x][9][:2] != "X9" and
+        elif int(array_scriere_sheet3[x][12]) >= 3 and (array_scriere_sheet3[x][9][:2] != "X9" and
                                                         array_scriere_sheet3[x][9][:3] != "X10" and
                                                         array_scriere_sheet3[x][9][:2] != "SP" and
                                                         array_scriere_sheet3[x][9][:3] != "X11" and
@@ -240,7 +485,7 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
             array_scriere_sheet3[x].append("OK")
     "eroare double"
     for x in range(1, len(array_scriere_sheet2)):
-        if int(array_scriere_sheet2[x][10]) == 2 and (array_scriere_sheet2[x][9][:2] != "X9" and
+        if int(array_scriere_sheet2[x][12]) == 2 and (array_scriere_sheet2[x][9][:2] != "X9" and
                                                       array_scriere_sheet2[x][9][:3] != "X10" and
                                                       array_scriere_sheet2[x][9][:2] != "SP" and
                                                       array_scriere_sheet2[x][9][:3] != "X11" and
@@ -250,7 +495,7 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
         else:
             array_scriere_sheet2[x].append("OK")
     for x in range(1, len(array_scriere_sheet3)):
-        if int(array_scriere_sheet3[x][10]) == 2 and (array_scriere_sheet3[x][9][:2] != "X9" and
+        if int(array_scriere_sheet3[x][12]) == 2 and (array_scriere_sheet3[x][9][:2] != "X9" and
                                                       array_scriere_sheet3[x][9][:3] != "X10" and
                                                       array_scriere_sheet3[x][9][:2] != "SP" and
                                                       array_scriere_sheet3[x][9][:3] != "X11" and
@@ -284,12 +529,12 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
             array_scriere_sheet3[x].append("OK")
     "erorare combinatii"
     for i in range(1, len(array_scriere_sheet2)):
-        if array_scriere_sheet2[i][10] > 2:
+        if array_scriere_sheet2[i][12] > 2:
             array_scriere_sheet2[i].append(pivotare(array_scriere_sheet2, array_scriere_sheet2[i][9]))
         else:
             array_scriere_sheet2[i].append("OK")
     for i in range(1, len(array_scriere_sheet3)):
-        if array_scriere_sheet3[i][10] > 2:
+        if array_scriere_sheet3[i][12] > 2:
             array_scriere_sheet3[i].append(pivotare(array_scriere_sheet3, array_scriere_sheet3[i][9]))
         else:
             array_scriere_sheet3[i].append("OK")
@@ -750,26 +995,174 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
     sheet6[0].append(x6616)
     sheet6[2].append("Status X6490")
     sheet6[2].append(x6490)
-    if globale.is_light_save == "1":
-        prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
-    prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
+    prn_excel_wires_validare(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
 
 
-# BOM ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def prelucrare_individuala_bom():
-    try:
-        globale.director_salvare = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
-                                                           title="Selectati directorul pentru salvare")
-        file_single = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir) + "/MAN/Input/Module Files")
-        with open(file_single, newline='') as csvfile:
-            array_modul = list(csv.reader(csvfile, delimiter=';'))
-        if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-            messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
-            return
-        prelucrare_bom_faza1(array_modul)
-        messagebox.showinfo('Finalizat!', array_modul[1][0])
-    except:
-        return
+def prn_excel_wires_validare(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, sheet8):
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'),
+                         bottom=Side(style='thin'))
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = sheet1[1][0]
+    ws2 = wb.create_sheet(sheet2[1][0])
+    ws3 = wb.create_sheet(sheet3[1][0])
+    ws4 = wb.create_sheet("Variatie Lungimi")
+    ws5 = wb.create_sheet("Erori")
+    ws6 = wb.create_sheet("Bracket")
+    ws7 = wb.create_sheet("Same Wire")
+    ws8 = wb.create_sheet("X6616X6490")
+    ws9 = wb.create_sheet("Variatie Lungimi IST SOLL")
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            if "E-" in sheet1[i][x]:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            else:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            if x == 2:
+                ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
+            else:
+                try:
+                    ws2.cell(column=x + 1, row=i + 1, value=float(sheet2[i][x]))
+                except:
+                    ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
+    for i in range(len(sheet3)):
+        for x in range(len(sheet3[i])):
+            if x == 2:
+                ws3.cell(column=x + 1, row=i + 1, value=str(sheet3[i][x]))
+            else:
+                try:
+                    ws3.cell(column=x + 1, row=i + 1, value=float(sheet3[i][x]))
+                except:
+                    ws3.cell(column=x + 1, row=i + 1, value=sheet3[i][x])
+    for i in range(len(sheet4)):
+        for x in range(len(sheet4[i])):
+            try:
+                ws4.cell(column=x + 1, row=i + 1, value=float(sheet4[i][x]))
+            except:
+                ws4.cell(column=x + 1, row=i + 1, value=sheet4[i][x])
+    for i in range(len(sheet5)):
+        for x in range(len(sheet5[i])):
+            if x == 2:
+                ws5.cell(column=x + 1, row=i + 1, value=str(sheet5[i][x]))
+            else:
+                try:
+                    ws5.cell(column=x + 1, row=i + 1, value=float(sheet5[i][x]))
+                except:
+                    ws5.cell(column=x + 1, row=i + 1, value=sheet5[i][x])
+    for i in range(len(sheet6)):
+        for x in range(len(sheet6[i])):
+            try:
+                ws6.cell(column=x + 1, row=i + 1, value=float(sheet6[i][x]))
+            except:
+                ws6.cell(column=x + 1, row=i + 1, value=sheet6[i][x])
+    """Cosmetica"""
+    colorsgray = PatternFill(start_color='aabbcc', end_color='aabbcc', fill_type='solid')
+    colorsdoi = PatternFill(start_color='7EF1EA', end_color='7EF1EA', fill_type='solid')
+    for i in range(1, 7):
+        for x in range(1, len(ws6['A']) + 1):
+            ws6.cell(column=i, row=x).border = thin_border
+            ws6.cell(column=i, row=x).alignment = Alignment(horizontal='center')
+    for row in ws6['C']:
+        if row.value == "RHD":
+            for i in range(1, 7):
+                ws6.cell(column=i, row=row.row).fill = colorsgray
+        elif row.value == "LHD":
+            for i in range(1, 7):
+                ws6.cell(column=i, row=row.row).fill = colorsdoi
+    for cells in ws1['1']:
+        ws1.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws2['1']:
+        ws2.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws3['1']:
+        ws3.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws4['1']:
+        ws4.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws5['1']:
+        ws5.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws6['1']:
+        ws6.cell(column=cells.column, row=1).font = Font(bold=True)
+    for cells in ws7['1']:
+        ws7.cell(column=cells.column, row=1).font = Font(bold=True)
+    """Cosmetica"""
+    for i in range(len(sheet7)):
+        for x in range(len(sheet7[i])):
+            if x == 2:
+                ws7.cell(column=x + 1, row=i + 1, value=str(sheet7[i][x]))
+            else:
+                try:
+                    ws7.cell(column=x + 1, row=i + 1, value=float(sheet7[i][x]))
+                except:
+                    ws7.cell(column=x + 1, row=i + 1, value=sheet7[i][x])
+    for x in range(len(sheet8[0])):
+        try:
+            ws8.cell(column=1, row=x + 1, value=float(sheet8[0][x][0]))
+            ws8.cell(column=2, row=x + 1, value=float(sheet8[0][x][1]))
+        except:
+            ws8.cell(column=1, row=x + 1, value=sheet8[0][x][0])
+            ws8.cell(column=2, row=x + 1, value=sheet8[0][x][1])
+    for x in range(len(sheet8[1])):
+        try:
+            ws8.cell(column=4, row=x + 1, value=float(sheet8[1][x][0]))
+            ws8.cell(column=5, row=x + 1, value=float(sheet8[1][x][1]))
+        except:
+            ws8.cell(column=4, row=x + 1, value=sheet8[1][x][0])
+            ws8.cell(column=5, row=x + 1, value=sheet8[1][x][1])
+    for x in range(len(sheet8[2])):
+        try:
+            ws8.cell(column=7, row=x + 1, value=float(sheet8[2][x][0]))
+            ws8.cell(column=8, row=x + 1, value=float(sheet8[2][x][1]))
+        except:
+            ws8.cell(column=7, row=x + 1, value=sheet8[2][x][0])
+            ws8.cell(column=8, row=x + 1, value=sheet8[2][x][1])
+    for x in range(len(sheet8[3])):
+        try:
+            ws8.cell(column=10, row=x + 1, value=float(sheet8[3][x][0]))
+            ws8.cell(column=11, row=x + 1, value=float(sheet8[3][x][1]))
+        except:
+            ws8.cell(column=10, row=x + 1, value=sheet8[3][x][0])
+            ws8.cell(column=11, row=x + 1, value=sheet8[3][x][1])
+    for i in range(len(sheet4)):
+        ws9.cell(column=1, row=i + 1, value="IST")
+        for x in range(len(sheet4[i])):
+            try:
+                ws9.cell(column=x + 2, row=i + 1, value=float(sheet4[i][x]))
+            except:
+                ws9.cell(column=x + 2, row=i + 1, value=sheet4[i][x])
+    ws9.cell(column=1, row=1, value="IST / SOLL")
+    ws9.insert_cols(5)
+    ws9.cell(column=5, row=1, value="Description")
+    istsoll(ws6, ws9)
+
+    if globale.director_salvare == "":
+        try:
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Validare/Wirelist/" +
+                    sheet1[1][0] + ".xlsx")
+            log_file("Creat " + sheet1[1][0] + ".xlsx")
+        except PermissionError:
+            log_file("Eroare scriere. Nu am salvat " + sheet1[1][0] + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
+            return None
+        except FileNotFoundError:
+            messagebox.showerror('Eroare scriere', "Directorul /MAN/Output/Validare/Wirelist/ nu exista!")
+            return None
+    else:
+        try:
+            wb.save(globale.director_salvare + "/" + sheet1[1][0] + ".xlsx")
+            log_file("Creat " + sheet1[1][0] + ".xlsx")
+        except PermissionError:
+            log_file("Eroare scriere. Nu am salvat " + sheet1[1][0] + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
+            return None
+
+    return None
 
 
 def prelucrare_bom_faza1(array_prelucrare):
@@ -787,6 +1180,7 @@ def prelucrare_bom_faza1(array_prelucrare):
         arr_module_active = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module Implementate.txt", newline='') as csvfile:
         arr_module_implementate = list(csv.reader(csvfile, delimiter=';'))
+
     "Prelucrare efectiva"
 
     for x in range(len(arr_module_active)):
@@ -822,6 +1216,8 @@ def prelucrare_bom_faza1(array_prelucrare):
 
 def prelucrare_bom_faza2(arr_sheet1, listas):
     ##"Selectie fisiere wirelist"
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt", newline='') as csvfile:
+        arr_component_overview = list(csv.reader(csvfile, delimiter=';'))
     lista_selectie = (["SATTEL LHD", "8011"], ["SATTEL RHD", "8013"], ["CHASSIS LHD", "8012"], ["CHASSIS RHD", "8014"],
                       ["TGLM LHD", "8023"], ["TGLM RHD", "8024"], ["4AXEL LHD", "8025"], ["4AXEL RHD", "8026"],
                       ["4AXEL MIL LHD", "8000"], ["4AXEL MIL RHD", "8001"], ["CHASSIS MIL RHD", "8030"],
@@ -829,7 +1225,7 @@ def prelucrare_bom_faza2(arr_sheet1, listas):
     lista_fisiere = []
     arr_sheet2 = [["Module", "Quantity", "Bezei", "VOBES-ID", "Benennung", "Verwendung", "Verwendung", "Kurzname", "xy",
                    "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe", "E-Komponente",
-                   "E-Komponente Part-Nr.", "Einh."]]
+                   "E-Komponente Part-Nr.", "Einh.", "Leoni PN 1", "Leoni PN 2", "Supplier No"]]
     for i in range(len(listas)):
         for x in range(len(lista_selectie)):
             if listas[i] in lista_selectie[x]:
@@ -851,270 +1247,53 @@ def prelucrare_bom_faza2(arr_sheet1, listas):
         for y in range(1, len(arr_bom_2)):
             if arr_sheet1[x][1] in arr_bom_2[y]:
                 arr_sheet2.append(arr_bom_2[y])
-    prn_excel_bom(arr_sheet1, arr_sheet2, lista_fisiere)
+    for x in range(1, len(arr_sheet2)):
+        for y in range(len(arr_component_overview)):
+
+            if arr_sheet2[x][9] == arr_component_overview[y][0]:
+                arr_sheet2[x].append(arr_component_overview[y][1])
+                arr_sheet2[x].append(arr_component_overview[y][2])
+                arr_sheet2[x].append(arr_component_overview[y][3])
+    prn_excel_bom_validare(arr_sheet1, arr_sheet2)
     return None
 
 
-# DIRECTORIES ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-def wirelist_director():
-    pbargui = Tk()
-    pbargui.title("Wirelist toate")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    timelabel = Label(pbargui, text="Time . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    timelabel.grid(row=2, column=2)
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
-    dir_output = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
-    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/KSKLight.txt", newline='') as csvfile:
-        array_sortare_light = list(csv.reader(csvfile, delimiter=';'))
-    counter = 0
-    start = time.time()
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    start0 = time.time()
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            globale.is_light_save = "0"
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8000 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
-                return
-            counter = counter + 1
-            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
-            if set(array_temporar_module).issubset(array_sortare_light[0]):
-                globale.is_light_save = "1"
-            prelucrare_wirelist_faza1(array_modul)
-            end0 = time.time()
-            timelabel["text"] = "Estimated time to complete : " + \
-                                str(((file_counter * 2) - (end0 - start0)) / 60)[:5] + " minutes."
-            pbargui.update_idletasks()
-            continue
-        else:
-            continue
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    start1 = time.time()
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            globale.is_light_save = "0"
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8011 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel11!')
-                return
-            counter = counter + 1
-            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
-            if set(array_temporar_module).issubset(array_sortare_light[0]):
-                globale.is_light_save = "1"
-            prelucrare_wirelist_faza1(array_modul)
-            end1 = time.time()
-            timelabel["text"] = "Estimated time to complete : " + \
-                                str(((file_counter * 2) - (end1 - start1)) / 60)[:5] + " minutes."
-            pbargui.update_idletasks()
-            continue
-        else:
-            continue
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    start2 = time.time()
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            globale.is_light_save = "0"
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8023 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
-                return
-            counter = counter + 1
-            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
-            if set(array_temporar_module).issubset(array_sortare_light[0]):
-                globale.is_light_save = "1"
-            prelucrare_wirelist_faza1(array_modul)
-            end2 = time.time()
-            timelabel["text"] = "Estimated time to complete : " + \
-                                str(((file_counter * 2) - (end2 - start2)) / 60)[:5] + " minutes."
-            pbargui.update_idletasks()
-            continue
-        else:
-            continue
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Necunoscut/"
-    dir_output = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/Necunoscut/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    start3 = time.time()
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            globale.is_light_save = "0"
-            file_progres = file_progres + 1
-            statuslabel["text"] = "Necunoscut = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
-                return
-            counter = counter + 1
-            array_temporar_module = [array_modul[i][1] for i in range(1, len(array_modul))]
-            if set(array_temporar_module).issubset(array_sortare_light[0]):
-                globale.is_light_save = "1"
-            prelucrare_wirelist_faza1(array_modul)
-            end3 = time.time()
-            timelabel["text"] = "Estimated time to complete : " + \
-                                str(((file_counter * 2) - (end3 - start3)) / 60)[:5] + " minutes."
-            pbargui.update_idletasks()
-            continue
-        else:
-            continue
-    end = time.time()
-    pbar.destroy()
-    pbargui.destroy()
-    messagebox.showinfo('Finalizat!',
-                        'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
-
-
-def bom_director():
-    pbargui = Tk()
-    pbargui.title("BOM toate")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    statuslabel = Label(pbargui, text="Waiting . . .")
-    pbar.grid(row=1, column=1, padx=5, pady=5)
-    statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
-    counter = 0
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    start = time.time()
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
-                return
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8000 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            counter = counter + 1
-            prelucrare_bom_faza1(array_modul)
-            continue
-        else:
-            continue
-
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
-                return
-            counter = counter + 1
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8011 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            prelucrare_bom_faza1(array_modul)
-            continue
-        else:
-            continue
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect.  Eroare cap de tabel!')
-                return
-            counter = counter + 1
-            file_progres = file_progres + 1
-            statuslabel["text"] = "8023 = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            prelucrare_bom_faza1(array_modul)
-            continue
-        else:
-            continue
-    dir_selectat = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/Necunoscut/"
-    file_counter = 0
-    file_progres = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
-    pbar['value'] = 0
-    for file_all in os.listdir(dir_selectat):
-        if file_all.endswith(".csv"):
-            with open(dir_selectat + file_all, newline='') as csvfile:
-                array_modul = list(csv.reader(csvfile, delimiter=';'))
-            if array_modul[0][0] != "Harness" and array_modul[0][0] != "Module":
-                messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
-                return
-            counter = counter + 1
-            file_progres = file_progres + 1
-            statuslabel["text"] = "Necunoscut = " + str(file_progres) + "/" + str(file_counter) + " : " + file_all
-            pbar['value'] += 1
-            pbargui.update_idletasks()
-            prelucrare_bom_faza1(array_modul)
-            continue
-        else:
-            continue
-    pbar.destroy()
-    pbargui.destroy()
-    end = time.time()
-    messagebox.showinfo('Finalizat!',
-                        'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
-
-
-
+def prn_excel_bom_validare(sheet1, sheet2):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = sheet1[1][0]
+    ws2 = wb.create_sheet("BOM")
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            if "E-" in sheet1[i][x]:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+            else:
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            try:
+                ws2.cell(column=x + 1, row=i + 1, value=float(sheet2[i][x]))
+            except:
+                ws2.cell(column=x + 1, row=i + 1, value=sheet2[i][x])
+    if globale.director_salvare == "":
+        try:
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM" + "/BOM " + sheet1[1][0] + ".xlsx")
+            log_file("Creat BOM " + sheet1[1][0] + ".xlsx")
+        except PermissionError:
+            log_file("Eroare salvare. Nu am salvat BOM " + sheet1[1][0] + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
+            return None
+    else:
+        try:
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM" + sheet1[1][0] + ".xlsx")
+            log_file("Creat BOM " + sheet1[1][0] + ".xlsx")
+        except PermissionError:
+            log_file("Eroare salvare. Nu am salvat BOM " + sheet1[1][0] + ".xlsx")
+            messagebox.showerror('Eroare scriere', "Fisierul " + sheet1[1][0] + "este read-only!")
+            return None

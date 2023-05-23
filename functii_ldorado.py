@@ -10,13 +10,14 @@ def segment_test():
     tree = parse(Ldorado_file)
     root = tree.getroot()
 
-    array_conector = [['Connector ID', 'Connector Name', 'PMD', 'Cavity PinNo', 'Connector WireID']]
+    array_conector = [['Connector ID', 'Connector Name', 'PMD', 'Cavity PinNo', 'Connector WireID',
+                       'ConnectorModuleRefs']]
     array_module = [['Module ID', 'CustomerPartNo', 'AscertainedPPSPartNo', 'Description', 'Signature']]
     array_conectorpmd = [['ConnectorPMD ID', 'Abbreviation', 'Description', 'HousingColour', 'HousingType',
                           'NumberOfCavities', 'Cavity ID', 'Terminal Type', 'CustomerPartNo']]
     array_wires = [["Wire ID", "ElementID", "PMD", "WireNo", "MultiCoreID", "WireModuleRef ModuleID"]]
     array_wirepmd = [["WirePMD ID", "Abbreviation", "Description", "WireType", "CSA", "Colour"]]
-
+    module_conector = [['Connector ID', 'Module ID']]
     # drawing number
     drawing_number = root.find("Harness/TitleBlock").attrib['CustomerPartNo']
 
@@ -30,7 +31,13 @@ def segment_test():
                                 array_conector.append(
                                     [connectors.attrib['ID'].strip(), connectors.attrib['ElementID'].strip(),
                                      connectors.attrib['PMD'].strip(), cavities.attrib['PinNo'].strip(),
-                                     cavity.attrib['WireID'].strip()])
+                                     cavity.attrib['WireID'].strip(), module_conector])
+
+    for connectors in root.find("Harness/Connectors"):
+        for connector in connectors:
+            if connector.tag == "ConnectorModuleRefs":
+                for modref in connector:
+                    module_conector.append([connectors.attrib['ID'].strip(), modref.attrib['ModuleID'].strip()])
 
     for module in root.find("Harness/Modules"):
         for titleblock in module:
@@ -86,7 +93,5 @@ def segment_test():
                               generalwirepmd.attrib['CSA'].strip(),
                               generalwirepmd.attrib['Colour'].strip()])
 
-    for i in range(len(array_wires)):
-        print(array_wires[i])
 
-    prn_excel_module_ldorado(array_conector, array_module, array_conectorpmd, array_wires, array_wirepmd)
+    prn_excel_module_ldorado(array_conector, array_module, array_conectorpmd, array_wires, array_wirepmd, module_conector)

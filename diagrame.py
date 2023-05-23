@@ -2586,7 +2586,7 @@ def digrame_in_ksk():
     pbar['value'] += 2
     pbargui.update_idletasks()
     with open(basic_module, newline='') as csvfile:
-        array_bm = list(csv.reader(csvfile, delimiter=','))
+        array_bm = list(csv.reader(csvfile, delimiter=';'))
     if array_bm[0][0] != "Basic_Module":
         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect. Eroare cap de tabel!')
         pbar.destroy()

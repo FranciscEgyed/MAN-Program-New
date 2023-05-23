@@ -254,7 +254,7 @@ def load_source():
     for row in ws17['A']:
         if row.value is not None:
             array_write.append([ws17.cell(row=row.row, column=1).value, ws17.cell(row=row.row, column=2).value,
-                                ws17.cell(row=row.row, column=3).value])
+                                ws17.cell(row=row.row, column=3).value, ws17.cell(row=row.row, column=4).value])
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt", 'w', newline='',
               encoding='utf-8') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
