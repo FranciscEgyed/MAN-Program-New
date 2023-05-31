@@ -145,7 +145,7 @@ submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
 submenucascade.add_command(label="Basic Module",
                            command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
 submenucascade.add_command(label="Lista diagrame in KSK",
-                           command=lambda: [statusbusy(), digrame_in_ksk(), statusidle()])
+                           command=lambda: [statusbusy(), diagrame_ksk(), statusidle()])
 
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])

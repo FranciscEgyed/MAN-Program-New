@@ -1162,3 +1162,23 @@ def prn_cm_to_excel(sheet1):
         log_file("Eroare salvare. Nu am salvat Control Matrix All.xlsx")
         messagebox.showerror('Eroare scriere', "Fisierul Control Matrix All.xlsx este read-only!")
         return None
+
+
+def prn_excel_diagrame_ksk(sheet1):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Toate"
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame KSK.xlsx")
+        log_file("Creat")
+    except PermissionError:
+
+        log_file("Eroare salvare. Nu am salvat ")
+        messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
+        return None
