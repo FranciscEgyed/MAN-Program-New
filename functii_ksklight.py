@@ -144,10 +144,10 @@ def cutting_ksklight():
             path = os.path.join(dir_selectat, file_all)
             wb = load_workbook(path)
             ws = wb.worksheets[0]
-            lista_module = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
+            lista_module = [ws.cell(row=row.row, column=1).value.replace("VM", "81").replace("PM", "81") for row in ws['A'] if row.value is not None]
             for q in range(len(array_wires_all)):
                 for x in range(len(lista_module)):
-                    if array_wires_all[q][0] == lista_module[x] and array_wires_all[q][0] not in excluderecst:
+                    if array_wires_all[q][0].replace("VM", "81").replace("PM", "81") == lista_module[x] and array_wires_all[q][0] not in excluderecst:
                         array_fire_ksk.append([file_all.split(".")[0], array_wires_all[q][0],
                                                array_wires_all[q][1].lower(),
                                                array_wires_all[q][2], array_wires_all[q][3], array_wires_all[q][4],
@@ -167,10 +167,12 @@ def cutting_ksklight():
         for x in range(len(control_matrix)):
             if lista_cutting[i][2] + lista_cutting[i][3] == control_matrix[x][0]:
                 lista_cutting[i].extend([control_matrix[x][1], control_matrix[x][3], control_matrix[x][5]])
+                if lista_cutting[i][3] == "weiss-blau_016":
+                    print(lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][1], control_matrix[x][3], control_matrix[x][5])
                 break
             # ceva pentru culori
             elif lista_cutting[i][3][0:4] in listafiretext:
-                if fuzz.ratio(lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][0]) > 94:
+                if fuzz.ratio(lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][0]) > 98:
                     print(lista_cutting[i][3][0:4], lista_cutting[i][2] + lista_cutting[i][3], control_matrix[x][0])
                     lista_cutting[i].extend([control_matrix[x][1], control_matrix[x][3], control_matrix[x][5]])
                     break
@@ -776,7 +778,7 @@ def stockcompa():
 
 def diagrame_ksk():
     pbargui = Tk()
-    pbargui.title("Lista SuperSleeve KSK Light")
+    pbargui.title("Lista Diagrame in KSK")
     pbargui.geometry("500x50+50+550")
     pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
     statuslabel = Label(pbargui, text="Waiting . . .")
@@ -784,119 +786,41 @@ def diagrame_ksk():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     timelabel.grid(row=2, column=2)
-    counter = 0
-
     bm_file = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                          title="Selectati fisierul Basic Module:")
     with open(bm_file, newline='') as csvfile:
         array_bm = list(csv.reader(csvfile, delimiter=';'))
     file_all = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                          title="Selectati fisierul EXCEL cu modulele din KSK: (LEONI PN)")
-    array_print = [["KSK No", "Basic_Module", "Module", "[Index]", "BM Group", "X", "Y"]]
+    wb = load_workbook(file_all)
+    ws = wb.worksheets[0]
+    array_ksk = []
+    for row in ws['A']:
+        if row.value is not None:
+            array_ksk.append(ws.cell(row=row.row, column=1).value)
 
-    start = time.time()
-    if file_all.endswith(".xlsx"):
-        start1 = time.time()
-        with open(bm_file, newline='') as csvfile:
-            array_bm = list(csv.reader(csvfile, delimiter=';'))
-            array_bm_work = array_bm
+    array_diagrame = list(dict.fromkeys([array_bm[i][0] for i in range(len(array_bm))]))
+    for i in range(len(array_bm)):
+        if array_bm[i][1] in array_ksk:
+            array_bm[i].append(1)
+        else:
+            array_bm[i].append(0)
+
+    for diagrama in array_diagrame:
+        array_index = [array_bm[i] for i in range(len(array_bm)) if diagrama in array_bm[i]]
+        indexe_diagrama = list(dict.fromkeys([array_index[i][2] for i in range(len(array_index))]))
+        indexe_diagrama_activ = list(dict.fromkeys([array_index[i][2] for i in range(len(array_index)) if array_index[i][5] !=0]))
         pbar['value'] += 2
         pbargui.update_idletasks()
-        wb = load_workbook(file_all)
-        ws = wb.worksheets[0]
-        lista_module_ksk = [ws.cell(row=row.row, column=1).value for row in ws['A'] if row.value is not None]
 
-        for i in range(len(array_bm_work)):
-            if array_bm_work[i][1] in lista_module_ksk:
-                array_bm_work[i].append(1)
-            else:
-                array_bm_work[i].append(0)
+        if indexe_diagrama == indexe_diagrama_activ:
+            print(diagrama)
 
-        array_prelucrat = [array_bm_work[i] for i in range(len(array_bm_work))
-                        if array_bm_work[i][5] != 0]
-        array_prelucrat.insert(0, ["Basic_Module", "Module", "Index", "Basic_Module_GROUP", "isWrapAccepted",
-                                   "Count"])
-        df1 = pd.DataFrame(array_prelucrat)
-        df1.columns = df1.iloc[0]
-        df1 = df1[1:]
-        df2 = pd.pivot_table(df1, index=["Basic_Module"], columns=["Index"], fill_value=0)
-        indexes = df2.index.values.tolist()
-        valori = df2.values.tolist()
-        index_value_pairs = []
-        for i in range(len(valori)):
-            if valori[i][0] != 0 and valori[i][1] != 0:
-                index_value_pairs.append(indexes[i])
-        add_to_print = []
-        for i in range(len(index_value_pairs)):
-            for x in range(len(array_bm)):
-                templist = []
-                if index_value_pairs[i] == array_bm[x][0] and array_bm[x] not in add_to_print:
-                    templist = array_bm[x]
-                    templist.insert(0, file_all[-14:-5])
-                    add_to_print.append(templist)
-        counter = counter + 1
-        array_print.extend(add_to_print)
-        end1 = time.time()
-        pbargui.update_idletasks()
 
-    statuslabel["text"] = "Creare lista SuperSleeve         "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    array_unic_print = [[array_print[i][1], array_print[i][0], array_print[i][2],
-                         array_print[i][3], array_print[i][4], array_print[i][5]] for i in range(1, len(array_print))]
-    array_unic_print2 = [array_unic_print[i] for i in range(len(array_unic_print))
-                         if array_unic_print[i][3] == str(array_unic_print[i][4])]
 
-    for i in range(len(array_unic_print2)):
-        for x in range(len(array_print)):
-            if array_unic_print2[i][0] == array_print[x][1]:
-                array_unic_print2[i].append(array_print[x][7])
-                break
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    array_unic_print2.insert(0, ["Basic Module", "CC: KSK+BM", "Modul ID", "Tip", "Cantitate", "Part No", "Segment"])
-    df = pd.DataFrame(array_unic_print2)
-    df = df.reset_index(drop=True)
-    df.columns = df.iloc[0]
-    df = df[1:]
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    pivot = df.pivot_table(index="Segment", columns="Part No", values="Cantitate", fill_value=0, aggfunc='count')
-    indexes = pivot.index.values.tolist()
-    valori = pivot.values.tolist()
-    coloane = pivot.columns.tolist()
-    array_taiere_print = [["Segment"]]
-    array_taiere_print[0].extend(coloane)
-    for i in range(len(indexes)):
-        temp = []
-        temp.append(indexes[i])
-        temp.extend(valori[i])
-        array_taiere_print.append(temp)
-    array_taiere_print[0].append("Lungime mm")
-    for i in range(1, len(array_taiere_print)):
-        for x in range(len(array_print)):
-            if array_taiere_print[i][0] == array_print[x][7]:
-                array_taiere_print[i].append(array_print[x][8])
-                break
-    statuslabel["text"] = "Cautare part number LEONI             "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    # for i in range(1, len(array_taiere_print[0]) - 1):
-    #    pbar['value'] += 2
-    #    pbargui.update_idletasks()
-    #    for x in range(len(compover)):
-    #        if array_taiere_print[0][i] == compover[x][0]:
-    #            array_taiere_print[0][i] = compover[x][2]
-    # answer = askyesno(title='Optiuni printare', message='Doriti printare completa?')
-    statuslabel["text"] = "Printare lista             "
-    pbar['value'] += 2
-    # pbargui.update_idletasks()
-    # if answer:
-    prn_excel_diagrame_ksk(array_print)
-    # else:
-    #    prn_excel_supers_ksk_all_simplu(array_taiere_print)
+    #prn_excel_diagrame_ksk(array_print)
+
     pbar.destroy()
     pbargui.destroy()
     end = time.time()
-    messagebox.showinfo('Finalizat!', 'Finalizat ' + str(counter) + " in "
-                        + str(end - start)[:6][:6] + " secunde.")
+    messagebox.showinfo('Finalizat!', 'Finalizat')

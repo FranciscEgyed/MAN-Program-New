@@ -55,10 +55,18 @@ def prelucrare_wirelist_faza1(array_prelucrare):
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Module MY2023.txt", newline='') as csvfile:
         modulemy23 = list(csv.reader(csvfile, delimiter=';'))
     "Prelucrare efectiva"
-    for x in range(len(arr_module_active)):
-        for y in range(1, len(arr_module_file)):
+    for y in range(1, len(arr_module_file)):
+        for x in range(len(arr_module_active)):
             if arr_module_file[y][1] == arr_module_active[x][0]:
                 arr_module_file[y].extend(arr_module_active[x])
+    for i in range(1, len(arr_module_file)):
+        if len(arr_module_file[i]) == 2:
+            for x in range(len(arr_module_active)):
+                if arr_module_file[i][1] == arr_module_active[x][0].replace("PM", "81").replace("VM", "81"):
+                    arr_module_file[i].extend([arr_module_active[x][0].replace("PM", "81").replace("VM", "81"),
+                                               arr_module_active[x][1], arr_module_active[x][2],
+                                               arr_module_active[x][3]])
+
     for i in range(1, len(arr_module_file)):
         if len(arr_module_file[i]) == 2:
             arr_module_file[i].extend(["XXXX", "XXXX", "XXXX", "XXXX"])
@@ -73,10 +81,11 @@ def prelucrare_wirelist_faza1(array_prelucrare):
             arr_module_file[y].append("Not OK")
 
     for i in range(1, len(arr_module_file)):
-        if arr_module_file[i][5] != "XXXX":
+        if arr_module_file[i][1] != "":
             lista_module_extrageret.append(arr_module_file[i][5])
     lista_module_extrageret = Counter(lista_module_extrageret).most_common(2)
     lista_module_extragere = [lista_module_extrageret[i][0] for i in range(0, 2)]
+
     for i in range(1, len(array_prelucrare)):
         if len(array_prelucrare[i][3]) > 10:
             arr_module_file[i].extend([array_prelucrare[i][2], "0"])
@@ -137,6 +146,13 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
             if listas[i] in lista_selectie[x]:
                 lista_fisiere.append(lista_selectie[x][1])
     lista_fisiere = sorted(lista_fisiere)
+
+    if len(lista_fisiere) == 0:
+        for i in range(1, len(arr_module_file2)):
+            lista_fisiere.append(arr_module_file2[i][3][-4:])
+    lista_fisiere = Counter(lista_fisiere).most_common(2)
+    lista_fisiere = sorted([lista_fisiere[i][0] for i in range(0, 2)])
+
     "Load required data files"
     if len(lista_fisiere) == 0:
         messagebox.showerror('Eroare fisier sursa', 'Verificati fisierul sursa Module Active')
@@ -149,7 +165,7 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
                   newline='') as csvfile:
             array_wires_1 = list(csv.reader(csvfile, delimiter=';'))
     except FileNotFoundError:
-        messagebox.showerror('Eroare fisier', 'Lipsa fisierul ' + lista_fisiere[0])
+        messagebox.showerror('Eroare fisier ' , 'Lipsa fisierul ' + lista_fisiere[0] + " pentru " + arr_module_file2[1][0])
         quit()
     try:
         with open(os.path.abspath(os.curdir) + "/MAN/Input/Wire Lists/" + lista_fisiere[1] + ".Wirelist.csv",

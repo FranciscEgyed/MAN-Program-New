@@ -1973,7 +1973,8 @@ def crearematrixmodule():
     statuslabel["text"] = "Printing EXCEL file . . ."
     pbar['value'] += 2
     pbargui.update_idletasks()
-    prn_excel_matrixmodule(array_output)
+    array_output2 = [array_output[i] for i in range(len(array_output)) if array_output[i][-1] != ""]
+    prn_excel_matrixmodule(array_output2)
     pbargui.destroy()
     end = time.time()
     messagebox.showinfo('Finalizat!', 'Prelucrate  fisiere.')

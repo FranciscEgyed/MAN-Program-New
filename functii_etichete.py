@@ -23,11 +23,12 @@ def eticheteqr():
         for row in ws1['A']:
             if row.value is not None:
                 # img = qrcode.make(ws1.cell(row=row.row, column=1).value, back_color=bcolors[1], fill_color=colors[1])
+                print(ws1.cell(row=row.row, column=1).value)
                 qr.add_data(ws1.cell(row=row.row, column=1).value)
                 img = qr.make_image(back_color=bcolors[1], fill_color=colors[1])
                 img = img.resize((200, 200))
                 img.save(os.path.abspath(os.curdir) + "/MAN/Output/QR Images/" +
-                         str(ws1.cell(row=row.row, column=1).value) + ".jpg")
+                         str(ws1.cell(row=row.row, column=1).value.replace("/", " ")) + ".jpg")
                 qr.clear()
         messagebox.showinfo("Finalizat", "Finalizat!")
     except:

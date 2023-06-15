@@ -403,8 +403,8 @@ def wires():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                         "8030", "8031", "8032", "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
@@ -572,8 +572,8 @@ def boms():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
-    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                  "8030", "8031", "8032", "8052", "8053"]
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
     dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
     start = time.time()
     file_counter = 0
@@ -789,8 +789,8 @@ def wires_complet():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                         "8030", "8031", "8032", "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
@@ -925,8 +925,8 @@ def wires_pnleoni():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                         "8030", "8031", "8032", "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
               newline='') as csvfile:
         array_componente = list(csv.reader(csvfile, delimiter=';'))
@@ -1076,8 +1076,8 @@ def boms_pnleoni():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
-    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                  "8030", "8031", "8032", "8052", "8053"]
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
               newline='') as csvfile:
         array_componente = list(csv.reader(csvfile, delimiter=';'))
@@ -1300,8 +1300,8 @@ def boms_cumulat():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
-    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                  "8030", "8031", "8032", "8052", "8053"]
+    array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
     array_output = [["Module", "Quantity", "Bezeichnung", "VOBES-ID", "Benennung", "Verwendung", "Verwendung",
                      "Kurzname", "xy", "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe",
                      "E-Komponente", "E-Komponente Part-Nr.", "Einh.", "Platforma"]]
@@ -1512,8 +1512,8 @@ def wires_cumulat():
     statuslabel = Label(pbargui, text="Waiting . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", "8027",
-                         "8030", "8031", "8032", "8052", "8053"]
+    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
     array_output = [["Module ID", "Ltg-Nr.", "Verbindung", "von", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung",
                      "nach", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung", "Leitung", "Sonderltg.",
                      "Farbe", "Quer.", "Pot.", "Lange", "Platforma"]]

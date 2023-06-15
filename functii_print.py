@@ -12,20 +12,21 @@ def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, shee
     thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'),
                          bottom=Side(style='thin'))
     dir_salvare_default = ""
-    if sheet2[1][0] == "8011" or sheet2[1][0] == "8012" or sheet2[1][0] == "8013" or sheet2[1][0] == "8014":
-        dir_salvare_default = "8011/"
-    if sheet2[1][0] == "8023" or sheet2[1][0] == "8024" or sheet2[1][0] == "8025" or sheet2[1][0] == "8026":
-        dir_salvare_default = "8023/"
-    if sheet2[1][0] == "8000" or sheet2[1][0] == "8001":
-        dir_salvare_default = "8000/"
-    if sheet2[1][0] == "8011.MY23" or sheet2[1][0] == "8012.MY23" or sheet2[1][0] == "8013.MY23" or \
+    if sheet2[1][0] == "8011" or sheet2[1][0] == "8012" or sheet2[1][0] == "8013" or sheet2[1][0] == "8014" or \
+            sheet2[1][0] == "8011.MY23" or sheet2[1][0] == "8012.MY23" or sheet2[1][0] == "8013.MY23" or \
             sheet2[1][0] == "8014.MY23":
-        dir_salvare_default = "/8011/"
-    if sheet2[1][0] == "8023.MY23" or sheet2[1][0] == "8024.MY23" or sheet2[1][0] == "8025.MY23" or \
+        dir_salvare_default = "8011/"
+
+    if sheet2[1][0] == "8023" or sheet2[1][0] == "8024" or sheet2[1][0] == "8025" or sheet2[1][0] == "8026" or \
+            sheet2[1][0] == "8023.MY23" or sheet2[1][0] == "8024.MY23" or sheet2[1][0] == "8025.MY23" or \
             sheet2[1][0] == "8026.MY23":
-        dir_salvare_default = "/8023/"
-    if sheet2[1][0] == "8000.MY23" or sheet2[1][0] == "8001.MY23":
-        dir_salvare_default = "/8000/"
+        dir_salvare_default = "8023/"
+
+    if sheet2[1][0] == "8000" or sheet2[1][0] == "8001" or sheet2[1][0] == "8052" or sheet2[1][0] == "8053" or \
+            sheet2[1][0] == "8041" or sheet2[1][0] == "8042" or sheet2[1][0] == "8000.MY23" or \
+            sheet2[1][0] == "8001.MY23":
+        dir_salvare_default = "8000/"
+
     wb = Workbook()
     ws1 = wb.active
     ws1.title = sheet1[1][0]
@@ -192,11 +193,19 @@ def prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, sheet7, shee
 
 def prn_excel_bom(sheet1, sheet2, lista_fisiere):
     dir_salvare_default = ""
-    if "8011" in lista_fisiere or "8012" in lista_fisiere or "8013" in lista_fisiere or "8014" in lista_fisiere:
+    if sheet2[1][0] == "8011" or sheet2[1][0] == "8012" or sheet2[1][0] == "8013" or sheet2[1][0] == "8014" or \
+            sheet2[1][0] == "8011.MY23" or sheet2[1][0] == "8012.MY23" or sheet2[1][0] == "8013.MY23" or \
+            sheet2[1][0] == "8014.MY23":
         dir_salvare_default = "8011/"
-    if "8023" in lista_fisiere or "8024" in lista_fisiere or "8025" in lista_fisiere or "8026" in lista_fisiere:
+
+    if sheet2[1][0] == "8023" or sheet2[1][0] == "8024" or sheet2[1][0] == "8025" or sheet2[1][0] == "8026" or \
+            sheet2[1][0] == "8023.MY23" or sheet2[1][0] == "8024.MY23" or sheet2[1][0] == "8025.MY23" or \
+            sheet2[1][0] == "8026.MY23":
         dir_salvare_default = "8023/"
-    if "8001" in lista_fisiere or "8000" in lista_fisiere:
+
+    if sheet2[1][0] == "8000" or sheet2[1][0] == "8001" or sheet2[1][0] == "8052" or sheet2[1][0] == "8053" or \
+            sheet2[1][0] == "8041" or sheet2[1][0] == "8042" or sheet2[1][0] == "8000.MY23" or \
+            sheet2[1][0] == "8001.MY23":
         dir_salvare_default = "8000/"
     wb = Workbook()
     ws1 = wb.active
@@ -1109,10 +1118,10 @@ def prn_excel_matrixmodule(sheet1):
     ws1.title = "Matrix"
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
-            try:
-                ws1.cell(column=x + 1, row=i + 1, value=sheet1[i][x])
-            except:
-                ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
+            #try:
+            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+           # except:
+            #    ws1.cell(column=x + 1, row=i + 1, value=str(float(sheet1[i][x])))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Matrix Module.xlsx")
         log_file("Creat Matrix Module.xlsx")

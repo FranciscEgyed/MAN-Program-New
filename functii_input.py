@@ -484,7 +484,7 @@ def cmcsrnew():
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
         if "8014" in array_sortare[0] or "8O14" in array_sortare[0]:
-            for i, j in enumerate(array_sortare[5]):
+            for i, j in enumerate(array_sortare[7]):
                 if j == 'Kurzname':
                     idx_conector.append(i)
                 elif j == 'Pin':
@@ -537,14 +537,14 @@ def cmcsrnew():
             pbar['value'] += 2
             pbargui.update_idletasks()
 
-            for i in range(6, len(array_sortare)):
+            for i in range(8, len(array_sortare)):
                 try:
                     for x in range(0, len(idx_module)):
                         if array_sortare[i][idx_module[x]] == "X" or array_sortare[i][idx_module[x]] == "x":
-                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                            array_print.append([array_sortare[5][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                                array_sortare[i][idx_knname], array_sortare[5][idx_module[x]],
                                                 array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
@@ -560,10 +560,10 @@ def cmcsrnew():
                             pbar['value'] += 2
                             pbargui.update_idletasks()
                         elif array_sortare[i][idx_module[x]] == "Y" or array_sortare[i][idx_module[x]] == "y":
-                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                            array_print.append([array_sortare[5][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                                array_sortare[i][idx_knname], array_sortare[5][idx_module[x]],
                                                 array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "OPERATIE",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
@@ -580,10 +580,10 @@ def cmcsrnew():
                             pbargui.update_idletasks()
                         elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] in listatwist:
-                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                            array_print.append([array_sortare[5][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i + 4][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i + 4][idx_knname], array_sortare[3][idx_module[x]],
+                                                array_sortare[i + 4][idx_knname], array_sortare[5][idx_module[x]],
                                                 array_sortare[i + 4][idx_leadset].upper().replace("23U", "23W"), "FIR",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
@@ -598,10 +598,10 @@ def cmcsrnew():
                                                 array_sortare[i][idx_aem3]])
                         elif (array_sortare[i][idx_module[x]] == "S" or array_sortare[i][idx_module[x]] == "s")\
                                 and array_sortare[i][idx_realname] not in listatwist:
-                            array_print.append([array_sortare[3][idx_module[x]] + array_sortare[i][idx_realname].lower(),
+                            array_print.append([array_sortare[5][idx_module[x]] + array_sortare[i][idx_realname].lower(),
                                                 array_sortare[i][idx_kanbanag].split("-")[0].upper().replace("23U", "23W"),
                                                 array_sortare[i][idx_realname].lower(),
-                                                array_sortare[i][idx_knname], array_sortare[3][idx_module[x]],
+                                                array_sortare[i][idx_knname], array_sortare[5][idx_module[x]],
                                                 array_sortare[i][idx_leadset].upper().replace("23U", "23W"), "FIRCOMP",
                                                 array_sortare[i][idx_pnmaterial], array_sortare[i][idx_conector[0]],
                                                 array_sortare[i][idx_pin[0]], array_sortare[i][idx_conector[1]],
@@ -1528,7 +1528,7 @@ def cm4axelr():
     if fisier_cm[-3:] == "csv":
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
-        if "23UAXEXTRA" in array_sortare[0]:
+        if "23UAXEXTRA" in array_sortare[0] or "23UAXEL" in array_sortare[0]:
             for i, j in enumerate(array_sortare[2]):
                 if 'Xcode' in j:
                     idx_conector.append(i)
@@ -1688,7 +1688,7 @@ def cm4axelr():
         else:
             pbar.destroy()
             pbargui.destroy()
-            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul CSR")
+            messagebox.showerror('Fisier gresit!', "Nu ati incarcat fisierul 8026")
     else:
         pbar.destroy()
         pbargui.destroy()
