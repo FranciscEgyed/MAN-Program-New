@@ -1,14 +1,14 @@
 import csv
 import fnmatch
+import math
 import os
 from collections import defaultdict
 from itertools import combinations, product, permutations
 from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL
-
 from functii_print import prn_excel_diagramenew
 
 
-def wirelistprepd(array_incarcat):
+def wirelistpreparation(array_incarcat):
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
                          "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     array_original = []
@@ -131,67 +131,67 @@ def wirelistprepd(array_incarcat):
     return array_output
 
 
-def count_occurrences(data):
-    kurzname_counts = {}
-    for row in data:
-        kurzname = row[5]  # Assuming 'Kurzname' is always at index 5
-        if kurzname in kurzname_counts:
-            kurzname_counts[kurzname] += 1
-        else:
-            kurzname_counts[kurzname] = 1
-    return kurzname_counts
-
-
-def create_groups(data):
-    kurzname_counts = count_occurrences(data)
-    kurzname_groups = defaultdict(dict)
-    used_ltg_module = set()
-
-    for row in data[1:]:  # Skip the header row
-        module = row[0]  # Assuming 'Module' is always at index 0
-        ltg_no = row[1]  # Assuming 'Ltg No' is always at index 1
-        kurzname = row[5]  # Assuming 'Kurzname' is always at index 5
-        pin_no = row[6]
-        if ltg_no in used_ltg_module:
+def find_max_pin_by_kurzname(data):
+    kurzname_max_pin = {}
+    for item in data[1:]:
+        kurzname = item[5]
+        try:
+            pin = int(item[6])
+        except ValueError:
+            pin = int(item[6][:-1])
+        if kurzname.startswith(("X9", "X10", "X11", "SP")):
             continue
+        if kurzname in kurzname_max_pin:
+            if pin > kurzname_max_pin[kurzname]:
+                kurzname_max_pin[kurzname] = math.ceil(pin / 2) * 2
+        else:
+            kurzname_max_pin[kurzname] = math.ceil(pin / 2) * 2
+        kurzname2 = item[7]
+        try:
+            pin2 = int(item[8])
+        except ValueError:
+            pin2 = int(item[8][:-1])
+        if kurzname2.startswith(("X9", "X10", "X11", "SP")):
+            continue
+        if kurzname2 in kurzname_max_pin:
+            if pin2 > kurzname_max_pin[kurzname2]:
+                kurzname_max_pin[kurzname2] = math.ceil(pin2 / 2) * 2
+        else:
+            kurzname_max_pin[kurzname2] = math.ceil(pin2 / 2) * 2
+    kurzname_max_pin = dict(sorted(kurzname_max_pin.items(), key=lambda x: x[1]))
+    return kurzname_max_pin
 
-        used_ltg_module.add(ltg_no)
 
-        if kurzname not in kurzname_groups:
-            kurzname_groups[kurzname] = {}
+def create_nested_dictionary(data):
+    result = {}
+    for item in data[1:]:
+        module = item[0]
+        kurzname = item[5]
+        ltg_no = item[1]
+        pin_no = item[6]
+        if kurzname not in result:
+            result[kurzname] = {}
 
-        if module not in kurzname_groups[kurzname]:
-            kurzname_groups[kurzname][module] = []
+        if module not in result[kurzname]:
+            result[kurzname][module] = []
+        result[kurzname][module].append({'Ltg No': ltg_no, 'Pin No': pin_no})
 
-        kurzname_groups[kurzname][module].append({'Ltg No': ltg_no, 'Pin No': pin_no})
-
-    # Sort the groups by occurrence count of Kurzname in ascending order
-    sorted_groups = {k: kurzname_groups[k] for k in sorted(kurzname_groups, key=lambda x: kurzname_counts.get(x, 0))}
-
-    return sorted_groups
-
+    return result
 
 
 def print_combinations(dictionary):
-    pbargui = Tk()
-    pbargui.title("Creare combinatii")
-    pbargui.geometry("500x50+50+550")
-    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
-    pbar.grid(row=1, column=1, padx=5, pady=5)
     output = {}
     combined_groups = {}
     for kurzname, kurzname_group in dictionary.items():
         module_groups = kurzname_group.keys()
         module_combinations = []
-        for i in range(2, len(module_groups)):
-            module_combinations.extend(list(permutations(module_groups, i)))
+        for i in range(1, len(module_groups)+1):
+            module_combinations.extend(list(combinations(module_groups, i)))
 
-        with open("filename", 'w') as file:
+        with open(os.path.abspath(os.curdir) + "/filename", 'w') as file:
             for tpl in module_combinations:
                 file.write(str(tpl) + '\n')
         for combination in module_combinations:
-            pbar['value'] += 2
-            pbargui.update_idletasks()
             combined_key = kurzname + "===" + ''.join(str(x) for x in combination)
             outlst = []
             duplicate_pin_no = False  # Flag for duplicate 'Pin No' values
@@ -199,9 +199,6 @@ def print_combinations(dictionary):
             for module in combination:
                 for key, inner_dict in dictionary.items():
                     for inner_key, lst in inner_dict.items():
-                        pbar['value'] += 2
-                        pbargui.update_idletasks()
-
                         if module == inner_key:
                             for item in lst:
                                 pin_no = item.get('Pin No')
@@ -216,39 +213,47 @@ def print_combinations(dictionary):
             if not duplicate_pin_no:
                 combined_groups[combined_key] = outlst
     output.update(combined_groups)
-    pbar.destroy()
-    pbargui.destroy()
 
     return output
 
+def get_ltg_pin_pairs(data):
+    ltg_pin_pairs = []
+    for key, values in data.items():
+        pairs = []
+        for i in range(0, len(values), 2):
+            ltg_no = values[i][1]
+            pin_no = values[i+1][1]
+            pairs.append((ltg_no, pin_no))
+        ltg_pin_pairs.append((key, pairs))
+    return ltg_pin_pairs
+def print_components_dict(components_dict):
+    ltg_pin_pairs = get_ltg_pin_pairs(components_dict)
+    for key, pairs in ltg_pin_pairs:
+        print(key)
+        for ltg_no, pin_no in pairs:
+            print(f'Ltg No: {ltg_no}, Pin No: {pin_no}')
+        print()
+
 
 def crearediagrame():
+    pbargui = Tk()
+    pbargui.title("Creare combinatii")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    pbar.grid(row=1, column=1, padx=5, pady=5)
     fisier_wirelist = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                                 title="Incarcati fisierul care necesita prelucrare")
     with open(fisier_wirelist, newline='') as csvfile:
         table = list(csv.reader(csvfile, delimiter=';'))
     nume_fisier = os.path.splitext(os.path.basename(fisier_wirelist))[0]
-    tablenew = wirelistprepd(table)
-    groups = create_groups(tablenew)
-    output1 = []
-    for key, inner_dict in groups.items():
-        #print(f"Kurzname: {key}")
-        output1.append(["Kurzname", key])
-        for inner_key, lst in inner_dict.items():
-            #print(f"Module: {inner_key}")
-            output1.append(["Module", inner_key])
-            for item in lst:
-                #print(f"Ltg No: {item['Ltg No']}, {item['Pin No']}")
-                output1.append(["Ltg No", item['Ltg No'], item['Pin No']])
-        #print()
-        output1.append([])
-    #output2 = print_combinations(groups)
-    output2 = []
-    for key, lst in print_combinations(groups).items():
-        output2.append(["Diagrama", key])
-        for q in range(0, len(lst), 2):
-            output2.append([lst[q][0] + " " + lst[q][1], lst[q + 1][0] + " " + lst[q + 1][1]])
-        output2.append([])
 
-    prn_excel_diagramenew(output1, output2, "Test")
+    data = wirelistpreparation(table)
+    nesteddic = create_nested_dictionary(data)
+    find_max_pin_by_kurzname(data)
+    permutations_dict = print_combinations(nesteddic)
+    print_components_dict(permutations_dict)
+
+    pbar.destroy()
+    pbargui.destroy()
+    #prn_excel_diagramenew(output1, output2, "Test")
     messagebox.showinfo("Finalizat", "Finalizat diagrame!")
