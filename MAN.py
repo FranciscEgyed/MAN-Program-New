@@ -1,6 +1,8 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from diagrame import *
+from functii_crearediagrame import crearediagrame
+from functii_clustering import clustering
 from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
 from functii_etichete import *
@@ -119,6 +121,7 @@ menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade2 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade3 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
@@ -149,6 +152,9 @@ submenucascade.add_command(label="Lista diagrame in KSK",
 
 submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
+submenu7.add_cascade(label="Functii ENG", menu=submenucascade3)
+submenucascade3.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
+submenucascade3.add_command(label="Creare diagrame", command=lambda: [statusbusy(), crearediagrame(), statusidle()])
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")

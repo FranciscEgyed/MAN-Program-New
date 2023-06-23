@@ -1191,3 +1191,48 @@ def prn_excel_diagrame_ksk(sheet1):
         log_file("Eroare salvare. Nu am salvat ")
         messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
         return None
+
+
+def prn_excel_clustering(sheet1, name):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = name
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Clustering/Clustering " + name + ".xlsx")
+        log_file("Creat Clustering " + name + ".xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat ")
+        messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
+        return None
+
+
+def prn_excel_diagramenew(sheet1, sheet2, name):
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = name
+    ws2 = wb.create_sheet(name + " combinatii")
+    for i in range(len(sheet1)):
+        for x in range(len(sheet1[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+    for i in range(len(sheet2)):
+        for x in range(len(sheet2[i])):
+            try:
+                ws2.cell(column=x + 1, row=i + 1, value=str(sheet2[i][x]))
+            except:
+                ws2.cell(column=x + 1, row=i + 1, value=float(sheet2[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame " + name + ".xlsx")
+        log_file("Creat Diagrame " + name + ".xlsx")
+    except PermissionError:
+        log_file("Eroare salvare. Nu am salvat ")
+        messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
+        return None

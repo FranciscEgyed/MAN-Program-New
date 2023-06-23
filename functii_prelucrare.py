@@ -404,20 +404,28 @@ def wires():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
     start = time.time()
     file_counter = 0
     file_progres = 0
-    for file_all in os.listdir(dir_wirelist):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
+    try:
+        for file_all in os.listdir(dir_wirelist):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+    except FileNotFoundError:
+        messagebox.showerror('Eroare fisiere!', "Nu ai incarcat nimic")
+        pbar.destroy()
+        pbargui.destroy()
+        return
     if file_counter == 0:
         pbar.destroy()
         pbargui.destroy()
-        messagebox.showerror('Eroare fisiere', 'Nu ai incarcat nimic')
+        messagebox.showerror('Eroare fisiere!', "Nu ai incarcat nimic")
+        pbar.destroy()
+        pbargui.destroy()
         return
     for file_all in os.listdir(dir_wirelist):
         if file_all.endswith(".csv"):
@@ -447,6 +455,8 @@ def wires():
                             array_original.append(array_t)
                         if array_original[0][0] != 1 and len(array_original[0]) != 2:
                             messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect ...')
+                            pbar.destroy()
+                            pbargui.destroy()
                             return
                         if len(array_original) < 50:
                             for i in range(0, len(array_original)):
@@ -454,6 +464,8 @@ def wires():
                                     if str(array_original[i][1]) != "Ltg-Nr.":
                                         messagebox.showerror('Eroare fisier' + file_all,
                                                              'Nu ai incarcat fisierul corect')
+                                        pbar.destroy()
+                                        pbargui.destroy()
                                         return
                         else:
                             for i in range(0, 50):
@@ -461,9 +473,13 @@ def wires():
                                     if str(array_original[i][1]) != "Ltg-Nr.":
                                         messagebox.showerror('Eroare fisier' + file_all,
                                                              'Nu ai incarcat fisierul corect')
+                                        pbar.destroy()
+                                        pbargui.destroy()
                                         return
                     except:
                         messagebox.showerror('Eroare fisier' + file_all, 'Nu ai incarcat fisierul corect')
+                        pbar.destroy()
+                        pbargui.destroy()
                         return
                     nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
                     array_output = [
@@ -573,14 +589,20 @@ def boms():
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
     array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     dir_BOM = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir), title="Selectati directorul cu fisiere:")
     start = time.time()
     file_counter = 0
     file_progres = 0
-    for file_all in os.listdir(dir_BOM):
-        if file_all.endswith(".csv"):
-            file_counter = file_counter + 1
+    try:
+        for file_all in os.listdir(dir_BOM):
+            if file_all.endswith(".csv"):
+                file_counter = file_counter + 1
+    except FileNotFoundError:
+        messagebox.showerror('Eroare fisier!', 'Nu ai incarcat nimic')
+        pbar.destroy()
+        pbargui.destroy()
+        return
     for file_all in os.listdir(dir_BOM):
         if file_all.endswith(".csv"):
             file_progres = file_progres + 1
@@ -609,9 +631,13 @@ def boms():
                                 if array_incarcat[i][0] == "0":
                                     if str(array_incarcat[i][-1])[:1] != "V":
                                         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                                        pbar.destroy()
+                                        pbargui.destroy()
                                         return
                     except:
                         messagebox.showerror('Eroare fisier', 'Nu ai incarcat fisierul corect')
+                        pbar.destroy()
+                        pbargui.destroy()
                         return
                     nume_fisier = os.path.splitext(os.path.basename(file_all))[0]
                     array_output = [
@@ -790,7 +816,7 @@ def wires_complet():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
 
     dir_wirelist = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
                                            title="Selectati directorul cu fisiere:")
@@ -926,7 +952,7 @@ def wires_pnleoni():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
               newline='') as csvfile:
         array_componente = list(csv.reader(csvfile, delimiter=';'))
@@ -1077,7 +1103,7 @@ def boms_pnleoni():
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
     array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026", 
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Component Overview.txt",
               newline='') as csvfile:
         array_componente = list(csv.reader(csvfile, delimiter=';'))
@@ -1301,7 +1327,7 @@ def boms_cumulat():
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     global nume_fisier
     array_boms = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     array_output = [["Module", "Quantity", "Bezeichnung", "VOBES-ID", "Benennung", "Verwendung", "Verwendung",
                      "Kurzname", "xy", "Teilenummer", "Vorzugsteil", "TAB-Nummer", "Referenzteil", "Farbe",
                      "E-Komponente", "E-Komponente Part-Nr.", "Einh.", "Platforma"]]
@@ -1513,7 +1539,7 @@ def wires_cumulat():
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010"]
+                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     array_output = [["Module ID", "Ltg-Nr.", "Verbindung", "von", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung",
                      "nach", "Kurzname", "Pin", "xy", "Kontakt", "Dichtung", "Leitung", "Sonderltg.",
                      "Farbe", "Quer.", "Pot.", "Lange", "Platforma"]]
