@@ -529,7 +529,7 @@ def cmcsrnew():
                     idx_aem2 = i
                 elif j == '??????':
                     idx_aem3 = i
-            for i, j in enumerate(array_sortare[3]):
+            for i, j in enumerate(array_sortare[5]):
                 if len(j) == 13:
                     idx_module.append(i)
 

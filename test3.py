@@ -1,10 +1,8 @@
-import csv
-import os
 from itertools import combinations
 import pandas as pd
-from openpyxl.workbook import Workbook
 
-dataoriginal111 = [['Module', 'Ltg No', 'Leitung', 'Farbe', 'Quer.', 'Kurzname', 'Pin', 'Kurzname', 'Pin', 'Sonderltg.', 'Lange'],
+
+dataoriginal = [['Module', 'Ltg No', 'Leitung', 'Farbe', 'Quer.', 'Kurzname', 'Pin', 'Kurzname', 'Pin', 'Sonderltg.', 'Lange'],
 ['85.25480-6030', '203005_3', '07.08131-0907', 'ws', 2.5, 'XA.M175.1.LI', '1', 'X6490.2A1', '29', '-', '6197'],
 ['81.25484-5824', '310000_62', '07.08131-0108', 'br', 0.5, 'X9178M', '1', 'XA.E713.1', '2', '-', '2721'],
 ['85.25480-6029', '310000_378', '07.08131-0708', 'br', 1.5, 'X3.X1170.1', '2', 'X6616.1A1', '3', '-', '4330'],
@@ -276,113 +274,92 @@ dataoriginal111 = [['Module', 'Ltg No', 'Leitung', 'Farbe', 'Quer.', 'Kurzname',
 ['85.25480-6493', 'Schirm_425', 'ZSB_SL425@AP', 'sw', 1.0, 'X7042.1A1', '5', 'XA.B1357.1', '5', 'SL425', '4999'],
 ['85.25480-6494', 'Schirm_426', 'ZSB_SL426@AP', 'sw', 1.0, 'XA.B1358.1', '5', 'X7043.1A1', '5', 'SL426', '4999']]
 
-with open("F:/Python Projects/MAN 2022/MAN/Input/Wire Lists/8000.Wirelist.csv",
-          newline='') as csvfile:
-    dataoriginal = list(csv.reader(csvfile, delimiter=';'))
 
 data = []
 lista_wireno = []
-lista_conectori_neprocesati = []
-
+combinatii_invalide = []
 for i in range(1, len(dataoriginal)):
-    if dataoriginal[i][6] == "5S": dataoriginal[i][6] = "5"
-    if dataoriginal[i][8] == "5S": dataoriginal[i][8] = "5"
+    data.append([dataoriginal[i][0], dataoriginal[i][1], dataoriginal[i][2], dataoriginal[i][3], dataoriginal[i][4], dataoriginal[i][5],
+                 int(dataoriginal[i][6]), dataoriginal[i][9], dataoriginal[i][10]])
     data.append([dataoriginal[i][0], dataoriginal[i][1], dataoriginal[i][2], dataoriginal[i][3], dataoriginal[i][4],
-                 dataoriginal[i][5], int(dataoriginal[i][6]), dataoriginal[i][9], dataoriginal[i][10]])
-    data.append([dataoriginal[i][0], dataoriginal[i][1], dataoriginal[i][2], dataoriginal[i][3], dataoriginal[i][4],
-                 dataoriginal[i][7], int(dataoriginal[i][8]), dataoriginal[i][9], dataoriginal[i][10]])
+                 dataoriginal[i][7],
+                 int(dataoriginal[i][8]), dataoriginal[i][9], dataoriginal[i][10]])
     lista_wireno.append(dataoriginal[i][1])
 data.insert(0,[dataoriginal[0][0], dataoriginal[0][1], dataoriginal[0][2], dataoriginal[0][3], dataoriginal[0][4],
-                 dataoriginal[0][7], dataoriginal[0][8], dataoriginal[0][9], dataoriginal[0][10]])
-
-def extract_ltgno(data):
-    result = []
-    seen = set()
-    for item in data:
-        kurzname, pin = item[5], item[6]  # Assuming Kurzname is at index 5 and Pin is at index 6
-        if kurzname.startswith(("X9", "X10", "X11", "SP")):
-            key = (kurzname, pin)
-            if key in seen:
-                result.append(item[1])  # Assuming LtgNo is at index 1
-            else:
-                seen.add(key)
-    return result
-
-lista_wireno = list(set(lista_wireno) - set(extract_ltgno(data)))
+                 dataoriginal[0][7],
+                 dataoriginal[0][8], dataoriginal[0][9], dataoriginal[0][10]])
+lista_wireno = list(set(lista_wireno))
 df = pd.DataFrame(data[1:], columns=data[0])
-
+#print(lista_wireno)
+#print(df)
 # Get unique values in the "Kurzname" column
 unique_kurzname = df['Kurzname'].unique()
-filtered_kurzname = [kurzname for kurzname in unique_kurzname if not kurzname.startswith(('X9', 'X10', 'X11', 'SP'))]
-sorted_kurzname = sorted(filtered_kurzname, key=lambda x: df[df['Kurzname'] == x]['Pin'].max(), reverse=False)
 
+# Sort unique kurzname based on the number of unique Pin values
+#sorted_kurzname = sorted(unique_kurzname, key=lambda x: len(df[df['Kurzname'] == x]['Pin'].unique()), reverse=True)
+sorted_kurzname = sorted(unique_kurzname, key=lambda x: df[df['Kurzname'] == x]['Pin'].max(), reverse=False)
+for kurzname in unique_kurzname:
+    max_pin = df[df['Kurzname'] == kurzname]['Pin'].max()
+    print(f"Kurzname: {kurzname}, Max Pin: {max_pin}")
+print(sorted_kurzname)
 # Iterate over each unique kurzname in sorted order
+
 for kurzname in sorted_kurzname:
-
-    combinatii_invalide = []
-    combinatii_valide = []
-
     counter = 1
-    filtered_df = df[df['Kurzname'] == kurzname]
-    non_null_values_list = []
-
-    # test delete from final
-    #print(lista_wireno)
-    #if "050000_001" in lista_wireno: lista_wireno.remove("050000_001")
-    # test delete from final
-
-    # Create the pivot table
-    print("Pivot Table for Kurzname:", kurzname)
-    pivot_table = pd.pivot_table(filtered_df, values='Ltg No', index='Pin', columns='Module', aggfunc='first')
-    print(pivot_table)
-    module_columns = list(pivot_table.columns)
-    module_pairs = []
-    if len(pivot_table.index) < 25 and len(pivot_table.columns) < 15:
-        for r in range(1, len(module_columns) + 1):
-            module_pairs.extend(list(combinations(module_columns, r)))
-    else:
-        lista_conectori_neprocesati.append(kurzname)
-    if len(module_pairs) <100:
-        for combination in module_pairs:
-            combination_df = filtered_df[filtered_df['Module'].isin(combination)]
-            pivot_table = pd.pivot_table(combination_df, values='Ltg No', index='Pin', columns='Module', aggfunc='first')
-            if pivot_table.notnull().sum(axis=1).gt(1).any():
-                combinatii_invalide.append(combination)
-            else:
-                combinatii_valide.append(combination)
-                if pivot_table.isin(lista_wireno).any().any():
-                    # print("All wires found in the remaining wirelist.")
-                    for index, row in pivot_table.iterrows():
-                        non_null_values = row[row.notnull()].tolist()
-                        non_null_values_list.append(non_null_values[0])
-                    version = " V" + str(counter)
-                    # Save the pivot table to the Excel file
-                    pivot_table.to_excel("Test/" + kurzname + version + ".xlsx")
-                    # print("Saved " + kurzname + "===" + str(combination))
-                    counter += 1
-                    print(counter)
-
-        print("Numar combinatii valide " + str(len(combinatii_valide)))
-    else:
-        print(str(len(module_pairs)) + " possible combinations. Skiping ...")
-    wires_to_delete = list(set(non_null_values_list))
-    lista_wireno = list(set(lista_wireno)-set(wires_to_delete))
-    print(lista_wireno)
-
-
-
-print("Fire nealocate : " + str(lista_wireno))
-print("Conectori nealocati : " + str(lista_conectori_neprocesati))
-lista_fire_nealocate = []
-for wire in lista_wireno:
-    for line in data:
-        if wire in line:
-            lista_fire_nealocate.append(line)
-wb = Workbook()
-ws1 = wb.active
-ws1.title = "Toate"
-for i in range(len(lista_fire_nealocate)):
-    for x in range(len(lista_fire_nealocate[i])):
-        ws1.cell(column=x + 1, row=i + 1, value=str(lista_fire_nealocate[i][x]))
-wb.save("Test/Fire ramase.xlsx")
+    if not kurzname.startswith(("X9", "X10", "X11", "SP")):
+        # Filter the dataframe for the current unique kurzname
+        filtered_df = df[df['Kurzname'] == kurzname]
+        non_null_values_list = []
+        # Create the pivot table
+        print("Pivot Table for Kurzname:", kurzname)
+        pivot_table = pd.pivot_table(filtered_df, values='Ltg No', index='Pin', columns='Module', aggfunc='first')
+        if not pivot_table.isin(lista_wireno).any().any():
+            print("There is at least one value not in the remaining wirelist.")
+        else:
+            #print("All wires found in the remaining wirelist.")
+            # Print the pivot table for the current unique kurzname
+            #print(pivot_table)
+            ##print()
+            #print(len(pivot_table.index), len(pivot_table.columns))
+            #print()
+            if len(pivot_table.index) < 25 and len(pivot_table.columns) < 15:
+                # Get the common pins based on non-null values in the 'Ltg No' column
+                common_pins = []
+                module_columns = list(pivot_table.columns)
+                module_pairs = []
+                for r in range(1, len(module_columns) + 1):
+                    module_pairs.extend(list(combinations(module_columns, r)))
+                #print("All combinations " + str(module_pairs))
+                file_name = kurzname + "V" + str(counter)
+                for combination in module_pairs:
+                    #print(combination)
+                    combination_df = filtered_df[filtered_df['Module'].isin(combination)]
+                    #print(combination_df.to_string())
+                    pivot_table = pd.pivot_table(combination_df, values='Ltg No', index='Pin', columns='Module', aggfunc='first')
+                    if pivot_table.notnull().sum(axis=1).gt(1).any():
+                        #print("Invalid combination : " + str(combination))
+                        combinatii_invalide.append(combination)
+                    else:
+                        if pivot_table.isin(lista_wireno).any().any():
+                            # print("All wires found in the remaining wirelist.")
+                            for index, row in pivot_table.iterrows():
+                                non_null_values = row[row.notnull()].tolist()
+                                non_null_values_list.append(non_null_values[0])
+                            version = " V" + str(counter)
+                            # Save the pivot table to the Excel file
+                            pivot_table.to_excel("Test/" + kurzname + version + ".xlsx")
+                            # print("Saved " + kurzname + "===" + str(combination))
+                            counter += 1
+                        else:
+                            print("There is at least one value not in the remaining wirelist.")
+                non_null_values_list = list(set(non_null_values_list))
+                #print(non_null_values_list)
+                for element in non_null_values_list:
+                    try:
+                        lista_wireno.remove(element)
+                    except:
+                        print("error ===========================================" + element)
+                        break
+                #print(len(lista_wireno))
+#print(lista_wireno)
 
