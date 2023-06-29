@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from diagrame import *
-from functii_crearediagrame import crearediagrame
+from functii_crearediagrame import crearediagrame, prelucrare_json, creare_wirelist
 from functii_clustering import clustering
 from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
@@ -154,7 +154,12 @@ submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
 submenu7.add_cascade(label="Functii ENG", menu=submenucascade3)
 submenucascade3.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
-submenucascade3.add_command(label="Creare diagrame", command=lambda: [statusbusy(), crearediagrame(), statusidle()])
+submenucascade3.add_command(label="Creare JSON din XML", command=lambda: [statusbusy(), crearediagrame(), statusidle()])
+submenucascade3.add_command(label="Creare EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
+                                                                            statusidle()])
+submenucascade3.add_command(label="Creare wirelist LDorado", command=lambda: [statusbusy(), creare_wirelist(),
+                                                                            statusidle()])
+
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")

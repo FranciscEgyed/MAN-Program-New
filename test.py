@@ -1,69 +1,80 @@
+import json
 import xml.etree.ElementTree as ET
-import sqlite3
 
-def process_element(element, cursor, table_name, column_names, parent_values=None):
-    values = []
-    if parent_values:
-        values.extend(parent_values)
 
-    for attr, value in element.attrib.items():
-        if attr not in column_names:
-            column_names.append(attr)
-        values.append(value)
+# Recursive function to process the XML elements
+#def process_element(element):
+#    # Create a dictionary for the current tag
+#    tag_dict = {}
+#    # Store the attributes of the element in the dictionary
+#    tag_dict.update(element.attrib)
+#    # Process the child elements recursively
+#    for child in element:
+#        child_dict = process_element(child)
+#        tag_dict.setdefault(child.tag, []).append(child_dict)
+#    return tag_dict
 
-    if element.text:
-        if 'text' not in column_names:
-            column_names.append('text')
-        values.append(element.text)
 
+def process_element(element):
+    # Create a dictionary for the current tag
+    tag_dict = {}
+
+    # Store the attributes of the element in the dictionary
+    tag_dict.update(element.attrib)
+
+    # Check if the element has text content
+    if element.text and element.text.strip():
+        # Store the text content under the "__text__" key
+        tag_dict["__text__"] = element.text.strip()
+
+    # Process the child elements recursively
     for child in element:
-        process_element(child, cursor, table_name, column_names, values)
+        child_dict = process_element(child)
+        tag_dict.setdefault(child.tag, []).append(child_dict)
 
-    if not element.findall("*"):
-        insert_query = "INSERT INTO {} ({}) VALUES ({})".format(
-            table_name, ', '.join(column_names), ', '.join(['?'] * len(column_names))
-        )
-        cursor.execute(insert_query, values)
+    return tag_dict
 
-def xml_to_sqlite(xml_file, db_file):
-    try:
-        tree = ET.parse(xml_file)
-        root = tree.getroot()
-    except (FileNotFoundError, ET.ParseError) as e:
-        print("Error: Failed to parse the XML file.")
-        print(e)
-        return
+def print_dictionary(dictionary, indent=0):
+    for key, value in dictionary.items():
+        if isinstance(value, dict):
+            print(f"{' ' * indent}{key}:")
+            print_dictionary(value, indent + 5)
+        elif isinstance(value, dict):
+            print(f"{' ' * indent}{key}:")
+            for item in value:
+                if isinstance(item, dict):
+                    print_dictionary(item, indent + 5)
+                else:
+                    print(f"{' ' * (indent + 5)}{item}")
+        else:
+            print(f"{' ' * indent}{key}: {value}")
 
-    connection = sqlite3.connect(db_file)
-    cursor = connection.cursor()
 
-    for root_element in root:
-        table_name = root_element.tag
 
-        column_names = set()
-        for element in root_element.iter():
-            column_names.add(element.tag)
-
-        create_table_query = "CREATE TABLE IF NOT EXISTS {} ({})".format(table_name, ', '.join(column_names))
-        try:
-            cursor.execute(create_table_query)
-            connection.commit()
-        except sqlite3.Error as e:
-            print("Error: Failed to create the table for root element: {}".format(table_name))
-            print(e)
-            continue
-
-        process_element(root_element, cursor, table_name, list(column_names))
-
-        try:
-            connection.commit()
-        except sqlite3.Error as e:
-            print("Error: Failed to insert data into the table for root element: {}".format(table_name))
-            print(e)
-
-    connection.close()
-
-# Usage example
+# Path to your XML file
 xml_file_path = "example.xml"
-db_file_path = "example.db"
-xml_to_sqlite(xml_file_path, db_file_path)
+
+# Root element to process
+root_element_names = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
+                      "Tapes", "Terminals", "CavityPlugs"]
+
+# Parse the XML file
+tree = ET.parse(xml_file_path)
+for element in root_element_names:
+    # Get the root element based on the given root_element_name
+    root = tree.find(".//{}".format(element))
+
+    if root is not None:
+        # Process the root element
+        root_dict = process_element(root)
+        # Save the dictionary to a JSON file
+        json_file_path = element + ".json"
+        with open(json_file_path, "w") as json_file:
+            json.dump(root_dict, json_file)
+
+    else:
+        print(f"Root element '{element}' not found in the XML file.")
+
+with open("Connectors.json", "r") as json_file:
+    loaded_dictionary = json.load(json_file)
+print_dictionary(loaded_dictionary)

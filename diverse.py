@@ -52,7 +52,9 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/Wirelist/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Clustering/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Clustering/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)
