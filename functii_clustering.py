@@ -129,6 +129,35 @@ def wirelistprep(array_incarcat):
     return array_output
 
 
+def group_data_by_ltg_noxxx(data, range_difference):
+    grouped_data = {}
+    # Iterate through each row of data
+    for row in data[1:]:
+
+        ltg_no = row[2]  # Get the "Ltg No" value from the row
+        lange = int(row[-1])  # Get the "Lange" value from the row and convert it to an integer
+        # Check if the "Ltg No" already exists in the grouped data dictionary
+
+        if ltg_no in grouped_data:
+
+            min_lange = min(grouped_data[ltg_no], key=lambda x: x[-1][-1])[-1][-1]
+
+            # Check if the current "Lange" falls within the range difference
+
+            if abs(lange - int(min_lange)) <= range_difference: #and lange != int(max_lange):
+                # Append the current row to the existing group
+                grouped_data[ltg_no][-1].append(row)
+            else:
+                # Create a new group for the current "Ltg No" and "Lange"
+                grouped_data[ltg_no].append([row])
+                print(ltg_no)
+        else:
+            # Create a new group for the current "Ltg No" and "Lange"
+            grouped_data[ltg_no] = [[row]]
+
+    return grouped_data
+
+
 def group_data_by_ltg_no(data, range_difference):
     grouped_data = {}
     # Iterate through each row of data
@@ -139,7 +168,7 @@ def group_data_by_ltg_no(data, range_difference):
         if ltg_no in grouped_data:
             max_lange = min(grouped_data[ltg_no], key=lambda x: x[-1][-1])[-1][-1]
             # Check if the current "Lange" falls within the range difference
-            if abs(lange - int(max_lange)) <= range_difference and lange != int(max_lange):
+            if abs(lange - int(max_lange)) <= range_difference:
                 # Append the current row to the existing group
                 grouped_data[ltg_no][-1].append(row)
             else:
@@ -151,7 +180,6 @@ def group_data_by_ltg_no(data, range_difference):
 
     return grouped_data
 
-
 def clustering():
     fisier_wirelist = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                                 title="Incarcati fisierul care necesita prelucrare")
@@ -161,15 +189,14 @@ def clustering():
     tablenew = wirelistprep(table)
     for i in range(len(tablenew)):
         tablenew[i].insert(0, tablenew[i][0]+tablenew[i][1] )
-    grouped_data = group_data_by_ltg_no(tablenew, 300)
+    grouped_data = group_data_by_ltg_no(tablenew, 150)
     # Print each line separately
     output = []
     for group in grouped_data.values():
         for lines in group:
-            if len(lines) > 1:
-                for line in lines:
-                    output.append(line)
-                output.append([])
+            for line in lines:
+                output.append(line)
+            output.append([])
     prn_excel_clustering(output, nume_fisier)
     messagebox.showinfo("Finalizat", "Finalizat clustering!")
 

@@ -115,6 +115,7 @@ def sortare_jit():
                      ws.cell(row=row.row, column=16).value, ws.cell(row=row.row, column=14).value])
                 array_temporar_module.append(
                     ws.cell(row=row.row, column=2).value.replace('PM.', '81.').replace('VM.', '81.'))
+
         for i in range(len(array_temporar)):
             if "PM." in array_temporar[i][1]:
                 array_temporar[i][1] = array_temporar[i][1].replace('PM.', '81.')

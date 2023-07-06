@@ -51,11 +51,11 @@ submenu1.add_command(label="Control Matrix TGLM L(8023)", command=lambda: [statu
 submenu1.add_command(label="Control Matrix TGLM R(8024)", command=lambda: [statusbusy(), cmtglmr(), statusidle()])
 submenu1.add_command(label="Control Matrix 4AXEL L(8025)", command=lambda: [statusbusy(), cm4axell(), statusidle()])
 submenu1.add_command(label="Control Matrix 4AXEL R(8026)", command=lambda: [statusbusy(), cm4axelr(), statusidle()])
-submenu1.add_command(label="Control Matrix to EXCEL",
-                     command=lambda: [statusbusy(), cmtoexcel(), statusidle()])
-submenu1.add_separator()
 submenu1.add_command(label="Control Matrix ALL",
                      command=lambda: [statusbusy(), cmall(), statusidle()])
+submenu1.add_separator()
+submenu1.add_command(label="Control Matrix to EXCEL",
+                     command=lambda: [statusbusy(), cmtoexcel(), statusidle()])
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix Super Sleeve - in development",
                      command=lambda: [statusbusy(), cmss(), statusidle()])
