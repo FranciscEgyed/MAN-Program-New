@@ -85,8 +85,16 @@ def prelucrare_wirelist_faza1(array_prelucrare):
             lista_module_extrageret.append(arr_module_file[i][5])
     ignore_values = ["XXXX"]
     lista_module_extrageret = [x for x in lista_module_extrageret if x not in ignore_values]
-
     lista_module_extrageret = Counter(lista_module_extrageret).most_common(2)
+    if len(lista_module_extrageret) < 2:
+        messagebox.showinfo("Eroare configuratie!",
+                            "Pentru " + str(arr_module_file[1][0]) + " nu gasesc informatii despre module " +
+                            "am gasit doar " + str(lista_module_extrageret[0]) + "Lista cu denumiri existente este: "
+                            "SATTEL LHD, 8011], [SATTEL RHD, 8013], [CHASSIS LHD, 8012], [CHASSIS RHD, 8014],"
+                            "[TGLM LHD, 8023], [TGLM RHD, 8024], [4AXEL LHD, 8025], [4AXEL RHD, 8026],"
+                            "[4AXEL MIL LHD, 8000], [4AXEL MIL RHD, 8001], [CHASSIS MIL RHD, 8030],"
+                            "[CHASSIS MIL LHD, 8031], [MIL_SAT RHD, 8052], [MIL_SAT LHD, 8053]")
+        return None
     lista_module_extragere = [lista_module_extrageret[i][0] for i in range(0, 2)]
 
     for i in range(1, len(array_prelucrare)):
@@ -479,9 +487,11 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
     lista_conectori_klappschale1 = ["X6499", "X6407", "X6478", "X4556" ]
     lista_conectori_klappschale2 = ["X6491", "X6492", "X7042", "X7043"]
     for i in range(len(array_scriere_sheet6)):
-        if array_scriere_sheet6[i][0][0:5] in lista_conectori_klappschale1 and array_scriere_sheet6[i][4] == "X":
+        if array_scriere_sheet6[i][0][0:5] in lista_conectori_klappschale1 and array_scriere_sheet6[i][4] == "X" \
+                and array_scriere_sheet6[i][0] == "8023":
             counter_klapp_6095_1 = counter_klapp_6095_1 + 1
-        elif array_scriere_sheet6[i][0][0:5] in lista_conectori_klappschale2 and array_scriere_sheet6[i][4] == "X":
+        elif array_scriere_sheet6[i][0][0:5] in lista_conectori_klappschale2 and array_scriere_sheet6[i][4] == "X" \
+                and array_scriere_sheet6[i][0] == "8023":
             counter_klapp_6095_2 = counter_klapp_6095_2 + 1
     if counter_klapp_6095_1 > 0 and counter_klapp_6095_2 > 0:
         klappschale_6095_dublat = True
@@ -741,7 +751,8 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         x6616sheetsortat[2].append(["X6490.1A1", item])
     for item in x64902a1:
         x6616sheetsortat[3].append(["X6490.2A1", item])
-    if sheet6[4][16] > 0:
+
+    if sheet6[4][16] > 0: # pentru 4AXEL
         if x66161a1 == x66162a1:
             x6616 = "OK"
         else:
@@ -751,16 +762,25 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         else:
             try:
                 x64902a1.remove(12)
-                if x64902a1 == x64901a1 and "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig:
+                if x64902a1 == x64901a1 and "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig \
+                        and "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig:
                     x6490 = "OK"
+                elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-5038" in moduleinconfig \
+                        and "81.25483-5024" in moduleinconfig :
+                    x6490 = "NOT OK"
                 else:
                     x6490 = "NOT OK"
             except:
-                if x64902a1 == x64901a1:
+                if x64902a1 == x64901a1 and "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig \
+                        and len(x64902a1) != 0 and len(x64901a1) != 0:
+                    ##and "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig
                     x6490 = "OK"
+                elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-5038" in moduleinconfig \
+                        and "81.25483-5024" in moduleinconfig :
+                    x6490 = "NOT OK"
                 else:
                     x6490 = "NOT OK"
-    elif sheet6[2][16] > 0:
+    elif sheet6[2][16] > 0: # pentru SATTEL
         if x66161a1 == x66162a1:
             x6616 = "OK"
         else:
@@ -775,8 +795,35 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
                     x6616 = "OK"
                 else:
                     x6616 = "NOT OK"
-        if x64901a1 == x64902a1:
+        if x64901a1 == x64902a1 and "81.25482-7988" in moduleinconfig and "81.25482-7987" in moduleinconfig \
+                and len(x64902a1) != 0 and len(x64901a1) != 0:
             x6490 = "OK"
+        elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-7988" in moduleinconfig \
+                 and "81.25483-7987" in moduleinconfig:
+            x6490 = "NOT OK"
+        else:
+            x6490 = "NOT OK"
+    elif sheet6[1][16] > 0: # pentru CHASSIS
+        if x66161a1 == x66162a1:
+            x6616 = "OK"
+        else:
+            try:
+                x66162a1.remove(36)
+                if x66162a1 == x66161a1:
+                    x6616 = "OK"
+                else:
+                    x6616 = "NOT OK"
+            except:
+                if x66162a1 == x66161a1:
+                    x6616 = "OK"
+                else:
+                    x6616 = "NOT OK"
+        if x64901a1 == x64902a1 and "81.25482-7990" in moduleinconfig and "81.25482-7989" in moduleinconfig and \
+                len(x64902a1) != 0 and len(x64901a1) != 0:
+            x6490 = "OK"
+        elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-7990" in moduleinconfig \
+                 and "81.25483-7989" in moduleinconfig:
+            x6490 = "NOT OK"
         else:
             x6490 = "NOT OK"
     else:
@@ -788,10 +835,13 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
             x6490 = "OK"
         else:
             x6490 = "NOT OK"
-    if len(x64901a1) == 0 and len(x64902a1) == 0:
-        x6490 = "OK"
-    if len(x66161a1) == 0 and len(x66162a1) == 0:
-        x6616 = "OK"
+
+    #if len(x64901a1) == 0 and len(x64902a1) == 0:
+    #    x6490 = "OK"
+    #if len(x66161a1) == 0 and len(x66162a1) == 0:
+    #    x6616 = "OK"
+
+    # verificare in caz de lipsa conector X6490
 
     for i in range(len(sheet6)):
         sheet6[i].append("")

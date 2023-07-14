@@ -60,7 +60,7 @@ def parse_xml(file):
 
 def prelucrare_json():
     files = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
-             "Tapes", "Terminals", "CavityPlugs"]
+             "Tapes", "Terminals", "CavityPlugs", "Accessories"]
 
     def extract_wire_ids(wire_list):
         wires = []
@@ -91,6 +91,7 @@ def prelucrare_json():
                 except KeyError:
                     wireid = "Empty"
                     terminalid = "Empty"
+
                 conectors.append([conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, plugid])
         conectors.insert(0, ["Conector ID", "PMD", "Name", "Junction", "X coord", "Y coord", "Pin", "Wire ID", "Terminal ID",
                              "Seal ID"])
@@ -217,7 +218,7 @@ def prelucrare_json():
                 extract_terminal_ids(loaded_dictionary)
             if file == "CavityPlugs":
                 extract_plugs_ids(loaded_dictionary)
-            if file == "Accessory":
+            if file == "Accessories":
                 extract_accessory_ids(loaded_dictionary)
 
     messagebox.showinfo('Finalizat', "Fisierele JSON finalizate!")
@@ -227,7 +228,7 @@ def creare_wirelist():
     #Load required data files
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Wires list.txt", newline='') as csvfile:
         array_wires = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors  list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors list.txt", newline='') as csvfile:
         array_conectors  = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Length Variations list.txt", newline='') as csvfile:
         array_variatii = list(csv.reader(csvfile, delimiter=';'))
@@ -244,5 +245,62 @@ def creare_wirelist():
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Accessory list.txt", newline='') as csvfile:
         array_accessory = list(csv.reader(csvfile, delimiter=';'))
 
-    for i in range(len(array_wires)):
-        print(array_wires[i])
+
+    output = []
+    # Extragere conectori si fire
+    for i in range(len(array_conectors)):
+        if array_conectors[i][7] == "Empty":
+            temp_list = [item for item in array_conectors[i]]
+            temp_list.append("None")
+            temp_list.append("None")
+            temp_list.append("None")
+            output.append(temp_list)
+        else:
+            for x in range(len(array_wires)):
+                if array_conectors[i][7] == array_wires[x][1]:
+                    temp_list = [item for item in array_conectors[i]]
+                    temp_list.append(array_wires[x][0])
+                    temp_list.append(array_wires[x][2])
+                    temp_list.append(array_wires[x][3])
+                    output.append(temp_list)
+    print(output[0])
+    print(output[1])
+    print(output[2])
+    print()
+    # inlocuire ID Modul cu part number MAN
+    for i in range(1, len(output)):
+        for x in range(len(array_modules)):
+            if output[i][10] == array_modules[x][0]:
+                output[i][10] = array_modules[x][1]
+                break
+    # inlocuire ID terminal cu part number MAN
+    for i in range(1, len(output)):
+        for x in range(len(array_terminals)):
+            if output[i][8] == array_terminals[x][0]:
+                output[i][8] = array_terminals[x][1]
+                break
+    # inlocuire ID seal cu part number MAN
+    for i in range(1, len(output)):
+        for x in range(len(array_seals)):
+            if output[i][9] == array_seals[x][0]:
+                output[i][9] = array_seals[x][1]
+                break
+    # atasare supersleeve la conector
+    output[0].append("Super S")
+    output[0].append("SS Length")
+    for i in range(1, len(output)):
+        print(array_conectors[i])
+        if array_conectors[i][10] == "None":
+            output[i].append("None")
+            output[i].append("None")
+        else:
+            for x in range(len(array_tapes)):
+                if output[i][10] == array_tapes[x][5]:
+                    output[i].append(array_tapes[x][1])
+                    output[i].append(array_tapes[x][2])
+
+
+
+    for x in range(0, 25):
+        print(output[x])
+

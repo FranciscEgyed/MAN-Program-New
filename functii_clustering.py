@@ -125,60 +125,32 @@ def wirelistprep(array_incarcat):
                 array_module = []
                 array_wires = []
                 array_output.extend(array_out_temp)
-    array_output = sorted(array_output[1:], key=lambda w: float(w[10]))
+    array_output = sorted(array_output[1:], key=lambda w: (w[1], float(w[10])))
     return array_output
 
 
-def group_data_by_ltg_noxxx(data, range_difference):
+def group_data(data):
     grouped_data = {}
-    # Iterate through each row of data
-    for row in data[1:]:
-
-        ltg_no = row[2]  # Get the "Ltg No" value from the row
-        lange = int(row[-1])  # Get the "Lange" value from the row and convert it to an integer
-        # Check if the "Ltg No" already exists in the grouped data dictionary
-
-        if ltg_no in grouped_data:
-
-            min_lange = min(grouped_data[ltg_no], key=lambda x: x[-1][-1])[-1][-1]
-
-            # Check if the current "Lange" falls within the range difference
-
-            if abs(lange - int(min_lange)) <= range_difference: #and lange != int(max_lange):
-                # Append the current row to the existing group
-                grouped_data[ltg_no][-1].append(row)
-            else:
-                # Create a new group for the current "Ltg No" and "Lange"
-                grouped_data[ltg_no].append([row])
-                print(ltg_no)
+    key_incrementer = 1
+    for item in data:
+        ltg_no = item[2]
+        length = int(item[11])
+        key = ltg_no + "_" + str(key_incrementer)
+        if key not in grouped_data:
+            grouped_data[key] = [length, length + 150]
+            grouped_data[key].append(item)
         else:
-            # Create a new group for the current "Ltg No" and "Lange"
-            grouped_data[ltg_no] = [[row]]
-
+            min_length = grouped_data[key][0]
+            max_length = grouped_data[key][1]
+            if min_length <= length <= max_length:
+                grouped_data[key].append(item)
+            else:
+                key_incrementer += 1
+                key = ltg_no + "_" + str(key_incrementer)
+                grouped_data[key] = [length, length + 150]
+                grouped_data[key].append(item)
     return grouped_data
 
-
-def group_data_by_ltg_no(data, range_difference):
-    grouped_data = {}
-    # Iterate through each row of data
-    for row in data[1:]:
-        ltg_no = row[2]  # Get the "Ltg No" value from the row
-        lange = int(row[-1])  # Get the "Lange" value from the row and convert it to an integer
-        # Check if the "Ltg No" already exists in the grouped data dictionary
-        if ltg_no in grouped_data:
-            max_lange = min(grouped_data[ltg_no], key=lambda x: x[-1][-1])[-1][-1]
-            # Check if the current "Lange" falls within the range difference
-            if abs(lange - int(max_lange)) <= range_difference:
-                # Append the current row to the existing group
-                grouped_data[ltg_no][-1].append(row)
-            else:
-                # Create a new group for the current "Ltg No" and "Lange"
-                grouped_data[ltg_no].append([row])
-        else:
-            # Create a new group for the current "Ltg No" and "Lange"
-            grouped_data[ltg_no] = [[row]]
-
-    return grouped_data
 
 def clustering():
     fisier_wirelist = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
@@ -189,14 +161,18 @@ def clustering():
     tablenew = wirelistprep(table)
     for i in range(len(tablenew)):
         tablenew[i].insert(0, tablenew[i][0]+tablenew[i][1] )
-    grouped_data = group_data_by_ltg_no(tablenew, 150)
+    grouped_data = group_data(tablenew)
+
     # Print each line separately
     output = []
-    for group in grouped_data.values():
-        for lines in group:
-            for line in lines:
-                output.append(line)
-            output.append([])
+    for key, values in grouped_data.items():
+        output.append([key])
+        for item in values:
+            if type(item) is list:
+                output.append(item)
+        output.append([])
+    for i in range(0, 10):
+        print(output[i])
     prn_excel_clustering(output, nume_fisier)
     messagebox.showinfo("Finalizat", "Finalizat clustering!")
 
