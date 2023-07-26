@@ -4,6 +4,8 @@ from tkinter import filedialog, messagebox
 import json
 import xml.etree.ElementTree as ET
 from openpyxl.workbook import Workbook
+from itertools import combinations
+from collections import Counter
 
 
 def crearediagrame():
@@ -84,26 +86,31 @@ def prelucrare_json():
                 try:
                     plugid = ele["PlugID"]
                 except KeyError:
-                    plugid = "None"
+                    plugid = "Empty"
                 try:
                     wireid = ele["ConnectorWire"][0]["WireID"]
-                    terminalid = ele["ConnectorWire"][0]["Terminals"][0]["Terminal"][0]["TerminalID"]
                 except KeyError:
                     wireid = "Empty"
+                try:
+                    terminalid = ele["ConnectorWire"][0]["Terminals"][0]["Terminal"][0]["TerminalID"]
+                except KeyError:
                     terminalid = "Empty"
-
-                conectors.append([conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, plugid])
+                try:
+                    sealid = ele["ConnectorWire"][0]["Seals"][0]["Seal"][0]["SealID"]
+                except KeyError:
+                    sealid = "Empty"
+                conectors.append([conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, sealid, plugid])
         conectors.insert(0, ["Conector ID", "PMD", "Name", "Junction", "X coord", "Y coord", "Pin", "Wire ID", "Terminal ID",
-                             "Seal ID"])
+                             "Seal ID", "Plug ID"])
         printfile(conectors, "Conectors list")
 
     def extract_module_ids(module_list):
         modules = []
         for module in module_list["Module"]:
             moduleid = module["ID"]
-            eleID = module["ElementID"]
+            eleID = module["TitleBlock"][0]["CustomerPartNo"]
             familyref = module["FamilyRef"]
-            logisticsID = module["LogisticsID"]
+            logisticsID = module["TitleBlock"][0]["Description"]
             modules.append([moduleid, eleID, familyref, logisticsID])
         modules.insert(0, ["Module ID", "MAN ID", "Family", "Description"])
         printfile(modules, "Modules list")
@@ -176,6 +183,7 @@ def prelucrare_json():
             accessoryconectorID = accessory["ReferencedConnectors"][0]["ReferencedConnector"][0]["ConnectorID"]
             for ele in accessory["AccessoryModuleRefs"][0]["AccessoryModuleRef"]:
                 accessorys.append([accessoryid, accessorypmd, accessoryconectorID, ele["ModuleID"]])
+        accessorys.insert(0, ["Accessory ID", "PMD", "ConnectorID", "Module ID"])
         printfile(accessorys, "Accessory list")
     def printfile(list_to_print, file_name):
         wb = Workbook()
@@ -245,15 +253,16 @@ def creare_wirelist():
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Accessory list.txt", newline='') as csvfile:
         array_accessory = list(csv.reader(csvfile, delimiter=';'))
 
+# function needed
 
     output = []
     # Extragere conectori si fire
     for i in range(len(array_conectors)):
         if array_conectors[i][7] == "Empty":
             temp_list = [item for item in array_conectors[i]]
-            temp_list.append("None")
-            temp_list.append("None")
-            temp_list.append("None")
+            temp_list.append("Empty")
+            temp_list.append("Empty")
+            temp_list.append("Empty")
             output.append(temp_list)
         else:
             for x in range(len(array_wires)):
@@ -263,15 +272,30 @@ def creare_wirelist():
                     temp_list.append(array_wires[x][2])
                     temp_list.append(array_wires[x][3])
                     output.append(temp_list)
-    print(output[0])
-    print(output[1])
-    print(output[2])
-    print()
+    # atasare supersleeve la conector
+    output[0].append("Super S")
+    output[0].append("SS Length")
+    for i in range(1, len(output)):
+        if output[i][10] == "Empty":
+            output[i].append("Empty")
+            output[i].append("Empty")
+        else:
+            for x in range(len(array_tapes)):
+                if output[i][10] == array_tapes[x][5]:
+                    output[i].append(array_tapes[x][1])
+                    output[i].append(array_tapes[x][2])
+    # atasare accesorii la conector
+    for i in range(1, len(output)):
+        temp_list_acc = []
+        for x in range(len(array_accessory)):
+            if output[i][0] == array_accessory[x][2] and output[i][11] == array_accessory[x][3]:
+                temp_list_acc.append(array_accessory[x][1])
+        output[i].extend(temp_list_acc)
     # inlocuire ID Modul cu part number MAN
     for i in range(1, len(output)):
         for x in range(len(array_modules)):
-            if output[i][10] == array_modules[x][0]:
-                output[i][10] = array_modules[x][1]
+            if output[i][11] == array_modules[x][0]:
+                output[i][11] = array_modules[x][1].replace("PM", "81").replace("VM", "81")
                 break
     # inlocuire ID terminal cu part number MAN
     for i in range(1, len(output)):
@@ -285,22 +309,92 @@ def creare_wirelist():
             if output[i][9] == array_seals[x][0]:
                 output[i][9] = array_seals[x][1]
                 break
-    # atasare supersleeve la conector
-    output[0].append("Super S")
-    output[0].append("SS Length")
+    # inlocuire ID plug cu part number MAN
     for i in range(1, len(output)):
-        print(array_conectors[i])
-        if array_conectors[i][10] == "None":
-            output[i].append("None")
-            output[i].append("None")
-        else:
-            for x in range(len(array_tapes)):
-                if output[i][10] == array_tapes[x][5]:
-                    output[i].append(array_tapes[x][1])
-                    output[i].append(array_tapes[x][2])
+        for x in range(len(array_plugs)):
+            if output[i][10] == array_plugs[x][0]:
+                output[i][10] = array_plugs[x][1]
+                break
+
+    # list unica conectori
+    lista_conectori = []
+    lista_conectori_cu_pin = []
+    for i in range(1, len(output)):
+        if output[i][0] not in lista_conectori:
+            lista_conectori.append(output[i][0])
+    # creare lista conectori pentru diagrame
+    for i in range(len(lista_conectori)):
+        max_pin = 0
+        for x in range(len(output)):
+            if lista_conectori[i] == output[x][0]:
+                current_pin = int(output[x][6].replace("S", ""))
+                if current_pin > max_pin:
+                    max_pin = current_pin
+        if 1 < max_pin < 50:
+            lista_conectori_cu_pin.append((lista_conectori[i], max_pin))
+
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "output"
+    for i in range(len(output)):
+        for x in range(len(output[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=float(output[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(output[i][x]))
+    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Lista output.xlsx")
+
+    for pereche in lista_conectori_cu_pin:
+        array_temp_wirelist = []
+        lista_combinatii_incompatibile = []
+        lista_combinatii_compatibile = []
+        if pereche[1] != 1 and pereche[1] < 60:
+            for x in range(len(output)):
+                if pereche[0] == output[x][0]:
+                    array_temp_wirelist.append(output[x])
+        lista_module_conector = set([x[11] for x in array_temp_wirelist if x[11] != "Empty"])
+        print(lista_module_conector)
+        for r in range(1, len(lista_module_conector) + 1):
+            print(r)
+            for combination in combinations(lista_module_conector, r):
+                print(combination)
+                incompatibil = False
+                if len(combination) == 1:
+                    lista_combinatii_compatibile.append(combination)
+                else:
+                    common_pins = []
+                    for modul in combination:
+                        for row in output:
+                            if modul in row:
+                                common_pins.append(row[6])
+                    for count in Counter(common_pins).values():
+                        if count > 1:
+                            incompatibil = True
+                if incompatibil:
+                    lista_combinatii_incompatibile.append(combination)
+                else:
+                    lista_combinatii_compatibile.append(combination)
+
+        wb = Workbook()
+        ws1 = wb.active
+        ws1.title = "Module compatibile"
+        ws2 = wb.create_sheet("Module incompatibile")
+        for i in range(len(lista_combinatii_compatibile)):
+            for x in range(len(lista_combinatii_compatibile[i])):
+                try:
+                    ws1.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_compatibile[i][x]))
+                except:
+                    ws1.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_compatibile[i][x]))
+        for i in range(len(lista_combinatii_incompatibile)):
+            for x in range(len(lista_combinatii_incompatibile[i])):
+                try:
+                    ws2.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_incompatibile[i][x]))
+                except:
+                    ws2.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_incompatibile[i][x]))
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Combinatii module " +
+                pereche[0] + ".xlsx")
 
 
 
-    for x in range(0, 25):
-        print(output[x])
 
+    print("FINISH")

@@ -54,12 +54,159 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Clustering/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)
 
     return None
+
+def golire_directoare():
+    dir_input1 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
+    dir_input2 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
+    dir_input3 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
+    dir_output1 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
+    dir_output2 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011/"
+    dir_output3 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023/"
+    dir_output4 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
+    dir_output5 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011/"
+    dir_output6 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023/"
+    dir_outputr = os.path.abspath(os.curdir) + "/MAN/Output/Report Files/"
+    dir_output_separare = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/"
+    dir_output_separare2 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
+    dir_output_separare3 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"
+    dir_output_separare4 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/"
+    dir_output_separare41 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light+/"
+    dir_output_separare5 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
+    dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
+    dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
+    dir_ldorado = os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"
+    dir_output_database1 = os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/"
+    dir_output_database2 = os.path.abspath(os.curdir) + "/MAN/Output/Database/"
+    dir_output_clustering = os.path.abspath(os.curdir) + "/MAN/Output/Clustering/"
+    dir_output_json = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/"
+    dir_output_exceljson = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/"
+
+
+
+
+    for file_all in os.listdir(dir_input1):
+        try:
+            os.remove(dir_input1 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_input2):
+        try:
+            os.remove(dir_input2 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_input3):
+        try:
+            os.remove(dir_input3 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output1):
+        try:
+            os.remove(dir_output1 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output2):
+        try:
+            os.remove(dir_output2 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output3):
+        try:
+            os.remove(dir_output3 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output4):
+        try:
+            os.remove(dir_output4 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output5):
+        try:
+            os.remove(dir_output5 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output6):
+        try:
+            os.remove(dir_output6 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_outputr):
+        try:
+            os.remove(dir_outputr + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare):
+        try:
+            os.remove(dir_output_separare + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_BOM_complet):
+        try:
+            os.remove(dir_output_BOM_complet + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_wire_complet):
+        try:
+            os.remove(dir_output_wire_complet + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_database1):
+        try:
+            os.remove(dir_output_database1 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_database2):
+        try:
+            os.remove(dir_output_database2 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare2):
+        try:
+            os.remove(dir_output_separare2 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare3):
+        try:
+            os.remove(dir_output_separare3 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare4):
+        try:
+            os.remove(dir_output_separare4 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare41):
+        try:
+            os.remove(dir_output_separare41 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_separare5):
+        try:
+            os.remove(dir_output_separare5 + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_clustering):
+        try:
+            os.remove(dir_output_clustering + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_json):
+        try:
+            os.remove(dir_output_json + file_all)
+        except:
+            continue
+    for file_all in os.listdir(dir_output_exceljson):
+        try:
+            os.remove(dir_output_exceljson + file_all)
+        except:
+            continue
+    messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
 
 
 def file_checker():
@@ -342,132 +489,6 @@ def istsoll(sheet, sheet2):
             for i in range(len(langenmodule)):
                 if sheet2.cell(column=4, row=row.row).value in langenmodule[i]:
                     sheet2.cell(column=5, row=row.row).value = langenmodule[i][9]
-
-
-def golire_directoare():
-    dir_input1 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8000/"
-    dir_input2 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8011/"
-    dir_input3 = os.path.abspath(os.curdir) + "/MAN/Input/Module Files/8023/"
-    dir_output1 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
-    dir_output2 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011/"
-    dir_output3 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023/"
-    dir_output4 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000/"
-    dir_output5 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8011/"
-    dir_output6 = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8023/"
-    dir_outputr = os.path.abspath(os.curdir) + "/MAN/Output/Report Files/"
-    dir_output_separare = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/"
-    dir_output_separare2 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/"
-    dir_output_separare3 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Prelucrate/"
-    dir_output_separare4 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light/"
-    dir_output_separare41 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Neprelucrate/Light+/"
-    dir_output_separare5 = os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/"
-    dir_output_BOM_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/BOM/"
-    dir_output_wire_complet = os.path.abspath(os.curdir) + "/MAN/Output/Complete BOM and WIRELIST/Wirelist/"
-    dir_ldorado = os.path.abspath(os.curdir) + "/MAN/Output/LDorado/"
-    dir_output_database1 = os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/"
-    dir_output_database2 = os.path.abspath(os.curdir) + "/MAN/Output/Database/"
-
-    for file_all in os.listdir(dir_input1):
-        try:
-            os.remove(dir_input1 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_input2):
-        try:
-            os.remove(dir_input2 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_input3):
-        try:
-            os.remove(dir_input3 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output1):
-        try:
-            os.remove(dir_output1 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output2):
-        try:
-            os.remove(dir_output2 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output3):
-        try:
-            os.remove(dir_output3 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output4):
-        try:
-            os.remove(dir_output4 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output5):
-        try:
-            os.remove(dir_output5 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output6):
-        try:
-            os.remove(dir_output6 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_outputr):
-        try:
-            os.remove(dir_outputr + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare):
-        try:
-            os.remove(dir_output_separare + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_BOM_complet):
-        try:
-            os.remove(dir_output_BOM_complet + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_wire_complet):
-        try:
-            os.remove(dir_output_wire_complet + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_database1):
-        try:
-            os.remove(dir_output_database1 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_database2):
-        try:
-            os.remove(dir_output_database2 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare2):
-        try:
-            os.remove(dir_output_separare2 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare3):
-        try:
-            os.remove(dir_output_separare3 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare4):
-        try:
-            os.remove(dir_output_separare4 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare41):
-        try:
-            os.remove(dir_output_separare41 + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_separare5):
-        try:
-            os.remove(dir_output_separare5 + file_all)
-        except:
-            continue
-    messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
 
 
 def databesemerge():

@@ -751,7 +751,7 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         x6616sheetsortat[2].append(["X6490.1A1", item])
     for item in x64902a1:
         x6616sheetsortat[3].append(["X6490.2A1", item])
-
+    #verificare X6490
     if sheet6[4][16] > 0: # pentru 4AXEL
         if x66161a1 == x66162a1:
             x6616 = "OK"
@@ -762,22 +762,25 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         else:
             try:
                 x64902a1.remove(12)
-                if x64902a1 == x64901a1 and "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig \
-                        and "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig:
+                if x64902a1 == x64901a1 and len(x64902a1) != 0 and len(x64901a1) != 0 and \
+                        "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig and\
+                        "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig:
                     x6490 = "OK"
-                elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-5038" in moduleinconfig \
-                        and "81.25483-5024" in moduleinconfig :
-                    x6490 = "NOT OK"
+                elif len(x64902a1) == 0 and len(x64901a1) == 0 and \
+                        "81.25483-5038" not in moduleinconfig and "81.25483-5024" not in moduleinconfig \
+                        and "81.25481-7608" not in moduleinconfig and "81.25481-5580" not in moduleinconfig:
+                    x6490 = "OK"
                 else:
                     x6490 = "NOT OK"
             except:
-                if x64902a1 == x64901a1 and "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig \
-                        and len(x64902a1) != 0 and len(x64901a1) != 0:
-                    ##and "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig
+                if x64902a1 == x64901a1 and len(x64902a1) != 0 and len(x64901a1) != 0 and \
+                        "81.25483-5038" in moduleinconfig and "81.25483-5024" in moduleinconfig and\
+                        "81.25481-7608" in moduleinconfig and "81.25481-5580" in moduleinconfig:
                     x6490 = "OK"
-                elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-5038" in moduleinconfig \
-                        and "81.25483-5024" in moduleinconfig :
-                    x6490 = "NOT OK"
+                elif len(x64902a1) == 0 and len(x64901a1) == 0 and \
+                        "81.25483-5038" not in moduleinconfig and "81.25483-5024" not in moduleinconfig \
+                        and "81.25481-7608" not in moduleinconfig and "81.25481-5580" not in moduleinconfig:
+                    x6490 = "OK"
                 else:
                     x6490 = "NOT OK"
     elif sheet6[2][16] > 0: # pentru SATTEL
@@ -795,12 +798,12 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
                     x6616 = "OK"
                 else:
                     x6616 = "NOT OK"
-        if x64901a1 == x64902a1 and "81.25482-7988" in moduleinconfig and "81.25482-7987" in moduleinconfig \
-                and len(x64902a1) != 0 and len(x64901a1) != 0:
+        if x64902a1 == x64901a1 and len(x64902a1) != 0 and len(x64901a1) != 0 and \
+                "81.25482-7988" in moduleinconfig and "81.25482-7987" in moduleinconfig:
             x6490 = "OK"
-        elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-7988" in moduleinconfig \
-                 and "81.25483-7987" in moduleinconfig:
-            x6490 = "NOT OK"
+        elif len(x64902a1) == 0 and len(x64901a1) == 0 and \
+                "81.25482-7988" not in moduleinconfig and "81.25482-7987" not in moduleinconfig:
+            x6490 = "OK"
         else:
             x6490 = "NOT OK"
     elif sheet6[1][16] > 0: # pentru CHASSIS
@@ -818,14 +821,16 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
                     x6616 = "OK"
                 else:
                     x6616 = "NOT OK"
-        if x64901a1 == x64902a1 and "81.25482-7990" in moduleinconfig and "81.25482-7989" in moduleinconfig and \
-                len(x64902a1) != 0 and len(x64901a1) != 0:
+        if x64902a1 == x64901a1 and len(x64902a1) != 0 and len(x64901a1) != 0 and \
+                "81.25482-7990" in moduleinconfig and "81.25482-7989" in moduleinconfig:
             x6490 = "OK"
-        elif len(x64902a1) == 0 and len(x64901a1) == 0 and "81.25483-7990" in moduleinconfig \
-                 and "81.25483-7989" in moduleinconfig:
-            x6490 = "NOT OK"
+        elif len(x64902a1) == 0 and len(x64901a1) == 0 and \
+                "81.25482-7990" not in moduleinconfig and "81.25482-7989" not in moduleinconfig:
+            x6490 = "OK"
         else:
             x6490 = "NOT OK"
+
+
     else:
         if x66161a1 == x66162a1:
             x6616 = "OK"
@@ -836,12 +841,7 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         else:
             x6490 = "NOT OK"
 
-    #if len(x64901a1) == 0 and len(x64902a1) == 0:
-    #    x6490 = "OK"
-    #if len(x66161a1) == 0 and len(x66162a1) == 0:
-    #    x6616 = "OK"
 
-    # verificare in caz de lipsa conector X6490
 
     for i in range(len(sheet6)):
         sheet6[i].append("")
