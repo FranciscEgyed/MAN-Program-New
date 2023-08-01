@@ -55,7 +55,9 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Clustering/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)

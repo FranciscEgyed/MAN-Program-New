@@ -133,6 +133,8 @@ submenu7.add_command(label="Generare cod QR",
 submenu7.add_separator()
 submenu7.add_command(label="Prelucrare masterdata",
                      command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
+submenu7.add_command(label="Comparatie fisiere",
+                     command=lambda: [statusbusy(), comparatie_fisiere(), statusidle()])
 submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()

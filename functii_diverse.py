@@ -1,5 +1,6 @@
 import csv
 import datetime
+import difflib
 import os
 import time
 from collections import Counter
@@ -337,3 +338,78 @@ def extragere_variatii():
 
     messagebox.showinfo('Finalizat!', 'Prelucrate ' + str(counter) + " fisiere in " + str(end - start)[:6] + " secunde.")
 
+
+def comparatie_fisiere():
+
+    def compare_files_in_folders(folder1, folder2):
+        pbargui = Tk()
+        pbargui.title("Comparatie fisiere ")
+        pbargui.geometry("500x50+50+550")
+        pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+        statuslabel = Label(pbargui, text="Waiting . . .")
+        pbar.grid(row=1, column=1, padx=5, pady=5)
+        statuslabel.grid(row=1, column=2, padx=5, pady=5)
+        # Get the list of files in each folder
+        files_folder1 = os.listdir(folder1)
+        files_folder2 = os.listdir(folder2)
+
+        # Get the common files (files with the same name) in both folders
+        common_files = set(files_folder1) & set(files_folder2)
+
+        # Initialize a dictionary to store comparison results
+        comparison_results = {}
+
+        # Compare the contents of common files
+        for filename in common_files:
+            statuslabel["text"] = filename
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+            file1_path = os.path.join(folder1, filename)
+            file2_path = os.path.join(folder2, filename)
+
+            with open(file1_path, 'r') as file1:
+                content1 = file1.read()
+
+            with open(file2_path, 'r') as file2:
+                content2 = file2.read()
+
+            diff_lines = list(difflib.ndiff(content1, content2))
+            different_lines = [line[2:] for line in diff_lines if line.startswith('- ')]
+
+            if not different_lines:
+                comparison_results[filename] = "Contents are identical."
+            else:
+                comparison_results[filename] = "Contents are different."
+                comparison_results[f"{filename}_diff"] = "".join(different_lines)
+            pbar['value'] += 1
+            pbargui.update_idletasks()
+        # Check for files that exist in one folder but not the other
+        for filename in set(files_folder1) ^ set(files_folder2):
+            if filename in files_folder1:
+                comparison_results[filename] = "File exists only in folder 1."
+            else:
+                comparison_results[filename] = "File exists only in folder 2."
+        pbar.destroy()
+        pbargui.destroy()
+        return comparison_results
+
+    # Example usage:
+    folder1_path = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                                       title="Selectati directorul numarul unu")
+    folder2_path = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                                       title="Selectati directorul numarul doi")
+    start = time.time()
+    results = compare_files_in_folders(folder1_path, folder2_path)
+    output = []
+    for filename, result in results.items():
+        output.append([f"{filename}: {result}"])
+    print(output)
+    with open(os.path.abspath(os.curdir) + "/MAN/Diferente fisiere.txt", 'w', newline='',
+              encoding='utf-8') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+        wr.writerows(output)
+
+    end = time.time()
+
+    messagebox.showinfo('Finalizat!',
+                        'Prelucrate in ' + str(end - start)[:6] + " secunde.")

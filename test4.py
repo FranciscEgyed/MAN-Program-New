@@ -1,43 +1,57 @@
-import json
 import os
-import time
-from tkinter import messagebox
-from openpyxl.workbook import Workbook
+
+from openpyxl.reader.excel import load_workbook
 
 
-files = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
-                          "Tapes", "Terminals", "CavityPlugs"]
-def print_list_of_dictionaries(lst, indent=0):
-    for item in lst:
-        if isinstance(item, dict):
-            print_dictionary(item, indent)
-        elif isinstance(item, list):
-            print_list_of_dictionaries(item, indent)
-        else:
-            print(f"{' ' * indent}{item}")
+def sort_by_first_two_characters(name):
+    # Extract the first two characters of the filename
+    first_two_characters = name[:2]
 
-def print_dictionary(dictionary, indent=0):
-    output = []
-    for key, value in dictionary.items():
-        if isinstance(value, dict):
-            print(f"{' ' * indent}{key}:")
-            print_dictionary(value, indent + 4)
-        elif isinstance(value, list):
-            print(f"{' ' * indent}{key}:")
-            print_list_of_dictionaries(value, indent + 4)
-        else:
-            print(f"{' ' * indent}{key}: {value}")
-        time.sleep(0.1)
+    # Convert the first two characters to an integer (if possible)
+    try:
+        return int(first_two_characters)
+    except ValueError:
+        # If conversion to an integer fails, return a large value
+        return float('inf')
 
 
-def extract_module_ids(module_list):
-    modules = []
-    for module in module_list["Module"]:
-        print(module["TitleBlock"][0]["Description"])
+def copy_excel_to_list(file_path):
+    # Load the Excel workbook
+    workbook = load_workbook(file_path)
+    # Select the specific sheet
+    sheet = workbook.worksheets[0]
+    # Create an empty list to store all rows as lists
+    all_rows_list = []
+    # Loop through all rows in the sheet
+    for row in sheet.iter_rows(values_only=True):
+        # Append each row as a list to the main list
+        all_rows_list.append(list(row))
+    # Close the workbook
+    workbook.close()
+    return all_rows_list
 
-with open("F:\Python Projects\MAN 2022\MAN\Output\Diagrame\JSON/Modules.json", "r") as json_file:
-    loaded_dictionary = json.load(json_file)
-#print_dictionary(loaded_dictionary)
-extract_module_ids(loaded_dictionary)
+output = copy_excel_to_list("F:/Python Projects/MAN 2022\MAN\Output\Diagrame\EXCELS/Lista output.xlsx")
 
+contents = os.listdir("F:/Python Projects/MAN 2022\MAN\Output\Diagrame\EXCELS/Conectori/Compatibili/")
+# Sort the contents based on the first two characters as numbers
+contents.sort(key=sort_by_first_two_characters)
+lista_fire = output
+for i in range(len(contents)):
 
+    print(contents[i][contents[i].find(' ') + 1:-5])
+    module_diagrama = copy_excel_to_list("F:/Python Projects/MAN 2022\MAN\Output\Diagrame\EXCELS/Conectori/Compatibili/" +contents[i])
+    for combinatie in module_diagrama:
+        output_diagrama = []
+        for modul in combinatie:
+            output_diagrama.append(modul)
+        print(output_diagrama)
+        print()
+        for modul_diagrama in output_diagrama:
+            diagrama = []
+            if modul_diagrama is not None:
+                for x in range(len(lista_fire)):
+                    if lista_fire[x][0] == contents[i][contents[i].find(' ') + 1:-5] and lista_fire[x][11] == modul_diagrama:
+                        diagrama.append([modul_diagrama, lista_fire[x][7], lista_fire[x][12]])
+                for dia in diagrama:
+                    print(dia)
+        print()

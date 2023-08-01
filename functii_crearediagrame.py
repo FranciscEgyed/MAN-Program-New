@@ -1,8 +1,12 @@
 import csv
+import math
 import os
-from tkinter import filedialog, messagebox
+import tkinter as tk
+from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
 import json
 import xml.etree.ElementTree as ET
+
+from openpyxl.reader.excel import load_workbook
 from openpyxl.workbook import Workbook
 from itertools import combinations
 from collections import Counter
@@ -41,7 +45,10 @@ def parse_xml(file):
 
     # Root elements to process
     root_element_names = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
-                          "Tapes", "Terminals", "CavityPlugs", "Accessories"]
+                          "Tapes", "Terminals", "CavityPlugs", "Accessories", "FusePMDs", "RelayPMDs", "AccessoryPMDs",
+                          "AssemblyPartPMDs", "HarnessConfigurationPMDs", "WiringGroupPMDs", "ConnectorPMDs",
+                          "FixingPMDs", "GeneralSpecialWirePMDs", "GeneralWirePMDs", "PartPMDs", "SealPMDs",
+                          "PlugPMDs", "TerminalPMDs", "TapePMDs", "SymbolPMDs","ComponentBoxPMDs"]
 
     # Parse the XML file
     tree = ET.parse(file)
@@ -65,11 +72,40 @@ def prelucrare_json():
              "Tapes", "Terminals", "CavityPlugs", "Accessories"]
 
     def extract_wire_ids(wire_list):
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/GeneralSpecialWirePMDs.json", "r") as json_file:
+            gsw = json.load(json_file)
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/GeneralWirePMDs.json", "r") as json_file:
+            gw = json.load(json_file)
         wires = []
         for wire in wire_list['Wire']:
+            cablu = "Empty"
+            sectiune = "Empty"
+            culoare = "Empty"
+            pmd = wire['PMD']
+            for fir in gsw['GeneralSpecialWirePMD']:
+                print(fir)
+                for core in fir['CorePMD']:
+                    print(core)
+                    if core["CustomerPartNo"] == pmd:
+                        cablu = core["CustomerPartNo"]
+                        sectiune = core["CSA"]
+                        try:
+                            culoare = core["Colour"].split("_")[1]
+                        except IndexError:
+                            culoare = core["Colour"]
+                    else:
+                        for firut in gw['GeneralWirePMD']:
+                            if firut["ID"] == pmd:
+                                cablu = firut["ID"]
+                                sectiune = firut["CSA"]
+                                try:
+                                    culoare = core["Colour"].split("_")[1]
+                                except IndexError:
+                                    culoare = core["Colour"]
             for moduleid in wire["WireModuleRefs"][0]["WireModuleRef"]:
-                wires.append([moduleid["ModuleID"], wire["ID"], wire["WireNo"], wire["RouteLength"]])
-        wires.insert(0, ["Module ID", "Wire ID", "Wire No", "Length"])
+                wires.append([moduleid["ModuleID"], wire["ID"], wire["WireNo"], wire["RouteLength"], cablu, sectiune,
+                              culoare])
+        wires.insert(0, ["Module ID", "Wire ID", "Wire No", "Length", "Cablu", "Sectiune", "Culoare"])
         printfile(wires, "Wires list")
 
     def extract_conector_ids(wire_list):
@@ -216,6 +252,7 @@ def prelucrare_json():
                 extract_variants_ids(loaded_dictionary)
             if file == "Wires":
                 extract_wire_ids(loaded_dictionary)
+
             if file == "CavitySeals":
                 extract_seal_ids(loaded_dictionary)
             if file == "Connectors":
@@ -231,8 +268,117 @@ def prelucrare_json():
 
     messagebox.showinfo('Finalizat', "Fisierele JSON finalizate!")
 
+def display_directory_contents(directory, wires):
+    def list_directory_contents(directory):
+        try:
+            # Get the list of files and directories in the specified directory
+            contents = os.listdir(directory)
+            return contents
+        except OSError:
+            return []
+    def sort_by_first_two_characters(name):
+        # Extract the first two characters of the filename
+        first_two_characters = name[:2]
+
+        # Convert the first two characters to an integer (if possible)
+        try:
+            return int(first_two_characters)
+        except ValueError:
+            # If conversion to an integer fails, return a large value
+            return float('inf')
+
+    # Create the main window
+    root = tk.Tk()
+    root.title("Directory Contents")
+    root.geometry("500x400")
+
+    # Create a canvas with a vertical scrollbar
+    canvas = tk.Canvas(root)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+    scrollbar = tk.Scrollbar(root, command=canvas.yview)
+    scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    canvas.configure(yscrollcommand=scrollbar.set)
+
+    # Create a frame inside the canvas to hold the radio buttons
+    frame = tk.Frame(canvas)
+    canvas.create_window((0, 0), window=frame, anchor=tk.NW)
+
+    # Get the directory contents
+    contents = list_directory_contents(directory)
+    # Sort the contents based on the first two characters as numbers
+    contents.sort(key=sort_by_first_two_characters)
+    # Create a list to store the selected items
+    selected_items = []
+
+
+
+    def print_selection(selected_items):
+        on_select()
+        print("Selected Items:")
+        for itemul in selected_items:
+            print("-", itemul)
+
+    def on_select():
+        selected_items.clear()
+        for item, var in selected_var_dict.items():
+            if var.get() == 1:
+                selected_items.append(item)
+
+    def clear_selection():
+        for var in selected_var_dict.values():
+            var.set(0)
+        selected_items.clear()
+
+    # Create a dictionary to store the radio buttons' variables
+    selected_var_dict = {}
+
+    # Insert radio buttons for each item in the directory
+    for item in contents:
+        selected_var_dict[item] = tk.IntVar()
+        radio_button = tk.Radiobutton(frame, text=item, variable=selected_var_dict[item], value=1)
+        radio_button.pack(anchor="w")
+
+    # Create the "Print Selection" button
+    print_button = tk.Button(root, text="Print Selection", command=lambda: print_selection(selected_items))
+    print_button.pack()
+
+    # Create the "Clear Selection" button
+    clear_button = tk.Button(root, text="Clear Selection", command=clear_selection)
+    clear_button.pack()
+
+    def on_frame_configure(event):
+        canvas.configure(scrollregion=canvas.bbox("all"))
+
+    frame.bind("<Configure>", on_frame_configure)
+
+    # Start the main event loop
+    root.mainloop()
+
+
 
 def creare_wirelist():
+    #creare GUI
+    pbargui = Tk()
+    pbargui.title("Creare fisiere pentru diagrame")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    timelabel = Label(pbargui, text="Time . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2)
+    timelabel.grid(row=2, column=2)
+    # clear folder from old files
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/"):
+        try:
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + file_all)
+        except:
+            continue
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/"):
+        try:
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/" + file_all)
+        except:
+            continue
     #Load required data files
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Wires list.txt", newline='') as csvfile:
         array_wires = list(csv.reader(csvfile, delimiter=';'))
@@ -254,7 +400,9 @@ def creare_wirelist():
         array_accessory = list(csv.reader(csvfile, delimiter=';'))
 
 # function needed
-
+    statuslabel["text"] = "Incarcare fisiere . . . "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
     output = []
     # Extragere conectori si fire
     for i in range(len(array_conectors)):
@@ -332,7 +480,9 @@ def creare_wirelist():
                     max_pin = current_pin
         if 1 < max_pin < 50:
             lista_conectori_cu_pin.append((lista_conectori[i], max_pin))
-
+    statuslabel["text"] = "Salvare lista fire . . . "
+    pbar['value'] += 2
+    pbargui.update_idletasks()
     wb = Workbook()
     ws1 = wb.active
     ws1.title = "output"
@@ -344,7 +494,12 @@ def creare_wirelist():
                 ws1.cell(column=x + 1, row=i + 1, value=str(output[i][x]))
     wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Lista output.xlsx")
 
+    lista_conectori_neprelucrati = []
+
     for pereche in lista_conectori_cu_pin:
+        statuslabel["text"] = "Prelucrare combinatii pentru : " + str(pereche[0]) + " factor de:"
+        pbar['value'] += 2
+        pbargui.update_idletasks()
         array_temp_wirelist = []
         lista_combinatii_incompatibile = []
         lista_combinatii_compatibile = []
@@ -353,48 +508,139 @@ def creare_wirelist():
                 if pereche[0] == output[x][0]:
                     array_temp_wirelist.append(output[x])
         lista_module_conector = set([x[11] for x in array_temp_wirelist if x[11] != "Empty"])
-        print(lista_module_conector)
-        for r in range(1, len(lista_module_conector) + 1):
-            print(r)
-            for combination in combinations(lista_module_conector, r):
-                print(combination)
-                incompatibil = False
-                if len(combination) == 1:
-                    lista_combinatii_compatibile.append(combination)
+
+        module_pins = {}
+        for row in output:
+            if row[11] != "Empty":
+                module = row[11]
+                pin = row[6]
+                if module in module_pins:
+                    module_pins[module].add(pin)
                 else:
-                    common_pins = []
-                    for modul in combination:
-                        for row in output:
-                            if modul in row:
-                                common_pins.append(row[6])
-                    for count in Counter(common_pins).values():
-                        if count > 1:
-                            incompatibil = True
-                if incompatibil:
-                    lista_combinatii_incompatibile.append(combination)
-                else:
-                    lista_combinatii_compatibile.append(combination)
+                    module_pins[module] = {pin}
 
-        wb = Workbook()
-        ws1 = wb.active
-        ws1.title = "Module compatibile"
-        ws2 = wb.create_sheet("Module incompatibile")
-        for i in range(len(lista_combinatii_compatibile)):
-            for x in range(len(lista_combinatii_compatibile[i])):
-                try:
-                    ws1.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_compatibile[i][x]))
-                except:
-                    ws1.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_compatibile[i][x]))
-        for i in range(len(lista_combinatii_incompatibile)):
-            for x in range(len(lista_combinatii_incompatibile[i])):
-                try:
-                    ws2.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_incompatibile[i][x]))
-                except:
-                    ws2.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_incompatibile[i][x]))
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Combinatii module " +
-                pereche[0] + ".xlsx")
+        if len(lista_module_conector) < 19:
+            for r in range(1, len(lista_module_conector) + 1):
+                counter_combinatii = 0
+                combinatii_posibile = math.factorial(len(lista_module_conector) + 1) // \
+                                      (math.factorial(r) * math.factorial(len(lista_module_conector) + 1 - r))
+                statuslabel["text"] = str(pereche[0]) + "-Prelucrare "+ str(combinatii_posibile) + " combinatii                                  "
+                for combination in combinations(lista_module_conector, r):
+                    counter_combinatii = counter_combinatii + 1
+                    timelabel["text"] = "Verificate " + str(counter_combinatii) + "                                              "
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if len(combination) == 1:
+                        num_common_pins = 0
+                    else:
+                        pins_lists = [module_pins.get(module_id, set()) for module_id in combination]
+                        common_pins = set.intersection(*pins_lists)
+                        num_common_pins = len(common_pins)
+                    if num_common_pins > 0:
+                        lista_combinatii_incompatibile.append(combination)
+                    else:
+                        lista_combinatii_compatibile.append(combination)
+
+                wb = Workbook()
+                ws1 = wb.active
+                ws1.title = "Module compatibile"
+                for i in range(len(lista_combinatii_compatibile)):
+                    for x in range(len(lista_combinatii_compatibile[i])):
+                        try:
+                            ws1.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_compatibile[i][x]))
+                        except:
+                            ws1.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_compatibile[i][x]))
+                wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + str(pereche[1]) + " " +
+                        pereche[0] + ".xlsx")
+
+                wb2 = Workbook()
+                ws21 = wb2.active
+                ws21.title = "Module incompatibile"
+                for i in range(len(lista_combinatii_incompatibile)):
+                    for x in range(len(lista_combinatii_incompatibile[i])):
+                        try:
+                            ws21.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_incompatibile[i][x]))
+                        except:
+                            ws21.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_incompatibile[i][x]))
+                wb2.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/ " +
+                        pereche[0] + ".xlsx")
+        else:
+            lista_conectori_neprelucrati.append(pereche[0])
+
+    wb3 = Workbook()
+    ws31 = wb3.active
+    ws31.title = "Conectori neprelucrati"
+    for i in range(len(lista_conectori_neprelucrati)):
+        try:
+            ws31.cell(column=1, row=i + 1, value=float(lista_conectori_neprelucrati[i]))
+        except:
+            ws31.cell(column=1, row=i + 1, value=str(lista_conectori_neprelucrati[i]))
+    wb3.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/Conectori neperlucrati.xlsx")
+
+    def sort_by_first_two_characters(name):
+        # Extract the first two characters of the filename
+        first_two_characters = name[:2]
+
+        # Convert the first two characters to an integer (if possible)
+        try:
+            return int(first_two_characters)
+        except ValueError:
+            # If conversion to an integer fails, return a large value
+            return float('inf')
+
+    contents = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/")
+    # Sort the contents based on the first two characters as numbers
+    contents.sort(key=sort_by_first_two_characters)
+    lista_fire = output[1:]
+    for i in range(len(contents)):
+        counter_diagrama = 0
+        print(contents[i][contents[i].find(' ') + 1:-5])
+        wb = load_workbook(os.path.abspath(os.curdir) +
+                           "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + contents[i])
+        ws1 = wb.worksheets[0]
+        row_count = 1
+        conectoropus = "WIP"
+        for row in ws1['A']:
+            output_diagrama = {key: None for key in range(1, int(contents[i][0:contents[i].find(' ')]) + 1)}
+            if row.value is not None:
+                lista_module_diagrama = []
+                for column in ws1.iter_cols(min_row=row_count, max_row=row_count, values_only=True):
+                    for cell in column:
+                        if cell is not None:
+                            lista_module_diagrama.append(cell)
+                for key in output_diagrama.keys():
+                    for fir in lista_fire:
+                        if int(fir[6].replace("S", "")) == key and fir[11] in lista_module_diagrama and\
+                                fir[0] == contents[i][contents[i].find(' ') + 1:-5]:
+                            modulul = fir[11]
+                            numarfir = fir[12]
+                            for wire in array_wires:
+                                if wire[1] == fir[7]:
+                                    culoare = wire[6]
+                                    codcul1 = wire[6][:2]
+                                    if wire[6][2:] != "":
+                                        codcul2 = wire[6][2:]
+                                    else:
+                                        codcul2 = wire[6][:2]
+                                    sectiune = wire[5]
+                        lista_fire.remove(fir)
+                    output_diagrama[key] = modulul, numarfir, culoare, codcul1, codcul2, sectiune, conectoropus
+            counter_diagrama = counter_diagrama + 1
+            print(output_diagrama)
+            print(contents[i][contents[i].find(' ') + 1:-5] , counter_diagrama)
+            print()
+            row_count = row_count + 1
 
 
-
-
+        #for row in ws1['A']:
+        #    output_diagrama = []
+        #    counter_diagrama = 1
+        #    if row.value is not None:
+        #        lista_conectori_cu_pin
+        #                        output_diagrama.append([modulul, pinul, numarfir, culoare, codcul1, codcul2, sectiune,
+        #                                                conectoropus])
+        #    row_count = row_count + 1
+        #    print(output_diagrama)
+        #    print()
+        print()
     print("FINISH")
