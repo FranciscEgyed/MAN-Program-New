@@ -7,6 +7,7 @@ import json
 import xml.etree.ElementTree as ET
 
 from openpyxl.reader.excel import load_workbook
+from openpyxl.styles import PatternFill
 from openpyxl.workbook import Workbook
 from itertools import combinations
 from collections import Counter
@@ -48,7 +49,7 @@ def parse_xml(file):
                           "Tapes", "Terminals", "CavityPlugs", "Accessories", "FusePMDs", "RelayPMDs", "AccessoryPMDs",
                           "AssemblyPartPMDs", "HarnessConfigurationPMDs", "WiringGroupPMDs", "ConnectorPMDs",
                           "FixingPMDs", "GeneralSpecialWirePMDs", "GeneralWirePMDs", "PartPMDs", "SealPMDs",
-                          "PlugPMDs", "TerminalPMDs", "TapePMDs", "SymbolPMDs","ComponentBoxPMDs"]
+                          "PlugPMDs", "TerminalPMDs", "TapePMDs", "SymbolPMDs","ComponentBoxPMDs", "Configurations"]
 
     # Parse the XML file
     tree = ET.parse(file)
@@ -69,7 +70,7 @@ def parse_xml(file):
 
 def prelucrare_json():
     files = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
-             "Tapes", "Terminals", "CavityPlugs", "Accessories"]
+             "Tapes", "Terminals", "CavityPlugs", "Accessories", "Configurations", "AccessoryPMDs"]
 
     def extract_wire_ids(wire_list):
         with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/GeneralSpecialWirePMDs.json", "r") as json_file:
@@ -83,9 +84,7 @@ def prelucrare_json():
             culoare = "Empty"
             pmd = wire['PMD']
             for fir in gsw['GeneralSpecialWirePMD']:
-                print(fir)
                 for core in fir['CorePMD']:
-                    print(core)
                     if core["CustomerPartNo"] == pmd:
                         cablu = core["CustomerPartNo"]
                         sectiune = core["CSA"]
@@ -221,6 +220,29 @@ def prelucrare_json():
                 accessorys.append([accessoryid, accessorypmd, accessoryconectorID, ele["ModuleID"]])
         accessorys.insert(0, ["Accessory ID", "PMD", "ConnectorID", "Module ID"])
         printfile(accessorys, "Accessory list")
+
+
+    def extract_configurations(configurations_list):
+        configurati = []
+        for configuration in configurations_list["Configuration"]:
+            configurationid = configuration["ID"]
+            configurationnickname = configuration["NickName"]
+            for moduleid in configuration["ConfigurationModule"]:
+                configurati.append([configurationid, configurationnickname, moduleid["ModuleID"]])
+        configurati.insert(0, ["Configuration ID", "NickName", "Module ID"])
+        printfile(configurati, "Configurations")
+
+
+    def extract_accessorypmds(accesory_list):
+        accesorypmd = []
+        for accesory in accesory_list["AccessoryPMD"]:
+            accesorypmdid = accesory["ID"]
+            abbr = accesory["Abbreviation"]
+            desc = accesory["Description"]
+            accesorypmd.append([accesorypmdid, abbr, desc])
+        accesorypmd.insert(0, ["AccessoryPMD ID", "Abbreviation", "Description"])
+        printfile(accesorypmd, "AccessoryPMDs")
+
     def printfile(list_to_print, file_name):
         wb = Workbook()
         ws1 = wb.active
@@ -242,6 +264,9 @@ def prelucrare_json():
             wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
             wr.writerows(list_to_print)
 
+
+
+
     for file in files:
         with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/" + file + ".json", "r") as json_file:
             loaded_dictionary = json.load(json_file)
@@ -252,7 +277,6 @@ def prelucrare_json():
                 extract_variants_ids(loaded_dictionary)
             if file == "Wires":
                 extract_wire_ids(loaded_dictionary)
-
             if file == "CavitySeals":
                 extract_seal_ids(loaded_dictionary)
             if file == "Connectors":
@@ -265,7 +289,10 @@ def prelucrare_json():
                 extract_plugs_ids(loaded_dictionary)
             if file == "Accessories":
                 extract_accessory_ids(loaded_dictionary)
-
+            if file == "Configurations":
+                extract_configurations(loaded_dictionary)
+            if file == "AccessoryPMDs":
+                extract_accessorypmds(loaded_dictionary)
     messagebox.showinfo('Finalizat', "Fisierele JSON finalizate!")
 
 def display_directory_contents(directory, wires):
@@ -369,6 +396,7 @@ def creare_wirelist():
     statuslabel.grid(row=1, column=2)
     timelabel.grid(row=2, column=2)
     # clear folder from old files
+    test_excel = []
     for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/"):
         try:
             os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + file_all)
@@ -377,6 +405,11 @@ def creare_wirelist():
     for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/"):
         try:
             os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/" + file_all)
+        except:
+            continue
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/"):
+        try:
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/" + file_all)
         except:
             continue
     #Load required data files
@@ -398,6 +431,8 @@ def creare_wirelist():
         array_terminals = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Accessory list.txt", newline='') as csvfile:
         array_accessory = list(csv.reader(csvfile, delimiter=';'))
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/AccessoryPMDs.txt", newline='') as csvfile:
+        array_accessorypmd = list(csv.reader(csvfile, delimiter=';'))
 
 # function needed
     statuslabel["text"] = "Incarcare fisiere . . . "
@@ -495,7 +530,7 @@ def creare_wirelist():
     wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Lista output.xlsx")
 
     lista_conectori_neprelucrati = []
-
+    lista_diagrame_create = []
     for pereche in lista_conectori_cu_pin:
         statuslabel["text"] = "Prelucrare combinatii pentru : " + str(pereche[0]) + " factor de:"
         pbar['value'] += 2
@@ -588,59 +623,134 @@ def creare_wirelist():
             # If conversion to an integer fails, return a large value
             return float('inf')
 
+    def colorpicker(codculoare):
+        if codculoare == "bk":
+            cell_fill = PatternFill(start_color="000000", end_color="000000", fill_type='solid')
+        elif codculoare == "bl":
+            cell_fill = PatternFill(start_color="0000FF", end_color="0000FF", fill_type='solid')
+        elif codculoare == "ws":
+            cell_fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type='solid')
+        elif codculoare == "rs":
+            cell_fill = PatternFill(start_color="ff99ff", end_color="ff99ff", fill_type='solid')
+        elif codculoare == "bn":
+            cell_fill = PatternFill(start_color="996600", end_color="996600", fill_type='solid')
+        elif codculoare == "rd":
+            cell_fill = PatternFill(start_color="FF0000", end_color="FF0000", fill_type='solid')
+        else:
+            cell_fill = PatternFill(start_color="FFFFFF", end_color="FFFFFF", fill_type='solid')
+        return cell_fill
+
+
     contents = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/")
     # Sort the contents based on the first two characters as numbers
     contents.sort(key=sort_by_first_two_characters)
     lista_fire = output[1:]
+
     for i in range(len(contents)):
-        counter_diagrama = 0
-        print(contents[i][contents[i].find(' ') + 1:-5])
+        counter_diagrama = 1
         wb = load_workbook(os.path.abspath(os.curdir) +
                            "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + contents[i])
         ws1 = wb.worksheets[0]
         row_count = 1
         conectoropus = "WIP"
-        for row in ws1['A']:
+        for row in ws1.iter_rows():
+            lista_module_diagrama = []
             output_diagrama = {key: None for key in range(1, int(contents[i][0:contents[i].find(' ')]) + 1)}
-            if row.value is not None:
-                lista_module_diagrama = []
-                for column in ws1.iter_cols(min_row=row_count, max_row=row_count, values_only=True):
-                    for cell in column:
-                        if cell is not None:
-                            lista_module_diagrama.append(cell)
-                for key in output_diagrama.keys():
-                    for fir in lista_fire:
-                        if int(fir[6].replace("S", "")) == key and fir[11] in lista_module_diagrama and\
-                                fir[0] == contents[i][contents[i].find(' ') + 1:-5]:
-                            modulul = fir[11]
-                            numarfir = fir[12]
-                            for wire in array_wires:
-                                if wire[1] == fir[7]:
-                                    culoare = wire[6]
-                                    codcul1 = wire[6][:2]
-                                    if wire[6][2:] != "":
-                                        codcul2 = wire[6][2:]
-                                    else:
-                                        codcul2 = wire[6][:2]
-                                    sectiune = wire[5]
-                        lista_fire.remove(fir)
-                    output_diagrama[key] = modulul, numarfir, culoare, codcul1, codcul2, sectiune, conectoropus
-            counter_diagrama = counter_diagrama + 1
-            print(output_diagrama)
-            print(contents[i][contents[i].find(' ') + 1:-5] , counter_diagrama)
+            # Iterate through worksheet and print cell contents
+            for cell in row:
+                if cell.value is not None:
+                    lista_module_diagrama.append(cell.value)
+            for key in output_diagrama.keys():
+                for conector in array_conectors:
+                    if conector[0] == contents[i][contents[i].find(' ') + 1:-5] and conector[7] != "Empty":
+                        fir = conector[7]
+                        for wire in array_wires:
+                            if wire[1] == fir:
+                                modul = wire[0]
+                                for plug in array_plugs:
+                                    if plug[2] == modul:
+                                        numarfir = plug[1]
+                                        break
+                modulul = ""
+                culoare = "bk"
+                codcul1 = "bk"
+                codcul2 = "bk"
+                sectiune = ""
+                for fir in lista_fire:
+                    if int(fir[6].replace("S", "")) == key and fir[11] in lista_module_diagrama and\
+                            fir[0] == contents[i][contents[i].find(' ') + 1:-5]:
+                        modulul = fir[11]
+                        numarfir = fir[12]
+                        for wire in array_wires:
+                            if wire[1] == fir[7]:
+                                culoare = wire[6]
+                                codcul1 = wire[6][:2]
+                                if wire[6][2:] != "":
+                                    codcul2 = wire[6][2:]
+                                else:
+                                    codcul2 = wire[6][:2]
+                                sectiune = wire[5]
+
+                output_diagrama[key] = modulul, numarfir, culoare, codcul1, codcul2, sectiune, conectoropus
+            output_diagrama[0] = "Modul PN", "Imprimare Fir", "Culoare", "", "", "Sectiune", "Conector opus"
+
             print()
+            wb = Workbook()
+            ws1 = wb.active
+            ws1.title = "V" + str(counter_diagrama)
+            # Write conector information
+            nume_conector = ""
+            partman_conector = ""
+            descrierecon = ""
+            for con in array_conectors:
+                if con[0] == contents[i][contents[i].find(' ') + 1:-5]:
+                    partman_conector = con[1]
+                    nume_conector = con[2]
+                    break
+            for pmd in array_accessorypmd:
+                if pmd[0] == partman_conector:
+                    descrierecon = pmd[2]
+                    break
+            print(contents[i][contents[i].find(' ') + 1:-5])
+            print(nume_conector)
+            print(partman_conector)
+            print(descrierecon)
+            print()
+
+            ws1.cell(row=1, column=2, value=nume_conector)
+            ws1.cell(row=2, column=2, value=partman_conector)
+            ws1.cell(row=3, column=2, value=descrierecon)
+
+            # Write the data from the dictionary to the Excel worksheet
+            for row_num, row_data in output_diagrama.items():
+                ws1.cell(row=row_num + 4, column=1, value=row_data[0])  # Column 1: '81.25481-7038'
+                ws1.cell(row=row_num + 4, column=2, value=row_num)  # Column 2: Key
+                ws1.cell(row=row_num + 4, column=3, value=row_data[1])  # Column 3: 'blau_001'
+                ws1.cell(row=row_num + 4, column=4, value=row_data[2])  # Column 4: 'bl'
+                ws1.cell(row=row_num + 4, column=5, value="").fill = colorpicker(row_data[3])  # Column 5: 'bl'
+                ws1.cell(row=row_num + 4, column=6, value="").fill = colorpicker(row_data[4])  # Column 6: 'bl'
+                ws1.cell(row=row_num + 4, column=7, value=row_data[5])  # Column 7: '1'
+                ws1.cell(row=row_num + 4, column=8, value=row_data[6])  # Column 8: 'WIP'
+
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/" +
+                    contents[i][contents[i].find(' ') + 1:-5] + " V" + str(counter_diagrama)  + ".xlsx")
             row_count = row_count + 1
+            lista_diagrame_create.append([contents[i][contents[i].find(' ') + 1:-5] + " V" + str(counter_diagrama),
+                                      lista_module_diagrama])
+            counter_diagrama = counter_diagrama + 1
 
 
-        #for row in ws1['A']:
-        #    output_diagrama = []
-        #    counter_diagrama = 1
-        #    if row.value is not None:
-        #        lista_conectori_cu_pin
-        #                        output_diagrama.append([modulul, pinul, numarfir, culoare, codcul1, codcul2, sectiune,
-        #                                                conectoropus])
-        #    row_count = row_count + 1
-        #    print(output_diagrama)
-        #    print()
-        print()
+
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Module compatibile"
+    for i in range(len(lista_diagrame_create)):
+        for x in range(len(lista_diagrame_create[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=float(lista_diagrame_create[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(lista_diagrame_create[i][x]))
+    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/Lista diagrame create.xlsx")
+    print(lista_diagrame_create)
+    print()
     print("FINISH")

@@ -57,7 +57,8 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)
@@ -89,7 +90,7 @@ def golire_directoare():
     dir_output_clustering = os.path.abspath(os.curdir) + "/MAN/Output/Clustering/"
     dir_output_json = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/"
     dir_output_exceljson = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/"
-
+    dir_output_exceldiacreate = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/"
 
 
 
@@ -208,6 +209,12 @@ def golire_directoare():
             os.remove(dir_output_exceljson + file_all)
         except:
             continue
+    for file_all in os.listdir(dir_output_exceldiacreate):
+        try:
+            os.remove(dir_output_exceljson + file_all)
+        except:
+            continue
+
     messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
 
 
