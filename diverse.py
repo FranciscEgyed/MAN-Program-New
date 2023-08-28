@@ -58,7 +58,8 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/"]
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Images/"]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)

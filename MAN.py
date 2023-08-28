@@ -1,7 +1,7 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from diagrame import *
-from functii_crearediagrame import crearediagrame, prelucrare_json, creare_wirelist
+from functii_crearediagrame import prelucrare_json, xmltojson, selectie_conectori
 from functii_clustering import clustering
 from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
@@ -156,11 +156,10 @@ submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
 submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
 submenu7.add_cascade(label="Functii ENG", menu=submenucascade3)
 submenucascade3.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
-submenucascade3.add_command(label="Creare JSON din XML", command=lambda: [statusbusy(), crearediagrame(), statusidle()])
-submenucascade3.add_command(label="Creare EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
+submenucascade3.add_command(label="Faza 1 JSON din XML", command=lambda: [statusbusy(), xmltojson(), statusidle()])
+submenucascade3.add_command(label="Faza 2 EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
                                                                             statusidle()])
-submenucascade3.add_command(label="Creare wirelist LDorado", command=lambda: [statusbusy(), creare_wirelist(),
-                                                                            statusidle()])
+submenucascade3.add_command(label="Faza 3 ", command=lambda: [statusbusy(), selectie_conectori(),statusidle()])
 
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
