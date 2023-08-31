@@ -1,8 +1,8 @@
 import csv
 import math
 import os
-import tkinter as tk
-from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label, MULTIPLE
+import time
+from tkinter import messagebox, filedialog, Tk, ttk, HORIZONTAL, Label
 import json
 import xml.etree.ElementTree as ET
 from openpyxl.drawing.image import Image
@@ -10,8 +10,9 @@ from openpyxl.reader.excel import load_workbook
 from openpyxl.styles import PatternFill
 from openpyxl.workbook import Workbook
 from itertools import combinations
-from collections import Counter
-from tkinter import Listbox, Scrollbar, Button
+import tkinter as tk
+
+
 
 def xmltojson():
     fisier_xml = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
@@ -117,18 +118,31 @@ def prelucrare_json():
                 pinid = ele["PinNo"]
                 try:
                     plugid = ele["PlugID"]
+                except KeyError:
+                    plugid = "Empty"
+                try:
                     for conectorwire in ele["ConnectorWire"]:
-                        wireid = conectorwire["WireID"]
-                        terminalid = conectorwire["Terminals"][0]["Terminal"][0]["TerminalID"]
-                        sealid = conectorwire["Seals"][0]["Seal"][0]["SealID"]
+                        try:
+                            wireid = conectorwire["WireID"]
+                        except KeyError:
+                            wireid = "Empty"
+                        try:
+                            terminalid = conectorwire["Terminals"][0]["Terminal"][0]["TerminalID"]
+                        except KeyError:
+                            terminalid = "Empty"
+                        try:
+                            sealid = conectorwire["Seals"][0]["Seal"][0]["SealID"]
+                        except KeyError:
+                            sealid = "Empty"
                         conectors.append(
                             [conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, sealid, plugid])
                 except KeyError:
-                    wireid = "Empty"
-                    terminalid = "Empty"
                     sealid = "Empty"
-                    plugid = "Empty"
-                    conectors.append([conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, sealid, plugid])
+                    terminalid = "Empty"
+                    wireid = "Empty"
+
+                    conectors.append(
+                        [conid, pmdID, eleID, juncID, txID, tyID, pinid, wireid, terminalid, sealid, plugid])
         conectors.insert(0, ["Conector ID", "PMD", "Name", "Junction", "X coord", "Y coord", "Pin", "Wire ID", "Terminal ID",
                              "Seal ID", "Plug ID"])
         printfile(conectors, "Conectors list")
@@ -321,22 +335,7 @@ def prelucrare_json():
 
 
 def selectie_conectori():
-    def select_all():
-        listbox.selection_set(0, tk.END)
 
-    def clear_selection():
-        listbox.selection_clear(0, tk.END)
-
-    def print_selected():
-        selected_indices = listbox.curselection()
-        selected_items = [data[index][0] for index in selected_indices]
-        root.destroy()
-        creare_diagrame(selected_items)
-
-
-    data = []
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors list.txt", newline='') as csvfile:
-        array_conectors  = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Wires list.txt", newline='') as csvfile:
         array_wires = list(csv.reader(csvfile, delimiter=';'))
     with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors list.txt", newline='') as csvfile:
@@ -350,13 +349,18 @@ def selectie_conectori():
 
     def count_module_ids(connections, target_connector_id):
         module_ids = set()
-
         for connection in connections[1:]:  # Skip the header row
-            connector_id, _, module_id = connection
-            if connector_id == target_connector_id:
+            connector_id2, _, module_id = connection
+            if connector_id2 == target_connector_id:
                 module_ids.add(module_id)
-
         return len(module_ids)
+
+    def combinatii(valoare):
+        combinatii_posibile = 0
+        for t in range(1, valoare + 1):
+            combinatii_posibile = combinatii_posibile + math.factorial(valoare) / (
+                        math.factorial(t) * math.factorial(valoare - t))
+        return int(combinatii_posibile)
 
     extracted_info = {}
     for line in array_conectors[1:]:
@@ -368,37 +372,82 @@ def selectie_conectori():
         if (connector_id, name) in extracted_info:
             # Update the largest pin if the current pin is larger
             if pin > int(extracted_info[(connector_id, name)][2]):
-                extracted_info[(connector_id, name)] = (connector_id, name, pin, module_count)
+                extracted_info[(connector_id, name)] = (connector_id, name, pin, module_count,
+                                                        combinatii(module_count), int(combinatii(module_count)/180000))
         else:
-            extracted_info[(connector_id, name)] = (connector_id, name, pin, module_count)
+            extracted_info[(connector_id, name)] = (connector_id, name, pin, module_count,
+                                                    combinatii(module_count), int(combinatii(module_count)/180000))
 
+    data = list(sorted(extracted_info.values(), key=lambda q: q[4]))
+    print(data)
 
-
-    data = list(sorted(extracted_info.values(), key=lambda x: x[2]))
-
-
-
+##########################################################################################################
+    hederlist = ['Connector Name', 'Connector ID', 'Pin count', 'Module count', 'Number of combinations',
+                 'Durata minute']
     root = tk.Tk()
-    root.title("Select conectors to process ")
-    root.geometry("600x450+50+50")
-    listbox = tk.Listbox(root, selectmode=tk.MULTIPLE)
-    listbox.pack(fill=tk.BOTH, expand=True)
-    for id, item, pinut, countmod in data:
-        listbox.insert(tk.END, item + " === " + id + " === " + str(pinut) + " === " + str(countmod))
+    root.title("Checkbox Example")
 
-    select_all_button = tk.Button(root, text="Select All", command=select_all)
-    select_all_button.pack(pady=5)
+    checkboxes_frame = tk.Frame(root)
+    checkboxes_frame.pack(side="left", padx=10, pady=10)
 
-    clear_selection_button = tk.Button(root, text="Clear Selection", command=clear_selection)
-    clear_selection_button.pack(pady=5)
+    buttons_frame = tk.Frame(root)
+    buttons_frame.pack(side="right", padx=10, pady=10)
 
-    print_selected_button = tk.Button(root, text="Process Selected", command=print_selected)
-    print_selected_button.pack(pady=5)
+    checkbox_var = []
 
-    description_label = tk.Label(root, text="", wraplength=300)
-    description_label.pack(padx=10, pady=5)
+    for header in hederlist:
+        label_text = header
+        label = tk.Label(checkboxes_frame, text=label_text)
+        label.grid(row=0, column=hederlist.index(header), sticky="w")
+
+    for idx, (connector_id, name, pin, module_count, combinations, divisions) in enumerate(data):
+        var = tk.BooleanVar(root)
+        var.set(False)
+        checkbox = tk.Checkbutton(checkboxes_frame, text=name, variable=var)
+        checkbox.grid(row=idx + 1, column=0, sticky="w")
+        checkbox_var.append(var)
+
+        label = tk.Label(checkboxes_frame, text=connector_id)
+        label.grid(row=idx + 1, column=1, sticky="w")
+        label = tk.Label(checkboxes_frame, text=pin)
+        label.grid(row=idx + 1, column=2, sticky="w")
+        label = tk.Label(checkboxes_frame, text=module_count)
+        label.grid(row=idx + 1, column=3, sticky="w")
+        label = tk.Label(checkboxes_frame, text=combinations)
+        label.grid(row=idx + 1, column=4, sticky="w")
+        label = tk.Label(checkboxes_frame, text=divisions)
+        label.grid(row=idx + 1, column=5, sticky="w")
+
+    def check_all():
+        for var in checkbox_var:
+            var.set(True)
+
+    def clear_all():
+        for var in checkbox_var:
+            var.set(False)
+
+    def print_selected():
+        selected_items = []
+        for idx, var in enumerate(checkbox_var):
+            if var.get():
+                selected_items.append(data[idx][0])
+        print("Selected Checkboxes:", selected_items)
+        #root.destroy()
+        creare_diagrame(selected_items)
+
+
+    check_all_button = tk.Button(buttons_frame, text="Check All", command=check_all)
+    check_all_button.pack(fill="x", pady=5)
+
+    clear_all_button = tk.Button(buttons_frame, text="Clear All", command=clear_all)
+    clear_all_button.pack(fill="x", pady=5)
+
+    print_selected_button = tk.Button(buttons_frame, text="Print Selected", command=print_selected)
+    print_selected_button.pack(fill="x", pady=5)
 
     root.mainloop()
+
+
 
 
 
@@ -407,7 +456,7 @@ def creare_diagrame(lista_de_prelucrat):
     #creare GUI
     pbargui = Tk()
     pbargui.title("Creare fisiere pentru diagrame")
-    pbargui.geometry("500x50+50+550")
+    pbargui.geometry("1000x50+50+550")
     pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
     statuslabel = Label(pbargui, text="Waiting . . .")
     timelabel = Label(pbargui, text="Time . . .")
@@ -602,7 +651,7 @@ def creare_diagrame(lista_de_prelucrat):
             lista_combinatii_compatibile = []
 
             # variabila de prelucrare
-            if pereche[1] != 1 and pereche[1] < 100:
+            if 0 < pereche[1] < 100:
                 for x in range(len(output)):
                     if pereche[0] == output[x][0]:
                         array_temp_wirelist.append(output[x])
@@ -619,12 +668,14 @@ def creare_diagrame(lista_de_prelucrat):
 
             # variabila de prelucrare
 
-            if len(lista_module_conector) < 300:
+            if len(lista_module_conector) < 1000:
+                start = time.time()
                 for t in range(1, len(lista_module_conector) + 1):
                     counter_combinatii = 0
-                    combinatii_posibile = math.factorial(len(lista_module_conector) + 1) // \
-                                          (math.factorial(t) * math.factorial(len(lista_module_conector) + 1 - t))
-                    statuslabel["text"] = str(pereche[0]) + "-Prelucrare "+ str(combinatii_posibile) + " combinatii                                  "
+                    combinatii_posibile = math.factorial(len(lista_module_conector)) // \
+                                          (math.factorial(t) * math.factorial(len(lista_module_conector) - t))
+                    statuslabel["text"] = ((str(pereche[0]) + str(t) + str(len(lista_module_conector)))
+                                           + "-Prelucrare "+ str(combinatii_posibile) + " combinatii /")
                     for combination in combinations(lista_module_conector, t):
                         counter_combinatii = counter_combinatii + 1
                         timelabel["text"] = "      Verificate " + str(counter_combinatii) + "                                              "
@@ -652,10 +703,6 @@ def creare_diagrame(lista_de_prelucrat):
                     wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" +
                             str(pereche[1]) + " " + pereche[0] + ".xlsx")
 
-                    statuslabel["text"] = "Prelucrare combinatii pentru : " + str(pereche[0]) + " factor de:"
-                    pbar['value'] += 2
-                    pbargui.update_idletasks()
-
                     wb2 = Workbook()
                     ws21 = wb2.active
                     ws21.title = "Module incompatibile"
@@ -667,8 +714,8 @@ def creare_diagrame(lista_de_prelucrat):
                                 ws21.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_incompatibile[i][x]))
                     wb2.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/ " +
                             pereche[0] + ".xlsx")
-            else:
-                lista_conectori_neprelucrati.append(pereche[0])
+        else:
+            lista_conectori_neprelucrati.append(pereche[0])
 
     wb3 = Workbook()
     ws31 = wb3.active
@@ -735,6 +782,7 @@ def creare_diagrame(lista_de_prelucrat):
             for cell in row:
                 if cell.value is not None:
                     lista_module_diagrama.append(cell.value)
+                    print(cell.value)
             for key in output_diagrama.keys():
                 for conector in array_conectors:
                     if conector[0] == numeconector and conector[7] != "Empty":
@@ -864,9 +912,10 @@ def creare_diagrame(lista_de_prelucrat):
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(lista_diagrame_create[i][x]))
     wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/Lista diagrame create.xlsx")
+    end = time.time()
     print(lista_diagrame_create)
-    print()
+    print( end - start)
     print("FINISH")
     messagebox.showinfo('Finalizat', "!!!!!!!!!!!!!!")
-
+    pbargui.destroy()
 
