@@ -47,19 +47,21 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Separare KSK/Beius/Taiere/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Database/KSK Export/",
                         os.path.abspath(os.curdir) + "/MAN/Output/LDorado/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/",
                         os.path.abspath(os.curdir) + "/MAN/Output/QR Images/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/Wirelist/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Clustering/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/",
-                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Images/"]
+
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output Excel/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/",
+                        os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Incompatibili/",
+]
     for d in directoareoutput:
         if not os.path.exists(d):
             os.makedirs(d)

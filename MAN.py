@@ -13,6 +13,7 @@ from functii_ldorado import *
 from functii_pentruvalidare import wirelist_validare, bom_validare
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
+from functii_prod import *
 from functii_rapoarte import *
 from masterdata import *
 
@@ -122,6 +123,7 @@ submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 
 submenucascade = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade2 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade3 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade4 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
@@ -160,6 +162,8 @@ submenucascade3.add_command(label="Faza 1 JSON din XML", command=lambda: [status
 submenucascade3.add_command(label="Faza 2 EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
                                                                             statusidle()])
 submenucascade3.add_command(label="Faza 3 ", command=lambda: [statusbusy(), selectie_conectori(),statusidle()])
+submenu7.add_cascade(label="Functii Productie", menu=submenucascade4)
+submenucascade4.add_command(label="APFR", command=lambda: [statusbusy(), apfr(), statusidle()])
 
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

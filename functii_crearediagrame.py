@@ -11,7 +11,7 @@ from openpyxl.styles import PatternFill
 from openpyxl.workbook import Workbook
 from itertools import combinations
 import tkinter as tk
-
+from tkinter import ttk
 
 
 def xmltojson():
@@ -41,12 +41,13 @@ def parse_xml(file):
         return tag_dict
 
     # Root elements to process
-    root_element_names = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
-                          "Tapes", "Terminals", "CavityPlugs", "Accessories", "FusePMDs", "RelayPMDs", "AccessoryPMDs",
-                          "AssemblyPartPMDs", "HarnessConfigurationPMDs", "WiringGroupPMDs", "ConnectorPMDs",
-                          "FixingPMDs", "GeneralSpecialWirePMDs", "GeneralWirePMDs", "PartPMDs", "SealPMDs",
-                          "PlugPMDs", "TerminalPMDs", "TapePMDs", "SymbolPMDs","ComponentBoxPMDs", "Configurations",
-                          "Segments"]
+    root_element_names = ["TitleBlock", "HarnessAttributes", "Sheets", "LengthVariants", "Modules", "Families",
+                          "Configurations", "Comments", "Accessories", "Fixings", "Images", "Junctions", "Segments",
+                          "MultiCores", "Wires", "CavitySeals", "CavityPlugs", "Terminals", "Connectors", "Tapes",
+                          "Dimensions", "Tables", "Associations", "Attributes", "FusePMDs", "RelayPMDs",
+                          "AccessoryPMDs", "AssemblyPartPMDs", "WiringGroupPMDs", "HarnessConfigurationPMDs",
+                          "ConnectorPMDs", "FixingPMDs", "ComponentBoxPMDs", "SymbolPMDs", "TapePMDs", "TerminalPMDs",
+                          "PlugPMDs", "SealPMDs", "PartPMDs", "GeneralWirePMDs", "GeneralSpecialWirePMDs"]
 
     # Parse the XML file
     tree = ET.parse(file)
@@ -59,7 +60,8 @@ def parse_xml(file):
             root_dict = process_element(root)
             # Save the dictionary to a JSON file
             json_file_path = element + ".json"
-            with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/"+ element + ".json", "w") as json_file:
+            with open(os.path.abspath(os.curdir) +
+                      "/MAN/Output/Diagrame/Input files XML/"+ element + ".json", "w") as json_file:
                 json.dump(root_dict, json_file)
         else:
             print(f"Root element '{element}' not found in the XML file.")
@@ -71,9 +73,9 @@ def prelucrare_json():
              "TapePMDs"]
 
     def extract_wire_ids(wire_list):
-        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/GeneralSpecialWirePMDs.json", "r") as json_file:
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/GeneralSpecialWirePMDs.json", "r") as json_file:
             gsw = json.load(json_file)
-        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/GeneralWirePMDs.json", "r") as json_file:
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/GeneralWirePMDs.json", "r") as json_file:
             gw = json.load(json_file)
         wires = []
         for wire in wire_list['Wire']:
@@ -287,12 +289,12 @@ def prelucrare_json():
             for x in range(len(list_to_print[i])):
                 ws1.cell(column=x + 1, row=i + 1, value=str(list_to_print[i][x]))
         try:
-            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/" + file_name + ".xlsx")
+            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output Excel/" + file_name + ".xlsx")
         except PermissionError:
             messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
             return None
 
-        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/" + file_name + ".txt", 'w', newline='',
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/" + file_name + ".txt", 'w', newline='',
                   encoding='utf-8') as myfile:
             wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
             wr.writerows(list_to_print)
@@ -301,7 +303,7 @@ def prelucrare_json():
 
 
     for file in files:
-        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/JSON/" + file + ".json", "r") as json_file:
+        with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/" + file + ".json", "r") as json_file:
             loaded_dictionary = json.load(json_file)
 
             if file == "Modules":
@@ -331,14 +333,71 @@ def prelucrare_json():
             if file == "TapePMDs":
                 extract_tapepmds(loaded_dictionary)
 
+    # atasare supersleeve la conector
+    #Load required data files
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Conectors list.txt", newline='') as csvfile:
+        array_conectors  = list(csv.reader(csvfile, delimiter=';'))
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Tapes list.txt", newline='') as csvfile:
+        array_tapes = list(csv.reader(csvfile, delimiter=';'))
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Segments.txt", newline='') as csvfile:
+        array_segments = list(csv.reader(csvfile, delimiter=';'))
+
+    conector_ss = {}
+    for conector in array_conectors[1:]:
+        connector_id = conector[0]
+        juction_id = conector[3]
+        if connector_id not in conector_ss:
+            conector_ss[connector_id] = juction_id
+
+    junctionid1 = [segment[1] for segment in array_segments]
+    junctionid2 = [segment[2] for segment in array_segments]
+
+    conector_and_ss = []
+    for conector in conector_ss:
+        temp_array = [conector]
+        seg = conector_ss.get(conector)
+        if seg in junctionid2:
+            while seg in junctionid2 and temp_array[-1] != seg:
+                for segment in array_segments:
+                    if seg == segment[2]:
+                        temp_array.append(segment[2])
+                        if segment[4] != "0":
+                            seg = segment[1]
+                            break
+            temp_array.append(seg)
+
+        elif seg in junctionid1:
+            while seg in junctionid1 and temp_array[-1] != seg:
+                for segment in array_segments:
+                    if seg == segment[1]:
+                        temp_array.append(segment[1])
+                        if segment[4] != "0":
+                            seg = segment[2]
+                            break
+            temp_array.append(seg)
+        for x in range(1, len(temp_array)):
+            for segment in array_segments:
+                if segment[2] == temp_array[x] or segment[1] == temp_array[x]:
+                    leght = segment[3]
+                    for tape in array_tapes:
+                        if tape[6] == segment[0]:
+                            pmd = tape[1]
+            conector_and_ss.append([conector, pmd, leght])
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Conector_and_ss.txt", 'w', newline='',
+              encoding='utf-8') as myfile:
+        wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
+        wr.writerows(conector_and_ss)
+
+
+
     messagebox.showinfo('Finalizat', "Fisierele JSON finalizate!")
 
 
 def selectie_conectori():
 
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Wires list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Wires list.txt", newline='') as csvfile:
         array_wires = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Conectors list.txt", newline='') as csvfile:
         array_conectors  = list(csv.reader(csvfile, delimiter=';'))
 
     lista_fire_conector = []
@@ -379,19 +438,49 @@ def selectie_conectori():
                                                     combinatii(module_count), int(combinatii(module_count)/180000))
 
     data = list(sorted(extracted_info.values(), key=lambda q: q[4]))
-    print(data)
 
 ##########################################################################################################
     hederlist = ['Connector Name', 'Connector ID', 'Pin count', 'Module count', 'Number of combinations',
                  'Durata minute']
+
+    def check_all():
+        for var in checkbox_var:
+            var.set(True)
+
+    def clear_all():
+        for var in checkbox_var:
+            var.set(False)
+
+    def print_selected():
+        selected_items = []
+        for idx, var in enumerate(checkbox_var):
+            if var.get():
+                selected_items.append(data[idx][0])
+        input_text = input_box.get()
+        root.destroy()
+        creare_diagrame(selected_items, int(input_text))
+
     root = tk.Tk()
     root.title("Checkbox Example")
+    root.geometry("800x800+50+50")
 
-    checkboxes_frame = tk.Frame(root)
-    checkboxes_frame.pack(side="left", padx=10, pady=10)
+    # Create a canvas to hold the checkboxes_frame and scrollbar
+    canvas = tk.Canvas(root)
+    canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-    buttons_frame = tk.Frame(root)
-    buttons_frame.pack(side="right", padx=10, pady=10)
+    # Create a frame to hold the checkboxes
+    checkboxes_frame = tk.Frame(canvas)
+
+    # Attach the checkboxes_frame to the canvas
+    canvas.create_window((0, 0), window=checkboxes_frame, anchor="nw")
+
+    # Create a vertical scrollbar
+    scrollbar = ttk.Scrollbar(root, orient="vertical", command=canvas.yview)
+    scrollbar.pack(side="right", fill="y")
+
+    # Configure the canvas to work with the scrollbar
+    canvas.configure(yscrollcommand=scrollbar.set)
+    canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
 
     checkbox_var = []
 
@@ -418,32 +507,24 @@ def selectie_conectori():
         label = tk.Label(checkboxes_frame, text=divisions)
         label.grid(row=idx + 1, column=5, sticky="w")
 
-    def check_all():
-        for var in checkbox_var:
-            var.set(True)
+    # Configure canvas scrolling region
+    canvas.config(scrollregion=canvas.bbox("all"))
 
-    def clear_all():
-        for var in checkbox_var:
-            var.set(False)
-
-    def print_selected():
-        selected_items = []
-        for idx, var in enumerate(checkbox_var):
-            if var.get():
-                selected_items.append(data[idx][0])
-        print("Selected Checkboxes:", selected_items)
-        #root.destroy()
-        creare_diagrame(selected_items)
-
-
-    check_all_button = tk.Button(buttons_frame, text="Check All", command=check_all)
+    check_all_button = tk.Button(root, text="Check All", command=check_all)
     check_all_button.pack(fill="x", pady=5)
 
-    clear_all_button = tk.Button(buttons_frame, text="Clear All", command=clear_all)
+    clear_all_button = tk.Button(root, text="Clear All", command=clear_all)
     clear_all_button.pack(fill="x", pady=5)
 
-    print_selected_button = tk.Button(buttons_frame, text="Print Selected", command=print_selected)
+    print_selected_button = tk.Button(root, text="Print Selected", command=print_selected)
     print_selected_button.pack(fill="x", pady=5)
+
+    label = tk.Label(root, text="Number of tubes to process")
+    label.pack(fill="x", pady=5)
+
+    # Create an input box (Entry widget)
+    input_box = tk.Entry(root)
+    input_box.pack(fill="x", pady=5)
 
     root.mainloop()
 
@@ -452,7 +533,10 @@ def selectie_conectori():
 
 
 
-def creare_diagrame(lista_de_prelucrat):
+def creare_diagrame(lista_de_prelucrat, tubeiterations):
+    image_folder = filedialog.askdirectory(initialdir=os.path.abspath(os.curdir),
+                                                title="Select folder with connector images:")
+
     #creare GUI
     pbargui = Tk()
     pbargui.title("Creare fisiere pentru diagrame")
@@ -465,47 +549,48 @@ def creare_diagrame(lista_de_prelucrat):
     timelabel.grid(row=2, column=2)
     # clear folder from old files
     test_excel = []
-    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/"):
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/"):
         try:
-            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + file_all)
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/" + file_all)
         except:
             continue
-    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/"):
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Incompatibili/"):
         try:
-            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/" + file_all)
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Incompatibili/" + file_all)
         except:
             continue
-    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/"):
+    for file_all in os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/"):
         try:
-            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/" + file_all)
+            os.remove(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/" + file_all)
         except:
             continue
     #Load required data files
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Wires list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Wires list.txt", newline='') as csvfile:
         array_wires = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectors list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Conectors list.txt", newline='') as csvfile:
         array_conectors  = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Length Variations list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Length Variations list.txt", newline='') as csvfile:
         array_variatii = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Modules list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Modules list.txt", newline='') as csvfile:
         array_modules = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Plugs list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Plugs list.txt", newline='') as csvfile:
         array_plugs = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Seals list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Seals list.txt", newline='') as csvfile:
         array_seals = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Tapes list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Tapes list.txt", newline='') as csvfile:
         array_tapes = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Terminals list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Terminals list.txt", newline='') as csvfile:
         array_terminals = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Accessory list.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Accessory list.txt", newline='') as csvfile:
         array_accessory = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/AccessoryPMDs.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/AccessoryPMDs.txt", newline='') as csvfile:
         array_accessorypmd = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Segments.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Segments.txt", newline='') as csvfile:
         array_segments = list(csv.reader(csvfile, delimiter=';'))
-    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/TapePMDs.txt", newline='') as csvfile:
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/TapePMDs.txt", newline='') as csvfile:
         array_tapepmds = list(csv.reader(csvfile, delimiter=';'))
-
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/Conector_and_ss.txt", newline='') as csvfile:
+        array_ssconectori = list(csv.reader(csvfile, delimiter=';'))
 
 # function needed
     output = []
@@ -530,26 +615,10 @@ def creare_diagrame(lista_de_prelucrat):
                     temp_list.append(array_wires[x][2])
                     temp_list.append(array_wires[x][3])
                     output.append(temp_list)
-    # atasare supersleeve la conector
-    statuslabel["text"] = "Extracting super sleeves . . . "
-    pbar['value'] += 2
-    pbargui.update_idletasks()
-    lista_abrevieri_ss = ["G44", "G43", "G42", "G45", "G46","04.37161-9133", "04.37161-9123", "04.37161-9115",
-                          "04.37161-9144", "04.37161-9149"]
-    output[0].append("Super S")
-    output[0].append("SS Length")
-    for i in range(1, len(output)):
-        if output[i][11] == "Empty":
-            output[i].append("Empty")
-            output[i].append("Empty")
-        else:
-            for x in range(len(array_tapes)):
-                if output[i][11] == array_tapes[x][5]:
-                    for e in range(len(array_segments)):
-                        if array_tapes[x][6] == array_segments[e][0] and array_tapes[x][1] in lista_abrevieri_ss:
-                            output[i].append(array_tapes[x][1])
-                            output[i].append(array_segments[e][3])
-    # atasare accesorii la conector
+
+
+
+        # atasare accesorii la conector
     #for i in range(1, len(output)):
     #    temp_list_acc = []
     #    for x in range(len(array_accessory)):
@@ -620,7 +689,7 @@ def creare_diagrame(lista_de_prelucrat):
         for x in range(len(output[i])):
             ws1.cell(column=x + 1, row=i + 1, value=str(output[i][x]))
     try:
-        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Lista output.xlsx")
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output Excel/Wirelist.xlsx")
     except:
         print()
     statuslabel["text"] = ""
@@ -640,10 +709,8 @@ def creare_diagrame(lista_de_prelucrat):
                     return True
         return False
 
-    print(lista_de_prelucrat)
     for pereche in lista_conectori_cu_pin:
         if pereche[0] in lista_de_prelucrat:
-            statuslabel["text"] = "Prelucrare combinatii pentru : " + str(pereche[0]) + " factor de:"
             pbar['value'] += 2
             pbargui.update_idletasks()
             array_temp_wirelist = []
@@ -667,30 +734,20 @@ def creare_diagrame(lista_de_prelucrat):
                         module_pins[module] = {pin}
 
             # variabila de prelucrare
-
-            if len(lista_module_conector) < 1000:
-                start = time.time()
-                for t in range(1, len(lista_module_conector) + 1):
-                    counter_combinatii = 0
-                    combinatii_posibile = math.factorial(len(lista_module_conector)) // \
-                                          (math.factorial(t) * math.factorial(len(lista_module_conector) - t))
-                    statuslabel["text"] = ((str(pereche[0]) + str(t) + str(len(lista_module_conector)))
-                                           + "-Prelucrare "+ str(combinatii_posibile) + " combinatii /")
-                    for combination in combinations(lista_module_conector, t):
-                        counter_combinatii = counter_combinatii + 1
-                        timelabel["text"] = "      Verificate " + str(counter_combinatii) + "                                              "
-                        pbar['value'] += 2
-                        pbargui.update_idletasks()
-                        if len(combination) == 1:
-                            common_pins = False
-                        else:
-                            pins_lists = [module_pins.get(module_id, set()) for module_id in combination]
-                            common_pins = has_common_elements(pins_lists)
-                        if common_pins:
-                            lista_combinatii_incompatibile.append(combination)
-                        else:
-                            lista_combinatii_compatibile.append(combination)
-
+            for t in range(1, len(lista_module_conector) + 1):
+                for combination in combinations(lista_module_conector, t):
+                    pbar['value'] += 2
+                    pbargui.update_idletasks()
+                    if len(combination) == 1:
+                        common_pins = False
+                    else:
+                        pins_lists = [module_pins.get(module_id, set()) for module_id in combination]
+                        common_pins = has_common_elements(pins_lists)
+                    if common_pins:
+                        lista_combinatii_incompatibile.append(combination)
+                    else:
+                        lista_combinatii_compatibile.append(combination)
+                    end = time.time()
                     wb = Workbook()
                     ws1 = wb.active
                     ws1.title = "Module compatibile"
@@ -700,7 +757,7 @@ def creare_diagrame(lista_de_prelucrat):
                                 ws1.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_compatibile[i][x]))
                             except:
                                 ws1.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_compatibile[i][x]))
-                    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" +
+                    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/" +
                             str(pereche[1]) + " " + pereche[0] + ".xlsx")
 
                     wb2 = Workbook()
@@ -712,7 +769,7 @@ def creare_diagrame(lista_de_prelucrat):
                                 ws21.cell(column=x + 1, row=i + 1, value=float(lista_combinatii_incompatibile[i][x]))
                             except:
                                 ws21.cell(column=x + 1, row=i + 1, value=str(lista_combinatii_incompatibile[i][x]))
-                    wb2.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/ " +
+                    wb2.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Incompatibili/" +
                             pereche[0] + ".xlsx")
         else:
             lista_conectori_neprelucrati.append(pereche[0])
@@ -725,7 +782,7 @@ def creare_diagrame(lista_de_prelucrat):
             ws31.cell(column=1, row=i + 1, value=float(lista_conectori_neprelucrati[i]))
         except:
             ws31.cell(column=1, row=i + 1, value=str(lista_conectori_neprelucrati[i]))
-    wb3.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Incompatibili/Conectori neperlucrati.xlsx")
+    wb3.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori neperlucrati.xlsx")
 
     def sort_by_first_two_characters(name):
         # Extract the first two characters of the filename
@@ -756,7 +813,7 @@ def creare_diagrame(lista_de_prelucrat):
         return cell_fill
 
 
-    contents = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/")
+    contents = os.listdir(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/")
     # Sort the contents based on the first two characters as numbers
     contents.sort(key=sort_by_first_two_characters)
     lista_fire = output[1:]
@@ -768,7 +825,7 @@ def creare_diagrame(lista_de_prelucrat):
         pbargui.update_idletasks()
         counter_diagrama = 1
         wb = load_workbook(os.path.abspath(os.curdir) +
-                           "/MAN/Output/Diagrame/EXCELS/Conectori/Compatibili/" + contents[i])
+                           "/MAN/Output/Diagrame/Diagrame create/Conectori/Compatibili/" + contents[i])
         ws1 = wb.worksheets[0]
         row_count = 1
         conectoropus = "WIP"
@@ -782,7 +839,6 @@ def creare_diagrame(lista_de_prelucrat):
             for cell in row:
                 if cell.value is not None:
                     lista_module_diagrama.append(cell.value)
-                    print(cell.value)
             for key in output_diagrama.keys():
                 for conector in array_conectors:
                     if conector[0] == numeconector and conector[7] != "Empty":
@@ -824,6 +880,8 @@ def creare_diagrame(lista_de_prelucrat):
             output_diagrama[0] = "Modul PN", "Imprimare Fir", "Culoare", "", "", "Sectiune", "Conector opus"
 
             # lista cu accesorii pentru diagrama
+            lista_abrevieri_ss = ["G44", "G43", "G42", "G45", "G46", "04.37161-9133", "04.37161-9123", "04.37161-9115",
+                                  "04.37161-9144", "04.37161-9149"]
             for q in range(1, len(array_accessory)):
                 if array_accessory[q][2] == numeconector:
                     for w in range(1, len(array_accessorypmd)):
@@ -834,12 +892,17 @@ def creare_diagrame(lista_de_prelucrat):
                             accesory_descr = "None found"
                     if [array_accessory[q][1], "leoni", accesory_descr] not in output_accesorii:
                         output_accesorii.append([array_accessory[q][1], "leoni", accesory_descr])
-            for w in range(len(array_tapes)):
-                if array_tapes[w][5] in lista_moduleids and array_tapes[w][1] in lista_abrevieri_ss:
-                    for a in range(len(array_segments)):
-                        if array_segments[a][0] == array_tapes[w][6]:
-                            if [array_tapes[w][1], "leoni", array_segments[a][3]] not in output_accesorii:
-                                output_accesorii.append([array_tapes[w][1], "leoni", array_segments[a][3]])
+            lista_tuburi_diagrama = []
+            for w in range(len(array_ssconectori)):
+                print(int(float(array_ssconectori[w][2]))> 60)
+                if (numeconector == array_ssconectori[w][0] and array_ssconectori[w][1] in lista_abrevieri_ss and
+                        int(array_ssconectori[w][2]) > 60):
+                    lista_tuburi_diagrama.append([array_ssconectori[w][1], "leoni", array_ssconectori[w][2]])
+            for x in range(tubeiterations):
+                try:
+                    output_accesorii.append(lista_tuburi_diagrama[x])
+                except IndexError:
+                    continue
 
             wb = Workbook()
             ws1 = wb.active
@@ -872,15 +935,13 @@ def creare_diagrame(lista_de_prelucrat):
                 ws1.cell(row=row_num + 4, column=6, value="").fill = colorpicker(row_data[4])  # Column 6: 'bl'
                 ws1.cell(row=row_num + 4, column=7, value=row_data[5])  # Column 7: '1'
                 ws1.cell(row=row_num + 4, column=8, value=row_data[6])  # Column 8: 'WIP'
-
+            print(output_accesorii)
             for e in range(len(output_accesorii)):
                 for r in range(len(output_accesorii[e])):
                     ws1.cell(row=20 + e, column=9+r, value=output_accesorii[e][r])
 
 
             # creare diagrama
-            # Replace with the path to your image folder
-            image_folder = os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Images/"
             # Replace with the image file name you want to insert
             image_filename = partman_conector + "@connector.png"
             image_path = os.path.join(image_folder, image_filename)
@@ -890,14 +951,24 @@ def creare_diagrame(lista_de_prelucrat):
                 img.height = 375  # Set the desired height
                 ws1.add_image(img, 'I1')
 
-
-            wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/" +
-                    nume_conector + " V" + str(counter_diagrama)  + ".xlsx")
-            row_count = row_count + 1
-            lista_diagrame_create.append([nume_conector + " V" + str(counter_diagrama),
-                                      lista_module_diagrama])
-            counter_diagrama = counter_diagrama + 1
-
+            for row_num, row_data in output_diagrama.items():
+                if row_num > 0:
+                    image_filenamefir = partman_conector + "@" + str(row_num) + "@0.png"
+                    image_path = os.path.join(image_folder, image_filenamefir)
+                    if os.path.exists(image_path):
+                        img = Image(image_path)
+                        img.width = 500  # Set the desired width
+                        img.height = 375  # Set the desired height
+                        ws1.add_image(img, 'I1')
+            try:
+                wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/" +
+                        nume_conector + " V" + str(counter_diagrama)  + ".xlsx")
+                row_count = row_count + 1
+                lista_diagrame_create.append([nume_conector + " V" + str(counter_diagrama),
+                                          lista_module_diagrama])
+                counter_diagrama = counter_diagrama + 1
+            except PermissionError:
+                messagebox.showerror('Read Only file', nume_conector + " V" + str(counter_diagrama)  + ".xlsx")
 
     timelabel["text"] = "     Printing final list in EXCEL"
     pbar['value'] += 2
@@ -911,10 +982,8 @@ def creare_diagrame(lista_de_prelucrat):
                 ws1.cell(column=x + 1, row=i + 1, value=float(lista_diagrame_create[i][x]))
             except:
                 ws1.cell(column=x + 1, row=i + 1, value=str(lista_diagrame_create[i][x]))
-    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/EXCELS/Diagrame create/Lista diagrame create.xlsx")
+    wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Diagrame create/Lista diagrame create.xlsx")
     end = time.time()
-    print(lista_diagrame_create)
-    print( end - start)
     print("FINISH")
     messagebox.showinfo('Finalizat', "!!!!!!!!!!!!!!")
     pbargui.destroy()
