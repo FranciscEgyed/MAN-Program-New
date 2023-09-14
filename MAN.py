@@ -9,7 +9,6 @@ from functii_etichete import *
 from functii_input import *
 from diverse import *
 from functii_ksklight import *
-from functii_ldorado import *
 from functii_pentruvalidare import wirelist_validare, bom_validare
 from functii_prelucrare import *
 from functii_prelucrare_ksk import *
@@ -154,8 +153,6 @@ submenucascade.add_command(label="Basic Module",
 submenucascade.add_command(label="Lista diagrame in KSK",
                            command=lambda: [statusbusy(), diagrame_ksk(), statusidle()])
 
-submenu7.add_cascade(label="LDorado . . . ", menu=submenucascade2)
-submenucascade2.add_command(label="segment_test", command=lambda: [statusbusy(), segment_test(), statusidle()])
 submenu7.add_cascade(label="Functii ENG", menu=submenucascade3)
 submenucascade3.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
 submenucascade3.add_command(label="Faza 1 JSON din XML", command=lambda: [statusbusy(), xmltojson(), statusidle()])

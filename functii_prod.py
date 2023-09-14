@@ -267,6 +267,7 @@ def apfr():
     ['|external number               product number                      designation                                                      |'],
     ['|ressource group          designation ressource group                    total   unit                                               |'],
     ['|===================================================================================================================================|'],
+    ['| product number    :    0                 - 9999999999999                                                                          |'],
     []
     ]
     array_output = [["Client PN", "Leoni PN", "Designation", "Resource group", "Resignation resource group", "Total", "Unit", "Group"]]
@@ -323,8 +324,15 @@ def apfr():
     dataframe = pd.DataFrame(array_output)
     dataframe.columns = dataframe.iloc[0]
     dataframe = dataframe[1:]
+    #pivot_dataframe = dataframe.pivot_table(index="Leoni PN", columns="Group", values="Total",
+    #                                        fill_value=0, aggfunc='sum')
     pivot_dataframe = dataframe.pivot_table(index="Leoni PN", columns="Group", values="Total",
-                                            fill_value=0, aggfunc='sum')
+                                            fill_value=0, aggfunc='sum', margins=True, margins_name='Total')
+
+    # Calculate the sum of "ASSY," "PACK," and "TEST" columns and assign it to a new column
+    pivot_dataframe = pivot_dataframe.assign(
+        Asembly_Total=pivot_dataframe["ASSY"] + pivot_dataframe["PACK"] + pivot_dataframe["TEST"])
+
     statuslabel["text"] = "Salvare informatii in EXCEL"
     pbar['value'] += 1
     pbargui.update_idletasks()

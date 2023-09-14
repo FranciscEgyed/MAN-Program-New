@@ -27,14 +27,14 @@ def klappschaller(sheet, sheet1):
     klappschalle1 = ""
     lista_selectie = (["BODYL", "8011/8012"], ["BODYR", "8013/8014"], ["BODYL", "8023"], ["BODYR", "8024"],
                       ["BODYL", "8025"], ["BODYR", "8026"])
-    "Verificare steering side"
+    # "Verificare steering side"
     if steering_side == "LHD":
         check = "Check LL "
     elif steering_side == "RHD":
         check = "Check LR "
     else:
         check = "Error "
-    "Verificare kalppschalle"
+    #"Verificare kalppschalle"
     for row in sheet["J"]:
         if row.value != "Module" and row.value is not None:
             module_prezente[0].append(row.value)
@@ -55,7 +55,7 @@ def klappschaller(sheet, sheet1):
                     klappschalle1 = ""
                 else:
                     klappschalle1 = module_prezente[0][i] + " wrong side"
-    "Module dublate"
+    #"Module dublate"
     duplicat0315 = ""
     duplicat0316 = ""
     counter0315 = 0
@@ -75,8 +75,8 @@ def klappschaller(sheet, sheet1):
     if counter0315 > 1:
         duplicat0315 = "81.25433-0315/81.25433-6095 both present "
     duplicataklappschalle = duplicat0316 + duplicat0315
-    "Module missing"
-    "to be rewieed"
+    #"Module missing"
+    #"to be rewieed"
     for row in sheet["N"]:
         if row.value != "Module absente" and row.value is not None:
             if row.value == "81.25433-0315" and "81.25433-6095" in module_prezente[0]:
@@ -113,16 +113,33 @@ def klappschaller(sheet, sheet1):
         klappschalle = "OK" + indication
     else:
         klappschalle = klappschalle1 + klappschalle2 + indication
-    "verificare inversa"
+    #"verificare inversa"
     for row in sheet["C"]:
         if row.value == steering_side:
             if not sheet.cell(row=row.row, column=2).value in verificare_inversa and \
                     (sheet.cell(row=row.row, column=5).value == "X" or sheet.cell(row=row.row, column=6).value == "X"):
                 verificare_inversa.append(sheet.cell(row=row.row, column=2).value)
+    # verificare 6095
+    text6095 = ""
+    for row in sheet["J"]:
+        if (row.value == "81.25433-6095" and
+                sheet.cell(row=row.row, column=12).value != sheet.cell(row=row.row, column=15).value):
+            text6095 = (" 81.25433-6095 found " + str(sheet.cell(row=row.row, column=12).value) +
+                        " need " + str(sheet.cell(row=row.row, column=15).value))
+    # verificare 3 instante klappschale
+    texttreiklap = ""
+    for row in sheet["L"]:
+        if (sheet.cell(row=row.row, column=12).value != "Quantity" and
+                sheet.cell(row=row.row, column=12).value is not None):
+            if int(sheet.cell(row=row.row, column=12).value) > 2:
+                texttreiklap = " " + (sheet.cell(row=row.row, column=10).value  + " found " +
+                                str(sheet.cell(row=row.row, column=12).value) + " need " +
+                                str(sheet.cell(row=row.row, column=15).value))
+
     if check == "Error ":
-        return check + duplicataklappschalle
+        return check + duplicataklappschalle + text6095 + texttreiklap
     else:
-        return check + duplicataklappschalle + klappschalle
+        return check + duplicataklappschalle + klappschalle + text6095 + texttreiklap
 
 
 def oldnewcheckr(sheet):

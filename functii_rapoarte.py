@@ -302,6 +302,8 @@ def verificare_raport(arr_raport):
             arr_raport[i][0] = "Klappschalle error"
         elif "Missing" in arr_raport[i][4]:
             arr_raport[i][0] = "Klappschalle error"
+        elif "found" in arr_raport[i][4]:
+            arr_raport[i][0] = "Klappschalle error"
         elif arr_raport[i][5] == "No Module":
             arr_raport[i][0] = "No Supersleeve Module"
         elif "Error" in arr_raport[i][5]:
