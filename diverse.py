@@ -202,21 +202,7 @@ def golire_directoare():
             os.remove(dir_output_clustering + file_all)
         except:
             continue
-    for file_all in os.listdir(dir_output_json):
-        try:
-            os.remove(dir_output_json + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_exceljson):
-        try:
-            os.remove(dir_output_exceljson + file_all)
-        except:
-            continue
-    for file_all in os.listdir(dir_output_exceldiacreate):
-        try:
-            os.remove(dir_output_exceljson + file_all)
-        except:
-            continue
+
 
     messagebox.showinfo("Golire", "Directoarele Input si Output au fost golite!!")
 

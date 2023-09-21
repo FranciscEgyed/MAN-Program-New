@@ -422,6 +422,7 @@ def selectie_conectori():
         return int(combinatii_posibile)
 
     extracted_info = {}
+    print(array_conectors)
     for line in array_conectors[1:]:
         module_count = count_module_ids(lista_fire_conector, line[0])
         connector_id = line[0]
@@ -894,7 +895,7 @@ def creare_diagrame(lista_de_prelucrat, tubeiterations):
                         output_accesorii.append([array_accessory[q][1], "leoni", accesory_descr])
             lista_tuburi_diagrama = []
             for w in range(len(array_ssconectori)):
-                print(int(float(array_ssconectori[w][2]))> 60)
+
                 if (numeconector == array_ssconectori[w][0] and array_ssconectori[w][1] in lista_abrevieri_ss and
                         int(array_ssconectori[w][2]) > 60):
                     lista_tuburi_diagrama.append([array_ssconectori[w][1], "leoni", array_ssconectori[w][2]])
@@ -935,7 +936,7 @@ def creare_diagrame(lista_de_prelucrat, tubeiterations):
                 ws1.cell(row=row_num + 4, column=6, value="").fill = colorpicker(row_data[4])  # Column 6: 'bl'
                 ws1.cell(row=row_num + 4, column=7, value=row_data[5])  # Column 7: '1'
                 ws1.cell(row=row_num + 4, column=8, value=row_data[6])  # Column 8: 'WIP'
-            print(output_accesorii)
+
             for e in range(len(output_accesorii)):
                 for r in range(len(output_accesorii[e])):
                     ws1.cell(row=20 + e, column=9+r, value=output_accesorii[e][r])

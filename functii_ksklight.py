@@ -640,7 +640,7 @@ def raport_light():
         yyy = xxx.query('DataJIT in @valuesdatajit_lb')
 
         result = pd.merge(yyy, dfstock, how='outer')
-        print(result.head(10))
+
         if len(valuesdatalivrare_lb) == 0 or len(valuesdatajit_lb) == 0:
             messagebox.showerror("Valori gresite", "Nu ati selectat nimic")
         else:

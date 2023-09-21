@@ -403,7 +403,7 @@ def comparatie_fisiere():
     output = []
     for filename, result in results.items():
         output.append([f"{filename}: {result}"])
-    print(output)
+
     with open(os.path.abspath(os.curdir) + "/MAN/Diferente fisiere.txt", 'w', newline='',
               encoding='utf-8') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')

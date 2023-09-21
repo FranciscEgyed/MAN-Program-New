@@ -119,27 +119,20 @@ def klappschaller(sheet, sheet1):
             if not sheet.cell(row=row.row, column=2).value in verificare_inversa and \
                     (sheet.cell(row=row.row, column=5).value == "X" or sheet.cell(row=row.row, column=6).value == "X"):
                 verificare_inversa.append(sheet.cell(row=row.row, column=2).value)
-    # verificare 6095
+    # verificare plus minus
     text6095 = ""
     for row in sheet["J"]:
-        if (row.value == "81.25433-6095" and
-                sheet.cell(row=row.row, column=12).value != sheet.cell(row=row.row, column=15).value):
-            text6095 = (" 81.25433-6095 found " + str(sheet.cell(row=row.row, column=12).value) +
-                        " need " + str(sheet.cell(row=row.row, column=15).value))
-    # verificare 3 instante klappschale
-    texttreiklap = ""
-    for row in sheet["L"]:
-        if (sheet.cell(row=row.row, column=12).value != "Quantity" and
-                sheet.cell(row=row.row, column=12).value is not None):
-            if int(sheet.cell(row=row.row, column=12).value) > 2:
-                texttreiklap = " " + (sheet.cell(row=row.row, column=10).value  + " found " +
-                                str(sheet.cell(row=row.row, column=12).value) + " need " +
-                                str(sheet.cell(row=row.row, column=15).value))
+        if row.value != "Module":
+            if (row.value is not None and
+                    sheet.cell(row=row.row, column=12).value != sheet.cell(row=row.row, column=15).value):
+                text6095 = text6095 + " " + (sheet.cell(row=row.row, column=10).value + " found " +
+                                             str(sheet.cell(row=row.row, column=12).value) + " need " +
+                                             str(sheet.cell(row=row.row, column=15).value))
 
     if check == "Error ":
-        return check + duplicataklappschalle + text6095 + texttreiklap
+        return check + duplicataklappschalle + text6095
     else:
-        return check + duplicataklappschalle + klappschalle + text6095 + texttreiklap
+        return check + duplicataklappschalle + klappschalle + text6095
 
 
 def oldnewcheckr(sheet):

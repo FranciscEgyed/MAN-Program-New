@@ -5,6 +5,7 @@ from functii_crearediagrame import prelucrare_json, xmltojson, selectie_conector
 from functii_clustering import clustering
 from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
+from functii_eng import extragere_welding
 from functii_etichete import *
 from functii_input import *
 from diverse import *
@@ -27,7 +28,7 @@ def statusidle():
 
 root = tk.Tk()
 root.title("2022 MAN file processor")
-root.geometry("600x450+50+50")
+root.geometry("670x450+50+50")
 root.iconbitmap("Img/ICON.ico")
 img = ImageTk.PhotoImage(Image.open("Img/MAN.jpg"))
 container = tk.Frame(root, bg="gray")
@@ -56,10 +57,7 @@ submenu1.add_command(label="Control Matrix ALL",
 submenu1.add_separator()
 submenu1.add_command(label="Control Matrix to EXCEL",
                      command=lambda: [statusbusy(), cmtoexcel(), statusidle()])
-submenu1.add_separator()
-submenu1.add_command(label="Control Matrix Super Sleeve - in development",
-                     command=lambda: [statusbusy(), cmss(), statusidle()])
-submenu1.add_separator()
+
 menu1.configure(menu=submenu1)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu2 = tk.Menubutton(menu_frame, text="Fisiere Input", background="DarkSeaGreen1", font="Arial 10 bold")
@@ -119,49 +117,14 @@ menu5.configure(menu=submenu5)
 menu7 = tk.Menubutton(menu_frame, text="Diverse", background="DarkSeaGreen1", font="Arial 10 bold")
 menu7.grid(row=0, column=5)
 submenu7 = tk.Menu(menu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
-submenucascade = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
-submenucascade2 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
-submenucascade3 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
-submenucascade4 = tk.Menu(submenu7, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenu7.add_command(label="Extragere lungimi KSK",
                      command=lambda: [statusbusy(), extragere_lungimi_ksk(), statusidle()])
 submenu7.add_command(label="Extragere BOM KSK", command=lambda: [statusbusy(), extragere_bom_ksk(), statusidle()])
 submenu7.add_command(label="Extragere Variatii de lungimi",
                      command=lambda: [statusbusy(), extragere_variatii(), statusidle()])
 submenu7.add_separator()
-submenu7.add_command(label="Generare cod QR",
-                     command=lambda: [statusbusy(), eticheteqr(), statusidle()])
-submenu7.add_separator()
-submenu7.add_command(label="Prelucrare masterdata",
-                     command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
-submenu7.add_command(label="Comparatie fisiere",
-                     command=lambda: [statusbusy(), comparatie_fisiere(), statusidle()])
-submenu7.add_separator()
 submenu7.add_command(label="Stergere fisiere", command=golire_directoare, background="red")
 submenu7.add_separator()
-
-submenu7.add_cascade(label="Diagrame . . . ", menu=submenucascade)
-submenucascade.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(),
-                                                                         comparatiediagrame(), statusidle()])
-submenucascade.add_command(label="Extragere informatii din diagrame",
-                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
-submenucascade.add_separator()
-submenucascade.add_command(label="Prelucrare fisiere Matrix Module",
-                           command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
-submenucascade.add_command(label="Basic Module",
-                           command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
-submenucascade.add_command(label="Lista diagrame in KSK",
-                           command=lambda: [statusbusy(), diagrame_ksk(), statusidle()])
-
-submenu7.add_cascade(label="Functii ENG", menu=submenucascade3)
-submenucascade3.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
-submenucascade3.add_command(label="Faza 1 JSON din XML", command=lambda: [statusbusy(), xmltojson(), statusidle()])
-submenucascade3.add_command(label="Faza 2 EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
-                                                                            statusidle()])
-submenucascade3.add_command(label="Faza 3 ", command=lambda: [statusbusy(), selectie_conectori(),statusidle()])
-submenu7.add_cascade(label="Functii Productie", menu=submenucascade4)
-submenucascade4.add_command(label="APFR", command=lambda: [statusbusy(), apfr(), statusidle()])
-
 menu7.configure(menu=submenu7)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 menu8 = tk.Menubutton(menu_frame, text="Database", background="DarkSeaGreen1", font="Arial 10 bold")
@@ -179,9 +142,48 @@ submenu8.add_command(label="Stergere inregistrari din database",
                      command=lambda: [statusbusy(), database_delete_record(), statusidle()], background="red")
 submenu8.add_command(label="!!! Stergere database !!!",
                      command=lambda: [statusbusy(), database_delete_all_records(), statusidle()], background="red")
-
 submenu8.add_separator()
 menu8.configure(menu=submenu8)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+menu9 = tk.Menubutton(menu_frame, text="ENG / PROD", background="DarkSeaGreen3", font="Arial 10 bold")
+menu9.grid(row=0, column=7)
+submenu9 = tk.Menu(menu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade5 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade6 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+
+submenu9.add_cascade(label="Functii Productie", menu=submenucascade5)
+submenucascade5.add_command(label="APFR", command=lambda: [statusbusy(), apfr(), statusidle()])
+
+submenu9.add_cascade(label="Functii ENG", menu=submenucascade6)
+submenucascade6.add_command(label="Generare cod QR",
+                     command=lambda: [statusbusy(), eticheteqr(), statusidle()])
+submenucascade6.add_command(label="Prelucrare masterdata",
+                     command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
+submenucascade6.add_command(label="Comparatie fisiere",
+                     command=lambda: [statusbusy(), comparatie_fisiere(), statusidle()])
+submenucascade6.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
+submenucascade6.add_command(label="extragere Welding", command=lambda: [statusbusy(), extragere_welding(), statusidle()])
+
+submenucascade6.add_separator()
+submenucascade6.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(),
+                                                                         comparatiediagrame(), statusidle()])
+submenucascade6.add_command(label="Extragere informatii din diagrame",
+                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
+submenucascade6.add_separator()
+submenucascade6.add_command(label="Prelucrare fisiere Matrix Module",
+                           command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
+submenucascade6.add_command(label="++++Basic Module",
+                           command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
+submenucascade6.add_command(label="++++Lista diagrame in KSK",
+                           command=lambda: [statusbusy(), diagrame_ksk(), statusidle()])
+submenucascade6.add_separator()
+submenucascade6.add_command(label="++++Faza 1 JSON din XML", command=lambda: [statusbusy(), xmltojson(), statusidle()])
+submenucascade6.add_command(label="++++Faza 2 EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
+                                                                            statusidle()])
+submenucascade6.add_command(label="++++Faza 3 ", command=lambda: [statusbusy(), selectie_conectori(),statusidle()])
+menu9.configure(menu=submenu9)
+# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 menu_frame.grid(row=0, column=0)
 container.grid(row=1, column=0)
 label.grid(row=2, column=0)

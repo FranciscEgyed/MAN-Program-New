@@ -289,7 +289,6 @@ def creare_raport_director():
 def verificare_raport(arr_raport):
     exception_array = ["433014_6", "591003_1", "713004_4", "310000_509"]
     for i in range(1, len(arr_raport)):
-        print(arr_raport[i][34])
         output = []
         txt = arr_raport[i][12].replace("Wire No. - ", "")
         txt_arr = txt.rsplit(",")

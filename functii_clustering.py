@@ -171,8 +171,6 @@ def clustering():
             if type(item) is list:
                 output.append(item)
         output.append([])
-    for i in range(0, 10):
-        print(output[i])
     prn_excel_clustering(output, nume_fisier)
     messagebox.showinfo("Finalizat", "Finalizat clustering!")
 

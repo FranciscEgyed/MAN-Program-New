@@ -370,6 +370,7 @@ def cmtoexcel():
 
 
 def cmss():
+    # control matrix supersleeve
     pbargui = Tk()
     pbargui.title("Control Matrix Super Sleeve")
     pbargui.geometry("500x50+50+550")
@@ -410,7 +411,7 @@ def cmss():
                            ws2.cell(row=2, column=2).value, "Nume", "Lungime mm"])
     # file_counter = len(ws2['AA']) * len(array_write) + len(ws2['AC']) * len(array_write)
     file_counter = 200
-    print(file_counter)
+
     file_progres = 0
     start1 = time.time()
     for i in range(0, 200):  # len(array_write)):
@@ -430,7 +431,7 @@ def cmss():
                                        ws2.cell(row=row.row, column=13).value, ws2.cell(row=row.row, column=14).value,
                                        ws2.cell(row=row.row, column=2).value, ws2.cell(row=row.row, column=10).value])
         end1 = time.time()
-        print(end1 - start2)
+
         file_progres += 2
         pbar['value'] += 2
         statuslabel["text"] = "Inregistrari parcurse " + str(file_progres) + "/" + str(file_counter)
@@ -438,7 +439,7 @@ def cmss():
                             str((file_counter * 0.035) - (end1 - start1))[:5] + " minutes."
         pbargui.update_idletasks()
         end3 = time.time()
-        print(end3 - start1)
+
 
 
 def cmcsrnew():
@@ -694,7 +695,7 @@ def cmcslnew():
     if fisier_cm[-3:] == "csv":
         with open(fisier_cm, newline='') as csvfile:
             array_sortare = list(csv.reader(csvfile, delimiter=','))
-        print(array_sortare[5][27])
+
         if "8011" in array_sortare[0]:
             for i, j in enumerate(array_sortare[2]):
                 if j == 'von' or j == 'nach':
