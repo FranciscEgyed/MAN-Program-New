@@ -153,7 +153,7 @@ submenucascade6 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font=
 
 submenu9.add_cascade(label="Functii Productie", menu=submenucascade5)
 submenucascade5.add_command(label="APFR", command=lambda: [statusbusy(), apfr(), statusidle()])
-
+submenucascade5.add_command(label="Big files breakup", command=lambda: [statusbusy(), breaklargefiles(), statusidle()])
 submenu9.add_cascade(label="Functii ENG", menu=submenucascade6)
 submenucascade6.add_command(label="Generare cod QR",
                      command=lambda: [statusbusy(), eticheteqr(), statusidle()])

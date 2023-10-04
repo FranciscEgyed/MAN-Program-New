@@ -18,7 +18,7 @@ def creare_raport():
                      "Modules not implemented", "Check", "comment", "Side", "Abbreviation", "q / W", "r / X", "s / Y",
                      "t", "u", "", "Side", "Abbreviation", "q / W", "r / X", "s / Y", "t", "u", "DoKa", "X6616/X6490",
                      "KSW module", "Military", "Arad Prüfung", "MY 2023", "X6490 Module", "Module check", "CKD",
-                     "Delivery Date", "Trailer No"]]
+                     "Delivery Date", "Trailer No", "Stvb RHM FHS/RHM"]]
     try:
         wb = load_workbook(fisier_de_prelucrat)
         ws1 = wb.worksheets[0]
@@ -39,7 +39,7 @@ def creare_raport():
              copylenghtvaluesleftr(ws4)[2], copylenghtvaluesleftr(ws4)[3], copylenghtvaluesleftr(ws4)[4],
              copylenghtvaluesleftr(ws4)[5], copylenghtvaluesleftr(ws4)[6], dokar(ws1), x6616r(ws6), kswr(ws1),
              militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
-             module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
+             module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value, stvb(ws6)])
     except PermissionError:
         messagebox.showerror('Eroare scriere', "Fisierul " + fisier_de_prelucrat + "este read-only!")
         quit()
@@ -68,7 +68,7 @@ def creare_raport_all():
                      "Modules not implemented", "Check", "comment", "Side", "Abbreviation", "q / W", "r / X", "s / Y",
                      "t", "u", "", "Side", "Abbreviation", "q / W", "r / X", "s / Y", "t", "u", "DoKa", "X6616/X6490",
                      "KSW module", "Military", "Arad Prüfung", "MY 2023", "X6490 Module", "Module check", "CKD",
-                     "Delivery Date", "Trailer No"]]
+                     "Delivery Date", "Trailer No", "Stvb RHM FHS/RHM"]]
     start = time.time()
     dir_prelucrare = os.path.abspath(os.curdir) + "/MAN/Output/Excel Files/8000"
     file_counter = 0
@@ -100,7 +100,7 @@ def creare_raport_all():
                      copylenghtvaluesleftr(ws4)[2], copylenghtvaluesleftr(ws4)[3], copylenghtvaluesleftr(ws4)[4],
                      copylenghtvaluesleftr(ws4)[5], copylenghtvaluesleftr(ws4)[6], dokar(ws1), x6616r(ws6), kswr(ws1),
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
-                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
+                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value, stvb(ws6)])
                 end0 = time.time()
                 file_progres = file_progres + 1
                 statuslabel["text"] = "                 8000: " + str(file_progres) + "/" + str(file_counter) \
@@ -143,7 +143,7 @@ def creare_raport_all():
                      copylenghtvaluesleftr(ws4)[2], copylenghtvaluesleftr(ws4)[3], copylenghtvaluesleftr(ws4)[4],
                      copylenghtvaluesleftr(ws4)[5], copylenghtvaluesleftr(ws4)[6], dokar(ws1), x6616r(ws6), kswr(ws1),
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
-                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
+                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value, stvb(ws6)])
                 end1 = time.time()
                 file_progres = file_progres + 1
                 statuslabel["text"] = "                 8011: " + str(file_progres) + "/" + \
@@ -186,7 +186,7 @@ def creare_raport_all():
                      copylenghtvaluesleftr(ws4)[2], copylenghtvaluesleftr(ws4)[3], copylenghtvaluesleftr(ws4)[4],
                      copylenghtvaluesleftr(ws4)[5], copylenghtvaluesleftr(ws4)[6], dokar(ws1), x6616r(ws6), kswr(ws1),
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
-                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
+                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value, stvb(ws6)])
                 end2 = time.time()
                 file_progres = file_progres + 1
                 statuslabel["text"] = "                 8023: " + str(file_progres) + "/" + \
@@ -234,7 +234,7 @@ def creare_raport_director():
                      "Modules not implemented", "Check", "comment", "Side", "Abbreviation", "q / W", "r / X", "s / Y",
                      "t", "u", "", "Side", "Abbreviation", "q / W", "r / X", "s / Y", "t", "u", "DoKa", "X6616/X6490",
                      "KSW module", "Military", "Arad Prüfung", "MY 2023", "X6490 Module", "Module check", "CKD",
-                     "Delivery Date", "Trailer No"]]
+                     "Delivery Date", "Trailer No", "Stvb RHM FHS/RHM"]]
     start = time.time()
     file_counter = 0
     file_progres = 0
@@ -269,7 +269,7 @@ def creare_raport_director():
                      copylenghtvaluesleftr(ws4)[2], copylenghtvaluesleftr(ws4)[3], copylenghtvaluesleftr(ws4)[4],
                      copylenghtvaluesleftr(ws4)[5], copylenghtvaluesleftr(ws4)[6], dokar(ws1), x6616r(ws6), kswr(ws1),
                      militaryr(ws1), prufungr(ws6, ws1, ws2, ws3), my2023r(ws6, ws1), x6616stvbr(ws1, ws8, ws6),
-                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value])
+                     module_check(ws1), ckd(ws1), delivery(ws1), ws1.cell(row=2, column=11).value, stvb(ws6)])
                 file_progres = file_progres + 1
                 statuslabel["text"] = "                 " + str(file_progres) + "/" + \
                                       str(file_counter) + " : " + file_all
@@ -303,6 +303,8 @@ def verificare_raport(arr_raport):
             arr_raport[i][0] = "Klappschalle error"
         elif "found" in arr_raport[i][4]:
             arr_raport[i][0] = "Klappschalle error"
+        elif "Missing" in arr_raport[i][44]:
+            arr_raport[i][0] = "Missing Stvb RHM FHS/RHM"
         elif arr_raport[i][5] == "No Module":
             arr_raport[i][0] = "No Supersleeve Module"
         elif "Error" in arr_raport[i][5]:

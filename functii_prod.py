@@ -1,5 +1,6 @@
 import csv
 import os
+import re
 from tkinter import filedialog, messagebox, Tk, ttk, HORIZONTAL, Label
 import pandas as pd
 from openpyxl.reader.excel import load_workbook
@@ -339,14 +340,13 @@ def apfr():
     file_load2 = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                            title="Incarcati fisierul EXCEL cu clasificarile Resource group-urilor:")
     pbargui = Tk()
-    pbargui.title("Wirelist toate")
+    pbargui.title("APFR")
     pbargui.geometry("500x50+50+550")
     pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
     statuslabel = Label(pbargui, text="Waiting . . .")
     timelabel = Label(pbargui, text="Time . . .")
     pbar.grid(row=1, column=1, padx=5, pady=5)
     statuslabel.grid(row=1, column=2, padx=5, pady=5)
-    timelabel.grid(row=2, column=2)
     array_clasificare = []
     if file_load2:
         wb = load_workbook(file_load2)
@@ -458,5 +458,44 @@ def apfr():
     pbargui.destroy()
 
 
+def breaklargefiles():
+    output_excel_path = os.path.abspath(os.curdir) + "/MAN/Output/"
+    input_file_path = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
+                                           title="Incarcati fisierul TXT:")
+    pbargui = Tk()
+    pbargui.title("Big files break up")
+    pbargui.geometry("500x50+50+550")
+    pbar = ttk.Progressbar(pbargui, orient=HORIZONTAL, length=200, mode='indeterminate')
+    statuslabel = Label(pbargui, text="Waiting . . .")
+    timelabel = Label(pbargui, text="Time . . .")
+    pbar.grid(row=1, column=1, padx=5, pady=5)
+    statuslabel.grid(row=1, column=2, padx=5, pady=5)
+    timelabel.grid(row=2, column=2)
+    chunksize = 500000
 
+    # Open the input file in read mode
+    with open(input_file_path, 'r', encoding='latin-1') as file:
+        # Read the content of the file
+        content = file.read()
 
+    # Use regular expression to replace NUL values with the desired replacement string
+    content_without_null = re.sub(r'\x00', '', content)
+    content_without_null2 = re.sub(r'\x82', '', content_without_null)
+    content_without_null3 = re.sub(r'\x90', '', content_without_null2)
+    content_without_null4 = re.sub(r'\x83', '', content_without_null3)
+    content_without_null5 = re.sub(r'\x89', '', content_without_null4)
+    content_without_null6 = re.sub(r'\x88', '', content_without_null5)
+    lines = content_without_null6.splitlines()
+    # Create a list of dictionaries where each dictionary represents a row in the Excel file
+    data = [{'Content': line} for line in lines]
+    df = pd.DataFrame(data)
+    # Calculate the number of chunks
+    num_chunks = len(df) // chunksize + 1
+    # Save DataFrame in chunks to text files
+    for i in range(num_chunks):
+        start_idx = i * chunksize
+        end_idx = (i + 1) * chunksize
+        chunk_df = df.iloc[start_idx:end_idx]
+        chunk_df.to_csv(output_excel_path + f'output_{i}.txt', sep='\t', index=False)  # Tab-separated text file
+    messagebox.showinfo('Finalizat', "!!!!!!!!!!!!!!")
+    pbargui.destroy()

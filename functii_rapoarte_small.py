@@ -909,3 +909,16 @@ def delivery(sheet):
         return sheet.cell(row=2, column=10).value
     else:
         return "No date"
+
+
+def stvb(sheet):
+    lista_stvb = []
+    for row in sheet['AA']:
+        if row.value == "True" and sheet.cell(row=row.row, column=28).value != "True":
+            lista_stvb.append(sheet.cell(row=row.row, column=26).value)
+    if len(lista_stvb) > 0:
+        lista_stvb.insert(0, "Missing ")
+        result_string = ' '.join(lista_stvb)
+    else:
+        result_string = "OK"
+    return result_string

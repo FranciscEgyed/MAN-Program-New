@@ -665,11 +665,46 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         array_scriere_sheet6[i].append("")
         array_scriere_sheet6[i].append("")
 
+    # Verificare Stvb RHM FHS/RHM
+    array_stvb = [["8011", "81.25482-5750", "X6478"],
+                    ["8011", "81.25482-7988", "X6490"],
+                    ["8012", "81.25482-5755", "X6478"],
+                    ["8012", "81.25482-7990", "X6490"],
+                    ["8013", "81.25482-5751", "X6408"],
+                    ["8013", "81.25482-5752", "X6409"],
+                    ["8013", "81.25482-7987", "X6490"],
+                    ["8014", "81.25482-5757", "X6408"],
+                    ["8014", "81.25482-5758", "X6409"],
+                    ["8014", "81.25482-7989", "X6490"],
+                    ["8023", "81.25482-6085", "X6478"],
+                    ["8024", "81.25482-6086", "X6408"],
+                    ["8024", "81.25482-6088", "X6409"],
+                    ["8025", "81.25482-6097", "X6478"],
+                    ["8025", "81.25483-5024", "X6490"],
+                    ["8026", "81.25482-6102", "X6408"],
+                    ["8026", "81.25482-6104", "X6409"],
+                    ["8026", "81.25483-5038", "X6490"]]
+    # check if modules in configuration
+    dictionar_module_config = {line[1] for line in sheet1}
+    dictionar_conectori_lh = {line[6] for line in sheet2}
+    dictionar_conectori_rh = {line[6] for line in sheet3}
+    dictionar_conectori_lh.update(dictionar_conectori_rh)
+    for line in array_stvb:
+        if line[1] in dictionar_module_config:
+            line.append('True')
+        else:
+            line.append('False')
+    for line in array_stvb:
+        # Check if any string in the set contains the partial string
+        found = any(line[2] in code for code in dictionar_conectori_lh)
+        if found:
+            line.append('True')
+        else:
+            line.append('False')
+    bkk(sheet1, sheet2, sheet3, sheet4, sheet5, array_scriere_sheet6, array_stvb)
 
-    bkk(sheet1, sheet2, sheet3, sheet4, sheet5, array_scriere_sheet6)
 
-
-def bkk(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
+def bkk(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, listastvb):
     arr_bkk_left = []
     arr_bkk_right = []
     arr_erori_bkk = []
@@ -718,10 +753,10 @@ def bkk(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         sheet6[i + 2].append(arr_erori_bkk[i])
     for i in range(len(arr_erori_bkk) + 2, len(sheet6)):
         sheet6[i].append("")
-    samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6)
+    samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, listastvb)
 
 
-def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
+def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, listastvb):
     arr_sheet7 = [["Harness", "Module", "Ltg-Nr.", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Lange",
                    "Kurzname/Pin", "K/P Count", "Verificare"]]
     arr_resistor = []
@@ -883,14 +918,27 @@ def samewire(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6):
         else:
             x6490 = "NOT OK"
 
-
-
     for i in range(len(sheet6)):
         sheet6[i].append("")
     sheet6[0].append("Status X6616")
     sheet6[0].append(x6616)
+    sheet6[1].append("")
+    sheet6[1].append("")
     sheet6[2].append("Status X6490")
     sheet6[2].append(x6490)
+    for i in range(3, len(sheet6)):
+        sheet6[i].append("")
+        sheet6[i].append("")
+    for line in sheet6:
+        line.append('')
+    sheet6[0].append("Stvb RHM FHS / RHM")
+    sheet6[0].append("Module")
+    sheet6[0].append("Connector")
+    sheet6[0].append("Requested in call off")
+    sheet6[0].append("Requested in wirelist")
+    for i in range(len(listastvb)):
+        sheet6[i + 1].extend(listastvb[i])
+
     if globale.is_light_save == "1":
         prn_excel_wires_light(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)
     prn_excel_wires(sheet1, sheet2, sheet3, sheet4, sheet5, sheet6, arr_sheet7, x6616sheetsortat)

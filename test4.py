@@ -1,107 +1,40 @@
-import csv
-import os
-from tkinter import filedialog
+import re
 
-file_load = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
-                                       title="Incarcati fisierul cu informatiile sursa:")
-with open(file_load, newline='') as csvfile:
-    array_apfr = list(csv.reader(csvfile, delimiter='\t'))
+import pandas as pd
 
-array_delete = [
-['\x0c+===================================================================================================================================+'],
-['+===================================================================================================================================+'],
-['|===================================================================================================================================|'],
-['| product number    :    0000000000000     - 9999999999999                                                                          |'],
-['|===================================================================================================================================|'],
-['|external number               product number                      designation                                                      |'],
-['|ressource group          designation ressource group                    total   unit                                               |'],
-['|===================================================================================================================================|'],
-[]
-]
-array_output = [["Client PN", "Leoni PN", "Designation", "Resource group", "Resignation resource group", "Total", "Unit"]]
-array_curatat = [line for line in array_apfr if line not in array_delete]
-array_curatat2 = [line for line in array_curatat if "" not in line]
-array_curatat3 = [line for line in array_curatat2 if 'FAVLS' not in line[0]]
+# Open the input file in read mode
+with open('C:/Users/Wana\Desktop/W.txt', 'r', encoding='latin-1') as file:
+    # Read the content of the file
+    content = file.read()
 
-array_breakers = []
-for i in range(len(array_curatat3)):
-    if array_curatat3[i] == ['+-----------------------------------------------------------------------------------------------------------------------------------+']:
-        array_breakers.append(i)
+# Use regular expression to replace NUL values with the desired replacement string
+content_without_null = re.sub(r'\x00', '', content)
+content_without_null2 = re.sub(r'\x82', '', content_without_null)
+content_without_null3 = re.sub(r'\x90', '', content_without_null2)
+content_without_null4 = re.sub(r'\x83', '', content_without_null3)
+content_without_null5 = re.sub(r'\x89', '', content_without_null4)
+content_without_null6 = re.sub(r'\x88', '', content_without_null5)
+# Open the same file in write mode to update its content
+with open('input.txt', 'w') as file:
+    # Write the updated content back to the file
+    file.write(content_without_null6)
+# Split the content into lines
+lines = content_without_null6.splitlines()
 
-for i in range(0, 100):#len(array_breakers) - 1):
-    array_output_temp = []
-    for x in range(array_breakers[i] + 1, array_breakers[i + 1]-1):
-        array_output_temp.append(array_curatat3[x])
-    clientpn = [s.strip() for s in array_output_temp[0][0].split("   ") if s][0]
-    leonipn = [s.strip() for s in array_output_temp[0][0].split("   ") if s][1]
-    designation = [s.strip() for s in array_output_temp[0][0].split("   ") if s][2]
-    first_three = [clientpn, leonipn, designation]
-    for lista in array_output_temp[1:]:
-        item_temp_list = [s.strip() for s in lista[0].split("   ") if s]
-        merged_list = [x for x in first_three] + [x for x in item_temp_list]
-        array_output.append(merged_list)
-lista_rg = []
-for p in array_output:
-    if p[3] not in lista_rg:
-        lista_rg.append(p[3])
-print(lista_rg)
+# Create a list of dictionaries where each dictionary represents a row in the Excel file
+data = [{'Content': line} for line in lines]
 
+df = pd.DataFrame(data)
 
+# Assuming your DataFrame is named 'df'
+chunk_size = 100000  # You can adjust the chunk size based on your available memory
 
+# Calculate the number of chunks
+num_chunks = len(df) // chunk_size + 1
 
-#for i in range(0, 50):
-#    print(array_output[i])
-
-
-
-lista_calcul = [["LHD801181.25433-0314", "X6499.1A1", "X6407.1A1", "X6478.1A1"],
-                        ["LHD801181.25433-0315", "X6302.1A1", "X4556.1A1"],
-                        ["LHD801181.25433-6095", "X6302.1A1", "X4556.1A1"],
-                        ["LHD801181.25433-0316", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD801181.25433-6096", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD801181.25433-0313", "X6499.1A1", "X6407.1A1", "X6478.1A1", "X6302.1A1", "X4556.1A1"],
-                        ["RHD801181.25433-0315", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD801181.25433-6095", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD801281.25433-0314", "X6499.1A1", "X6407.1A1", "X6478.1A1"],
-                        ["LHD801281.25433-0315", "X6302.1A1", "X4556.1A1"],
-                        ["LHD801281.25433-6095", "X6302.1A1", "X4556.1A1"],
-                        ["LHD801281.25433-0316", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD801281.25433-6096", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD801281.25433-0313", "X6499.1A1", "X6407.1A1", "X6478.1A1", "X6302.1A1", "X4556.1A1"],
-                        ["RHD801281.25433-0315", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1", "X6493.1A1"],
-                        ["RHD801281.25433-6095", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1", "X6493.1A1"],
-                        ["LHD801381.25433-0313", "X6408.1A1", "X6301.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["RHD801381.25433-0317", "X6301.1A1"],
-                        ["RHD801381.25433-0317", "X6408.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["LHD801481.25433-0313", "X6408.1A1", "X6301.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["RHD801481.25433-0317", "X6301.1A1"],
-                        ["RHD801481.25433-0317", "X6408.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["LHD802381.25433-0314", "X6302.1A1"],
-                        ["LHD802381.25433-0315", "X6499.1A1", "X6478.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["LHD802381.25433-0315", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD802381.25433-6095", "X6499.1A1", "X6478.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["LHD802381.25433-6095", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD802381.25433-0319", "X6499.1A1", "X6478.1A1", "X6302.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["RHD802381.25433-0315", "X6499.1A1", "X6478.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["RHD802381.25433-6095", "X6499.1A1", "X6478.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["LHD802481.25433-0313", "X6301.1A1", "X6408.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["RHD802481.25433-0318", "X6301.1A1"],
-                        ["RHD802481.25433-0318", "X6408.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["LHD802581.25433-0313", "X6499.1A1", "X6478.1A1", "X6407.1A1"],
-                        ["LHD802581.25433-0315", "X6302.1A1", "X4556.1A1"],
-                        ["LHD802581.25433-0316", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD802581.25433-6095", "X6302.1A1", "X4556.1A1"],
-                        ["LHD802581.25433-6096", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD802581.25433-0313", "X6499.1A1", "X6302.1A1", "X6478.1A1", "X6407.1A1", "X4556.1A1"],
-                        ["RHD802581.25433-0315", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["RHD802581.25433-6095", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1"],
-                        ["LHD802681.25433-0313", "X6408.1A1", "X6409.1A1", "X6301.1A1", "X6543.1A1"],
-                        ["RHD802681.25433-0317", "X6301.1A1"],
-                        ["RHD802681.25433-0317", "X6408.1A1", "X6409.1A1", "X6543.1A1"],
-                        ["LHD804181.25433-0314", "X6499.1A1", "X6478.1A1", "X6407.1A1"],
-                        ["LHD804181.25433-0315", "X6302.1A1", "X4556.1A1"],
-                        ["LHD804181.25433-6095", "X6302.1A1", "X4556.1A1"],
-                        ["LHD804181.25433-0316", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1", "X6493.1A1"],
-                        ["LHD804181.25433-6096", "X6491.1A1", "X6492.1A1", "X7042.1A1", "X7043.1A1", "X6493.1A1"],
-                        ["LHD804281.25433-0313", "X6301.1A1", "X6408.1A1", "X6409.1A1", "X6543.1A1"]
-                        ]
+# Save DataFrame in chunks to text files
+for i in range(num_chunks):
+    start_idx = i * chunk_size
+    end_idx = (i + 1) * chunk_size
+    chunk_df = df.iloc[start_idx:end_idx]
+    chunk_df.to_csv(f'output_{i}.txt', sep='\t', index=False)  # Tab-separated text file
