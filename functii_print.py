@@ -1199,10 +1199,7 @@ def prn_excel_clustering(sheet1, name):
     ws1.title = name
     for i in range(len(sheet1)):
         for x in range(len(sheet1[i])):
-            try:
-                ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
-            except:
-                ws1.cell(column=x + 1, row=i + 1, value=float(sheet1[i][x]))
+            ws1.cell(column=x + 1, row=i + 1, value=str(sheet1[i][x]))
     try:
         wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Clustering/Clustering " + name + ".xlsx")
         log_file("Creat Clustering " + name + ".xlsx")

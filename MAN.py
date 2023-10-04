@@ -1,11 +1,10 @@
 import tkinter as tk
 from PIL import ImageTk, Image
 from diagrame import *
-from functii_crearediagrame import prelucrare_json, xmltojson, selectie_conectori
-from functii_clustering import clustering
+from functii_cmfire import clustering
+from functii_crearediagrame import xmltojson, selectie_conectori
 from functii_database import databasecontent, exportdatabase, database_delete_record, database_delete_all_records
 from functii_diverse import *
-from functii_eng import extragere_welding
 from functii_etichete import *
 from functii_input import *
 from diverse import *
@@ -150,37 +149,36 @@ menu9.grid(row=0, column=7)
 submenu9 = tk.Menu(menu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade5 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 submenucascade6 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
+submenucascade7 = tk.Menu(submenu9, tearoff=0, background="DarkSeaGreen1", font="Arial 15 bold")
 
 submenu9.add_cascade(label="Functii Productie", menu=submenucascade5)
 submenucascade5.add_command(label="APFR", command=lambda: [statusbusy(), apfr(), statusidle()])
 submenucascade5.add_command(label="Big files breakup", command=lambda: [statusbusy(), breaklargefiles(), statusidle()])
 submenu9.add_cascade(label="Functii ENG", menu=submenucascade6)
 submenucascade6.add_command(label="Generare cod QR",
-                     command=lambda: [statusbusy(), eticheteqr(), statusidle()])
+                            command=lambda: [statusbusy(), eticheteqr(), statusidle()])
 submenucascade6.add_command(label="Prelucrare masterdata",
-                     command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
+                            command=lambda: [statusbusy(), inlocuire_masterdata(), statusidle()])
 submenucascade6.add_command(label="Comparatie fisiere",
-                     command=lambda: [statusbusy(), comparatie_fisiere(), statusidle()])
-submenucascade6.add_command(label="Clustering", command=lambda: [statusbusy(), clustering(), statusidle()])
-submenucascade6.add_command(label="extragere Welding", command=lambda: [statusbusy(), extragere_welding(), statusidle()])
+                            command=lambda: [statusbusy(), comparatie_fisiere(), statusidle()])
 
 submenucascade6.add_separator()
 submenucascade6.add_command(label="Comparatie diagrame", command=lambda: [statusbusy(),
-                                                                         comparatiediagrame(), statusidle()])
+                                                                          comparatiediagrame(), statusidle()])
 submenucascade6.add_command(label="Extragere informatii din diagrame",
-                           command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
+                            command=lambda: [statusbusy(), extragere_informatii_diagrame(), statusidle()])
 submenucascade6.add_separator()
 submenucascade6.add_command(label="Prelucrare fisiere Matrix Module",
-                           command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
-submenucascade6.add_command(label="++++Basic Module",
-                           command=lambda: [statusbusy(), crearebasicmodule(), statusidle()])
-submenucascade6.add_command(label="++++Lista diagrame in KSK",
-                           command=lambda: [statusbusy(), diagrame_ksk(), statusidle()])
-submenucascade6.add_separator()
-submenucascade6.add_command(label="++++Faza 1 JSON din XML", command=lambda: [statusbusy(), xmltojson(), statusidle()])
-submenucascade6.add_command(label="++++Faza 2 EXCEL din JSON", command=lambda: [statusbusy(), prelucrare_json(),
-                                                                            statusidle()])
-submenucascade6.add_command(label="++++Faza 3 ", command=lambda: [statusbusy(), selectie_conectori(),statusidle()])
+                            command=lambda: [statusbusy(), crearematrixmodule(), statusidle()])
+submenu9.add_cascade(label="Functii Control Matrix si LDorado", menu=submenucascade7)
+submenucascade7.add_command(label="Extragere informatii din LDorado", command=lambda: [statusbusy(), xmltojson(),
+                                                                                       statusidle()])
+
+submenucascade7.add_command(label="++++Creare diagrame ",
+                            command=lambda: [statusbusy(), selectie_conectori(), statusidle()])
+submenucascade7.add_separator()
+submenucascade7.add_command(label="+++ Creare CM fire",
+                            command=lambda: [statusbusy(), clustering(), statusidle()])
 menu9.configure(menu=submenu9)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

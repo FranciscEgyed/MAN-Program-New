@@ -18,7 +18,7 @@ def xmltojson():
     fisier_xml = filedialog.askopenfilename(initialdir=os.path.abspath(os.curdir),
                                                 title="Incarcati fisierul care necesita prelucrare")
     parse_xml(fisier_xml)
-    messagebox.showinfo("Finalizat", "Finalizat JSON!")
+
 
 def parse_xml(file):
     def process_element(element):
@@ -65,7 +65,7 @@ def parse_xml(file):
                 json.dump(root_dict, json_file)
         else:
             print(f"Root element '{element}' not found in the XML file.")
-
+    prelucrare_json()
 
 def prelucrare_json():
     files = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
@@ -387,10 +387,7 @@ def prelucrare_json():
               encoding='utf-8') as myfile:
         wr = csv.writer(myfile, quoting=csv.QUOTE_ALL, delimiter=';')
         wr.writerows(conector_and_ss)
-
-
-
-    messagebox.showinfo('Finalizat', "Fisierele JSON finalizate!")
+    langenmodule()
 
 
 def selectie_conectori():
@@ -530,7 +527,73 @@ def selectie_conectori():
     root.mainloop()
 
 
-
+def langenmodule():
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/Configurations.json", "r") as json_file:
+        configurations = json.load(json_file)
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/Modules.json", "r") as json_file:
+        modules = json.load(json_file)
+    with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/LengthVariants.json", "r") as json_file:
+        lengthvariants = json.load(json_file)
+    configuratii = []
+    for configuration in configurations["Configuration"]:
+        configurationid = configuration["ID"]
+        configurationnickname = configuration["NickName"]
+        for moduleid in configuration["ConfigurationModule"]:
+            configuratii.append([configurationid, configurationnickname, moduleid["ModuleID"]])
+    configuratii.insert(0, ["Configuration ID", "NickName", "Module ID"])
+    listamodule = []
+    for module in modules["Module"]:
+        moduleid = module["ID"]
+        eleID = module["TitleBlock"][0]["CustomerPartNo"]
+        familyref = module["FamilyRef"]
+        logisticsID = module["TitleBlock"][0]["Description"]
+        listamodule.append([moduleid, eleID, familyref, logisticsID])
+    listamodule.insert(0, ["Module ID", "MAN ID", "Family", "Description"])
+    nume_variatii = [["Nume"]]
+    for variant in lengthvariants["VariantNames"][0]["VariantName"]:
+        varname = variant["__text__"]
+        nume_variatii[0].append(varname)
+    for variant in lengthvariants["VariantParameters"][0]["VariantParameter"]:
+        valoare = []
+        for value in variant["VariantParameterValue"]:
+            valoare.append(value["__text__"])
+        valoare.insert(0, variant["Name"])
+        nume_variatii.append(valoare)
+    for line in configuratii:
+        for module in listamodule:
+            if line[2] == module[0]:
+                line[2] = module[1]
+    for variatie in nume_variatii[1:]:
+        configuratii[0].append(variatie[0])
+    # Extracting header row
+    header = [line[0] for line in nume_variatii]
+    # Creating a new list with the desired format
+    new_data = [header]
+    for i in range(1, len(nume_variatii[0])):
+        truck_data = []
+        for x in range(1, len(nume_variatii)):
+            truck_data.append(nume_variatii[x][i])
+        truck_data.insert(0, nume_variatii[0][i])
+        new_data.append(truck_data)
+    for line in configuratii:
+        for variatie in new_data:
+            if line[1] == variatie[0]:
+                line.extend(variatie[1:])
+    wb = Workbook()
+    ws1 = wb.active
+    ws1.title = "Langenmodule"
+    for i in range(len(configuratii)):
+        for x in range(len(configuratii[i])):
+            try:
+                ws1.cell(column=x + 1, row=i + 1, value=int(configuratii[i][x]))
+            except:
+                ws1.cell(column=x + 1, row=i + 1, value=str(configuratii[i][x]))
+    try:
+        wb.save(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Langenmodules.xlsx")
+    except PermissionError:
+        messagebox.showerror('Eroare scriere', "Fisierul este read-only!")
+        return None
+    messagebox.showinfo('Fisiere exportate', 'All files exported!')
 
 
 
