@@ -573,9 +573,14 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
                 dictionar_klapp[line[0]] = [0]
         for line in arr_module_existente:
             for linie in array_scriere_sheet6:
-                if line[0] == linie[1] and linie[2] == sidebracket:
-                    if int(linie[6]) not in dictionar_klapp[line[0]]:
-                        dictionar_klapp[line[0]].append(int(linie[6]))
+                if sidebracket == "LHD":
+                    if line[0] == linie[1] and linie[4] == "X":
+                        if int(linie[6]) not in dictionar_klapp[line[0]]:
+                            dictionar_klapp[line[0]].append(int(linie[6]))
+                elif sidebracket == "RHD":
+                    if line[0] == linie[1] and linie[5] == "X":
+                        if int(linie[6]) not in dictionar_klapp[line[0]]:
+                            dictionar_klapp[line[0]].append(int(linie[6]))
 
         array_scriere_sheet6[0].append("Module calculate")
         for line in array_scriere_sheet6[1:]:
