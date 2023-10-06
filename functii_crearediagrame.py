@@ -70,7 +70,7 @@ def parse_xml(file):
 def prelucrare_json():
     files = ["Modules", "LengthVariants", "Wires", "CavitySeals", "Connectors",
              "Tapes", "Terminals", "CavityPlugs", "Accessories", "Configurations", "AccessoryPMDs", "Segments" ,
-             "TapePMDs"]
+             "TapePMDs", "MultiCores"]
 
     def extract_wire_ids(wire_list):
         with open(os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/GeneralSpecialWirePMDs.json", "r") as json_file:
@@ -281,6 +281,17 @@ def prelucrare_json():
         tapepmds.insert(0, ["TapeID", "Abbreviation", "Description", "ProtectionType", "TapeMaterial"])
         printfile(tapepmds, "TapePMDs")
 
+    def extract_multicores(mc_list):
+        mcpmd = []
+        for mc in mc_list["MultiCore"]:
+            mcid = mc["ID"]
+            eleid = mc["ElementID"]
+            pmd = mc["PMD"]
+            wire = mc["WireNo"]
+            mcpmd.append([mcid, eleid, pmd, wire])
+        mcpmd.insert(0, ["ID", "Element ID", "Material PN", "Wire No"])
+        printfile(mcpmd, "MC PMDs")
+
     def printfile(list_to_print, file_name):
         wb = Workbook()
         ws1 = wb.active
@@ -332,6 +343,8 @@ def prelucrare_json():
                 extract_segments(loaded_dictionary)
             if file == "TapePMDs":
                 extract_tapepmds(loaded_dictionary)
+            if file == "MultiCores":
+                extract_multicores(loaded_dictionary)
 
     # atasare supersleeve la conector
     #Load required data files

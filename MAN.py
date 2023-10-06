@@ -15,6 +15,7 @@ from functii_prelucrare_ksk import *
 from functii_prod import *
 from functii_rapoarte import *
 from masterdata import *
+from test1 import clustering1
 
 
 def statusbusy():
@@ -179,6 +180,9 @@ submenucascade7.add_command(label="++++Creare diagrame ",
 submenucascade7.add_separator()
 submenucascade7.add_command(label="+++ Creare CM fire",
                             command=lambda: [statusbusy(), clustering(), statusidle()])
+submenucascade7.add_command(label="+++ Creare CM fire",
+                            command=lambda: [statusbusy(), clustering1(), statusidle()])
+
 menu9.configure(menu=submenu9)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

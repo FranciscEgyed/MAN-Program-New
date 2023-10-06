@@ -16,8 +16,6 @@ def wirelistprep(array_incarcat):
                     return input_list.index(item)
         return None
 
-
-
     array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
                          "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     array_original = []
@@ -54,8 +52,7 @@ def wirelistprep(array_incarcat):
                     return
     array_output = [
         ["Module", "Ltg No", "Leitung", "Farbe", "Quer.", "Kurzname", "Pin", "Kurzname", "Pin",
-         "Sonderltg.",
-         "Lange"]]
+         "Sonderltg.", "Lange", "Kontakt1", "Dichtung1", "Typ", "Kontakt2", "Dichtung2"]]
     array_module = []
     array_wires = []
     for i in range(1, len(array_incarcat)):
@@ -86,6 +83,7 @@ def wirelistprep(array_incarcat):
             index_type = array_wires[0].index('Typ')
             index_dichtung1 = array_wires[0].index('Dichtung')
             index_dichtung2 = find_second_instance(array_wires[0], 'Dichtung')
+            innenleiter = array_wires[0].index('Innenleiter')
 
             for wire in range(1, len(array_wires)):
                 for index in range(pot_position, ltgno_position):
@@ -104,7 +102,8 @@ def wirelistprep(array_incarcat):
                                                array_wires[wire][index_contact2],
                                                array_wires[wire][index_type],
                                                array_wires[wire][index_dichtung1],
-                                               array_wires[wire][index_dichtung2]
+                                               array_wires[wire][index_dichtung2],
+                                               array_wires[wire][innenleiter]
                                                ])
             array_module = []
             array_wires = []
@@ -140,6 +139,7 @@ def wirelistprep(array_incarcat):
                 index_type = array_wires[0].index('Typ')
                 index_dichtung1 = array_wires[0].index('Dichtung')
                 index_dichtung2 = find_second_instance(array_wires[0], 'Dichtung')
+                innenleiter = array_wires[0].index('Innenleiter')
                 for wire in range(1, len(array_wires)):
                     for index in range(pot_position, ltgno_position):
                         if array_wires[wire][index] != "-":
@@ -157,74 +157,142 @@ def wirelistprep(array_incarcat):
                                                    array_wires[wire][index_contact2],
                                                    array_wires[wire][index_type],
                                                    array_wires[wire][index_dichtung1],
-                                                   array_wires[wire][index_dichtung2]
+                                                   array_wires[wire][index_dichtung2],
+                                                   array_wires[wire][innenleiter]
                                                    ])
                 array_module = []
                 array_wires = []
                 array_output.extend(array_out_temp)
     array_output = sorted(array_output[1:], key=lambda w: (w[1], float(w[10])))
+    print(array_output[:5])
     return array_output
 
 
-def group_data(data, ltg_no, clusteringlength):
+def group_data(data, prefix, clusteringlength):
     grouped_data = {}
     key_incrementer = 1
     for item in data:
+        ltg_no = item[2]
         length = int(item[11])
-        key = ltg_no + "_" + str(key_incrementer)
-        if key not in grouped_data:
-            grouped_data[key] = [length, length + clusteringlength]
+        matched = False
+        for key, value in grouped_data.items():
+            lower_limit = value[1]
+            upper_limit = value[2]
+            if value[0] == ltg_no and lower_limit <= length <= upper_limit:
+                grouped_data[key].append(item)
+                matched = True
+                break
+        if not matched:
+            key = prefix + "_" + str(key_incrementer)
+            grouped_data[key] = [ltg_no, length, length + clusteringlength]
             grouped_data[key].append(item)
-        else:
-            min_length = grouped_data[key][0]
-            max_length = grouped_data[key][1]
-            if min_length <= length <= max_length:
-                grouped_data[key].append(item)
-            else:
-                key_incrementer += 1
-                key = ltg_no + "_" + str(key_incrementer)
-                grouped_data[key] = [length, length + clusteringlength]
-                grouped_data[key].append(item)
+            key_incrementer += 1
+    # Create a new dictionary with modified keys
     return grouped_data
-
 
 
 def cm(input, nume_fisier):
     output = [["Dwg", "LPN", "What changed", "(CW)", "Change", "Leadset", "REAL NAME", "Kanban name", "von",
-              "Pin", "nach", "Pin", "Splice", "Leitung", "Farbe", "Typ", "Kontakt", "Dichtung", "Kontakt2",
-              "Dichtung2", "Labeling", "FORS PN", "Crosssec", "Strip_1", "Kontakt PN", "Seal 1 PN", "Strip_2",
-              "Kontakt2 PN", "Seal 2 PN", "Length", "OLD Length", "AG", "OpText", "ResGroup", "Sonderltg.",
-              "Twist", "End Product", "max_v_puchok", "AGNr", "Alt+F2 1", "Alt+F2 2", "Alt+F2 3", "Alt+F2 4",
-              "Alt+F2 5", "Alt+F2 6", "Alt+F2 7", "Alt+F2 8", "Alt+F2 9", "Alt+F2 10", "Suppl.text 1",
-              "Suppl.text 2", "APAB_1", "APAB_2"]]
-    lista_module = sorted(list(set([line[2] for line in input])))
-
-    output[0].extend(lista_module)
+               "Pin", "nach", "Pin", "Splice", "Leitung", "Farbe", "Typ", "Kontakt", "Dichtung", "Kontakt2",
+               "Dichtung2", "Labeling", "FORS PN", "Crosssec", "Strip_1", "Kontakt PN", "Seal 1 PN", "Strip_2",
+               "Kontakt2 PN", "Seal 2 PN", "Length", "OLD Length", "AG", "OpText", "ResGroup", "Sonderltg.",
+               "Twist", "End Product", "max_v_puchok", "AGNr", "Alt+F2 1", "Alt+F2 2", "Alt+F2 3", "Alt+F2 4",
+               "Alt+F2 5", "Alt+F2 6", "Alt+F2 7", "Alt+F2 8", "Alt+F2 9", "Alt+F2 10", "Suppl.text 1",
+               "Suppl.text 2", "APAB_1", "APAB_2"]]
+    lista_multicores = ["07.08132-0534", "07.08304-0111", "07.08304-0131", "07.08302-0159", "07.08302-0092",
+                        "07.08302-0086", "07.08302-0054", "07.08302-0096", "07.08302-0060", "07.08304-0165",
+                        "07.08134-4348", "07.08304-0182", "07.07999-0212", "07.08302-0074", "07.08302-0213",
+                        "07.08302-0217", "07.08302-0233"]
+    lista_module = {}
     for line in input:
-        output.append(["X", "X", "X", "X", "X", "X", line[3], line[0], line[7], line[8], line[9], line[10],
-                       line[11], line[4], line[5], line[15], line[13], line[14], line[16], line[17], "X", "X",
-                       line[6]
-                       ])
+        key = line[0]
+        if line[0] not in lista_module:
+            lista_module[key] = [line[2]]
+        else:
+            lista_module[key].append(line[2])
+    lista_module_list = sorted(list(set(line[2] for line in input)))
+    lista_twisturi = sorted(list(set(line[11] for line in input)))
+
+    output[0].extend(lista_module_list)
+    used_wireno = []
+    for line in input:
+        if line[0] not in used_wireno:
+            output.append(["", "", "", "", "", line[1], line[3], line[0], line[7], line[8], line[9], line[10],
+                           "", line[4], line[5], line[15], line[13], line[14], line[16], line[17], "", "",
+                           line[6], "", "", "", "", "", "", line[12], "", "", "", "", line[11],
+                           ])
+            used_wireno.append(line[0])
     for line in output:
         if len(line) < len(output[0]):
             mulptiplicator = len(output[0]) - len(line)
             line.extend([""] * mulptiplicator)
 
+    for key, values in lista_module.items():
+        for line in output[1:]:
+            if line[7] == key:
+                for module in values:
+                    index = output[0].index(module)
+                    line[index] = "X"
+
+    keep_list = output[0]
+    output = sorted(output[1:], key=lambda x: x[34])
+    output.insert(0, keep_list)
     for line in output[1:]:
-        for linie in input:
-            if line[7] == linie[0]:
-                module = linie[2]
-                index_x = output[0].index(module)
-                line[index_x] = "X"
-                break
-    for i in range(0, 5):
-        print(output[i])
-        print(len(output[i]))
-    prn_excel_clustering(output, "CM cu " + nume_fisier)
+        cuttingnokont = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+                         line[13], line[14], line[15], "", "", "", "", "", "", line[22], "", "", "", "", "", "",
+                         line[29], "", "", "", "", line[34]]
+        cuttingkont1 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+                        line[13], line[14], line[15], line[16], line[17], "", "", "", "", line[22], "", "", "", "", "",
+                        "",
+                        line[29], "", "", "", "", line[34]]
+        cuttingkont2 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+                        line[13], line[14], line[15], "", "", line[18], line[19], "", "", line[22], "", "", "", "", "",
+                        "",
+                        line[29], "", "", "", "", line[34]]
+        cuttingkont12 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+                         line[13], line[14], line[15], line[16], line[17], line[18], line[19], "", "", line[22], "", "",
+                         "", "", "", "",
+                         line[29], "", "", "", "", line[34]]
+        crimpwpa1 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Crimp WPA",
+                     line[13], line[14], line[15], line[16], line[17], "", "", "", "", line[22], "", "", "", "", "", "",
+                     line[29], "", "", "", "", line[34]]
+        crimpwpa2 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Crimp WPA",
+                     line[13], line[14], line[15], "", "", line[18], line[19], "", "", line[22], "", "", "", "", "", "",
+                     line[29], "", "", "", "", line[34]]
 
+        if float(line[22]) > 4:
+            index = output.index(line) + 1
+            if line[17] != "-" and line[19] != "-" and line[13] not in lista_multicores:
+                output.insert(index, cuttingnokont)
+                output.insert(index + 1, crimpwpa1)
+                output.insert(index + 2, crimpwpa2)
+            elif line[17] != "-" and line[19] == "-":
+                output.insert(index, cuttingnokont)
+                output.insert(index + 1, crimpwpa1)
+            elif line[17] == "-" and line[19] != "-":
+                output.insert(index, cuttingnokont)
+                output.insert(index + 1, crimpwpa2)
+            else:
+                output.insert(index, cuttingnokont)
+        else:
+            index = output.index(line) + 1
+            output.insert(index, cuttingkont12)
 
+    for twist in lista_twisturi:
+        index = ""
+        for line in output:
+            if twist == line[34]:
+                index = output.index(line) + 1
+                indexfir1 = index - 4
+                indexfir2 = index - 2
+                twistwpa = ["", "", "", "", "", "", output[indexfir1][6] + "/" + output[indexfir2][6],
+                            output[indexfir1][7] + "/" + output[indexfir2][7], "", "", "", "", "Twist WPA",
+                            line[13], line[14], line[15], "", "", "", "", "", "", line[22], "", "", "", "",
+                            "", "", line[29], "", "", "", "", line[34]]
+        output.insert(index, twistwpa)
 
-
+    lista_sl = [line[34] for line in output if "SL" in line]
+    prn_excel_clustering(output, " CM " + nume_fisier)
 
 
 def clustering():
@@ -239,15 +307,17 @@ def clustering():
     def display_text():
         string = entrywno.get()
         string2 = int(entrycl.get())
-
-        with open(fisier_wirelist, newline='') as csvfile:
-            table = list(csv.reader(csvfile, delimiter=';'))
+        try:
+            with open(fisier_wirelist, newline='') as csvfile:
+                table = list(csv.reader(csvfile, delimiter=';'))
+        except:
+            messagebox.showerror('Fisier gresit', 'Nu ai incarcat fisier wirelist!')
+            root.destroy()
         nume_fisier = os.path.splitext(os.path.basename(fisier_wirelist))[0]
         tablenew = wirelistprep(table)
         for i in range(len(tablenew)):
             tablenew[i].insert(0, tablenew[i][0] + tablenew[i][1])
         grouped_data = group_data(tablenew, string, string2)
-        # Print each line separately
         output = []
         for key, values in grouped_data.items():
             # output.append([key])
@@ -257,18 +327,9 @@ def clustering():
                     temp.extend(item)
                     if len(temp) > 1:
                         output.append(temp)
-            #output.append([])
+            # output.append([])
         prn_excel_clustering(output, nume_fisier)
-        for i in range(0, 5):
-            print(output[i])
         cm(output, nume_fisier)
-
-
-
-
-
-
-
         root.destroy()
         messagebox.showinfo("Finalizat", "Finalizat clustering!")
 

@@ -447,7 +447,8 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
         if (sheet2[1][0].replace(".MY23", "") in arr_tabel_klappschale[i][0] or
                 sheet3[1][0].replace(".MY23", "") in arr_tabel_klappschale[i][0]):
             array_scriere_sheet6.append([arr_tabel_klappschale[i][1], arr_tabel_klappschale[i][2],
-                                         arr_tabel_klappschale[i][3], arr_tabel_klappschale[i][4]])
+                                         arr_tabel_klappschale[i][3], arr_tabel_klappschale[i][0],
+                                         "", "", arr_tabel_klappschale[i][4]])
     if len(array_scriere_sheet6) == 1:
         messagebox.showinfo("Eroare klappschale!",
                             "Pentru " + str(sheet1[1][0]) + " nu exista informatii in tabelul de klappschale!" +
@@ -459,20 +460,18 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             if array_scriere_sheet6[i][0] in sheet2[x][6]:
                 counter = counter + 1
         if counter > 0:
-            array_scriere_sheet6[i].append("X")
+            array_scriere_sheet6[i][4] = "X"
         else:
-            array_scriere_sheet6[i].append("0")
+            array_scriere_sheet6[i][4] = "0"
     for i in range(1, len(array_scriere_sheet6)):
         counter1 = 0
         for x in range(len(sheet3)):
             if array_scriere_sheet6[i][0] in sheet3[x][6]:
                 counter1 = counter1 + 1
         if counter1 > 0:
-            array_scriere_sheet6[i].append("X")
+            array_scriere_sheet6[i][5] = "X"
         else:
-            array_scriere_sheet6[i].append("0")
-    for i in range(len(array_scriere_sheet6)):
-        array_scriere_sheet6[i].append("")
+            array_scriere_sheet6[i][5] = "0"
 
     arr_module_existente = [["Module", "Drawing", "Quantity", "Side check"]]
     lista_klappschale = []
@@ -568,48 +567,22 @@ def klappschale(sheet1, sheet2, sheet3, sheet4, sheet5):
             array_scriere_sheet6[i].append("")
 
         #calucare module necesare klappshalle
-        lista_platforme = list(set([x[0] for x in arr_tabel_klappschale]))
-        lista_klapps = list(set([x[2] for x in arr_tabel_klappschale]))
-        lista_side = list(set([x[3] for x in arr_tabel_klappschale]))
+        dictionar_klapp = {}
+        for line in arr_module_existente[1:]:
+            if line[0] not in dictionar_klapp:
+                dictionar_klapp[line[0]] = [0]
+        for line in arr_module_existente:
+            for linie in array_scriere_sheet6:
+                if line[0] == linie[1] and linie[2] == sidebracket:
+                    if int(linie[6]) not in dictionar_klapp[line[0]]:
+                        dictionar_klapp[line[0]].append(int(linie[6]))
 
-        lista_calcul = []
-        array_combinatii_klapp = []
-        for side in lista_side:
-            for platforma in lista_platforme:
-                for klapp in lista_klapps:
-                    if side + platforma + klapp not in array_combinatii_klapp:
-                        array_combinatii_klapp.append(side + platforma + klapp)
-
-        for combinatie in array_combinatii_klapp:
-            array_temp = []
-            for linie in arr_tabel_klappschale:
-                if linie[3] == combinatie[:3] and linie[4] == combinatie[3:7] and linie[2] == combinatie[7:]:
-                    array_temp.append(linie[1])
-            array_temp.insert(0, combinatie)
-            if len(array_temp) > 1:
-                lista_calcul.append(array_temp)
-
-        calcule = []
-        for lista in lista_calcul:
-            for i in range(len(array_scriere_sheet6)):
-                if array_scriere_sheet6[i][1] == lista[0][7:] and \
-                        array_scriere_sheet6[i][2] == lista[0][0:3] and array_scriere_sheet6[i][3] == lista[0][3:7] and \
-                        array_scriere_sheet6[i][0] in lista[1:] and array_scriere_sheet6[i][4] == 'X' and \
-                        array_scriere_sheet6[1][7] == lista[0][0:3]:
-
-                    calcule.append(lista[0][7:])
-                    break
-                elif array_scriere_sheet6[i][1] == lista[0][7:] and \
-                        array_scriere_sheet6[i][2] == lista[0][0:3] and array_scriere_sheet6[i][3] == lista[0][3:7] and \
-                        array_scriere_sheet6[i][0] in lista[1:] and array_scriere_sheet6[i][5] == 'X' and \
-                        array_scriere_sheet6[1][7] == lista[0][0:3]:
-
-                    calcule.append(lista[0][7:])
-                    break
-
-        for i in range(len(array_scriere_sheet6)):
-            if array_scriere_sheet6[i][9] != "" and array_scriere_sheet6[i][9] != "Module":
-                array_scriere_sheet6[i].append(calcule.count(array_scriere_sheet6[i][9]))
+        array_scriere_sheet6[0].append("Module calculate")
+        for line in array_scriere_sheet6[1:]:
+            if line[9] != "":
+                line.append(len([value for value in dictionar_klapp[line[9]] if value >0]))
+            else:
+                line.append("")
     else:
         messagebox.showerror('Eroare Bracket Side', 'Nu am putut determina Bracket Side-ul pentru configuratia :'
                              + sheet1[1][0])
