@@ -52,7 +52,6 @@ def structura_directoare():
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/Wirelist/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Validare/BOM/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Clustering/",
-
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Input files XML/",
                         os.path.abspath(os.curdir) + "/MAN/Output/Diagrame/Output TXT/",
