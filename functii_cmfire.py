@@ -1,5 +1,6 @@
 import csv
 import fnmatch
+import itertools
 import os
 import tkinter as tk
 from tkinter import filedialog, messagebox, Entry
@@ -16,8 +17,6 @@ def wirelistprep(array_incarcat):
                     return input_list.index(item)
         return None
 
-    array_wirelisturi = ["8000", "8001", "8011", "8012", "8013", "8014", "8023", "8024", "8025", "8026",
-                         "8030", "8031", "8032", "8052", "8053", "8041", "8042", "8010", "8034", "8035"]
     array_original = []
     if "AEM" in array_incarcat[0][1]:
         for i in range(len(array_incarcat)):
@@ -164,7 +163,8 @@ def wirelistprep(array_incarcat):
                 array_wires = []
                 array_output.extend(array_out_temp)
     array_output = sorted(array_output[1:], key=lambda w: (w[1], float(w[10])))
-    print(array_output[:5])
+    for i in range(0, 10):
+        print(array_output[i])
     return array_output
 
 
@@ -199,10 +199,8 @@ def cm(input, nume_fisier):
                "Twist", "End Product", "max_v_puchok", "AGNr", "Alt+F2 1", "Alt+F2 2", "Alt+F2 3", "Alt+F2 4",
                "Alt+F2 5", "Alt+F2 6", "Alt+F2 7", "Alt+F2 8", "Alt+F2 9", "Alt+F2 10", "Suppl.text 1",
                "Suppl.text 2", "APAB_1", "APAB_2"]]
-    lista_multicores = ["07.08132-0534", "07.08304-0111", "07.08304-0131", "07.08302-0159", "07.08302-0092",
-                        "07.08302-0086", "07.08302-0054", "07.08302-0096", "07.08302-0060", "07.08304-0165",
-                        "07.08134-4348", "07.08304-0182", "07.07999-0212", "07.08302-0074", "07.08302-0213",
-                        "07.08302-0217", "07.08302-0233"]
+    lista_multicores = ["07.08304-0111", "07.08304-0131", "07.08304-0182", "07.08134-4348", "07.08304-0165"]
+
     lista_module = {}
     for line in input:
         key = line[0]
@@ -211,7 +209,22 @@ def cm(input, nume_fisier):
         else:
             lista_module[key].append(line[2])
     lista_module_list = sorted(list(set(line[2] for line in input)))
-    lista_twisturi = sorted(list(set(line[11] for line in input)))
+    lista_twisturi = sorted(
+        list(set((line[11], line[12]) for line in input if line[11] != "-" and line[4] not in lista_multicores)))
+    lista_twisturi_4fire = sorted(
+        list(set((line[11], line[12]) for line in input if line[11] != "-" and line[4] in lista_multicores)))
+
+    filtered_data = {}
+    for code, value in lista_twisturi:
+        value = int(value)
+        if code in filtered_data:
+            # Check if the absolute difference is greater than or equal to 100
+            if abs(value - filtered_data[code]) >= 100:
+                filtered_data[code] = value
+        else:
+            filtered_data[code] = value
+
+    lista_twisturi = [(code, str(value)) for code, value in filtered_data.items()]
 
     output[0].extend(lista_module_list)
     used_wireno = []
@@ -235,28 +248,28 @@ def cm(input, nume_fisier):
                     line[index] = "X"
 
     keep_list = output[0]
-    output = sorted(output[1:], key=lambda x: x[34])
+    output = sorted(output[1:], key=lambda x: (x[34], x[29]))
     output.insert(0, keep_list)
     for line in output[1:]:
-        cuttingnokont = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+        cuttingnokont = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Cutting",
                          line[13], line[14], line[15], "", "", "", "", "", "", line[22], "", "", "", "", "", "",
                          line[29], "", "", "", "", line[34]]
-        cuttingkont1 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+        cuttingkont1 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Cutting",
                         line[13], line[14], line[15], line[16], line[17], "", "", "", "", line[22], "", "", "", "", "",
                         "",
                         line[29], "", "", "", "", line[34]]
-        cuttingkont2 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+        cuttingkont2 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Cutting",
                         line[13], line[14], line[15], "", "", line[18], line[19], "", "", line[22], "", "", "", "", "",
                         "",
                         line[29], "", "", "", "", line[34]]
-        cuttingkont12 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Cutting",
+        cuttingkont12 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Cutting",
                          line[13], line[14], line[15], line[16], line[17], line[18], line[19], "", "", line[22], "", "",
                          "", "", "", "",
                          line[29], "", "", "", "", line[34]]
-        crimpwpa1 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Crimp WPA",
+        crimpwpa1 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Crimp WPA",
                      line[13], line[14], line[15], line[16], line[17], "", "", "", "", line[22], "", "", "", "", "", "",
                      line[29], "", "", "", "", line[34]]
-        crimpwpa2 = ["", "", "", "", "", "", line[6], line[7], line[8], line[9], line[10], line[11], "Crimp WPA",
+        crimpwpa2 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "", "Crimp WPA",
                      line[13], line[14], line[15], "", "", line[18], line[19], "", "", line[22], "", "", "", "", "", "",
                      line[29], "", "", "", "", line[34]]
 
@@ -274,25 +287,101 @@ def cm(input, nume_fisier):
                 output.insert(index + 1, crimpwpa2)
             else:
                 output.insert(index, cuttingnokont)
-        else:
+        elif line[13] not in lista_multicores:
             index = output.index(line) + 1
             output.insert(index, cuttingkont12)
 
     for twist in lista_twisturi:
-        index = ""
         for line in output:
-            if twist == line[34]:
-                index = output.index(line) + 1
-                indexfir1 = index - 4
-                indexfir2 = index - 2
+            if twist[0] == line[34] and twist[1] == line[29]:
+                index = output.index(line)
+                indexfir1 = index
+                indexfir2 = index + 2
                 twistwpa = ["", "", "", "", "", "", output[indexfir1][6] + "/" + output[indexfir2][6],
                             output[indexfir1][7] + "/" + output[indexfir2][7], "", "", "", "", "Twist WPA",
                             line[13], line[14], line[15], "", "", "", "", "", "", line[22], "", "", "", "",
                             "", "", line[29], "", "", "", "", line[34]]
-        output.insert(index, twistwpa)
+                output.insert(index + 4, twistwpa)
+                break
+    for twist in lista_twisturi_4fire:
+        for line in output:
+            if twist[0] == line[34] and twist[1] == line[29]:
+                index = output.index(line)
+                cuttingnokont = ["", "", "", "", "", "", line[6], line[7], "", "", "", "",
+                                 "Cutting", line[13], line[14], line[15], "", "", "", "", "", "", line[22],
+                                 "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa11 = ["", "", "", "", "", "", line[6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], output[index][14], line[15], output[index][16], output[index][17], "", "",
+                              "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa12 = ["", "", "", "", "", "", output[index + 1][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], output[index + 1][16], output[index + 1][17],
+                              "", "", "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa13 = ["", "", "", "", "", "", output[index + 2][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], output[index + 2][16], output[index + 2][17],
+                              "", "", "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa14 = ["", "", "", "", "", "", output[index + 3][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], output[index + 3][16], output[index + 3][17],
+                              "", "", "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa21 = ["", "", "", "", "", "", output[index][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], "", "", output[index][18], output[index][19],
+                              "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa22 = ["", "", "", "", "", "", output[index + 1][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], "", "", output[index + 1][18], output[index + 1][19],
+                              "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa23 = ["", "", "", "", "", "", output[index + 2][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], "", "", output[index + 2][18], output[index + 2][19],
+                              "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                crimpwpa24 = ["", "", "", "", "", "", output[index + 3][6], line[7], "", "", "", "",
+                              "Crimp WPA", line[13], line[14], line[15], "", "", output[index + 3][18], output[index + 3][19],
+                              "", "", line[22], "", "", "", "", "", "", line[29], "", "", "", "", line[34]]
+                output.insert(index + 4, cuttingnokont)
+                output.insert(index + 5, crimpwpa11)
+                output.insert(index + 6, crimpwpa12)
+                output.insert(index + 7, crimpwpa13)
+                output.insert(index + 8, crimpwpa14)
+                output.insert(index + 9, crimpwpa21)
+                output.insert(index + 10, crimpwpa22)
+                output.insert(index + 11, crimpwpa23)
+                output.insert(index + 12, crimpwpa24)
+                break
+    extragere_welding(input, nume_fisier)
+    prn_excel_clustering(output, "CM " + nume_fisier)
 
-    lista_sl = [line[34] for line in output if "SL" in line]
-    prn_excel_clustering(output, " CM " + nume_fisier)
+def extragere_welding(input, nume_fisier):
+    # create dictionary
+    print(input[0])
+    lista_welding = []
+    for line in input:
+        if line[7].startswith(('X9', 'X10', 'X11')):
+            lista_welding.append([line[7], line[3], line[4], line[6], line[2]])
+        elif line[9].startswith(('X9', 'X10', 'X11')):
+            lista_welding.append([line[9], line[3], line[4], line[6], line[2]])
+    lista_puncte_weld = list(set([line[0] for line in lista_welding]))
+    for punct in lista_puncte_weld:
+        punct_weld = []
+        for weld in lista_welding:
+            if punct == weld[0]:
+                punct_weld.append(weld)
+
+    values_at_index_1 = list(set([sublist[1] for sublist in punct_weld]))
+    # Generate combinations of different lengths from 2 to the length of the list
+    all_combinations = []
+    for r in range(2, len(values_at_index_1) + 1):
+        combinations = list(itertools.combinations(values_at_index_1, r))
+        all_combinations.extend(combinations)
+    output_combinatii = []
+    for line in all_combinations:
+        temp_line = []
+        for element in line:
+            for wire in punct_weld:
+                if element == wire[1]:
+                    temp_line.append([wire[1], wire[3], wire[2]])
+        if temp_line not in output_combinatii:
+            output_combinatii.append(temp_line)
+
+    prn_excel_clustering(output_combinatii, 'Welding ' + nume_fisier)
+
+
 
 
 def clustering():
@@ -340,8 +429,10 @@ def clustering():
     # Create an Entry widget to accept User Input
 
     entrywno = Entry(root, width=40)
+    entrywno.insert(0, 'WIRE')
     entrywno.focus_set()
     entrycl = Entry(root, width=40)
+    entrycl.insert(0, '200')
     label.pack()
     entrywno.pack()
     label2.pack()

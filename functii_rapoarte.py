@@ -303,8 +303,6 @@ def verificare_raport(arr_raport):
             arr_raport[i][0] = "Klappschalle error"
         elif "found" in arr_raport[i][4]:
             arr_raport[i][0] = "Klappschalle error"
-        elif "Missing" in arr_raport[i][44]:
-            arr_raport[i][0] = "Missing Stvb RHM FHS/RHM"
         elif arr_raport[i][5] == "No Module":
             arr_raport[i][0] = "No Supersleeve Module"
         elif "Error" in arr_raport[i][5]:
@@ -339,4 +337,6 @@ def verificare_raport(arr_raport):
             arr_raport[i][0] = "X6490 module missing"
         elif arr_raport[i][40] != "OK":
             arr_raport[i][0] = "Module check error"
+        elif "Missing" in arr_raport[i][44]:
+            arr_raport[i][0] = "Missing Stvb RHM FHS/RHM"
     return None
