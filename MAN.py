@@ -17,7 +17,6 @@ from functii_rapoarte import *
 from masterdata import *
 
 
-
 def statusbusy():
     statuslabel["text"] = "Working on it . . . "
 

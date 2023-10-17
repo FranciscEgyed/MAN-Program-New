@@ -139,6 +139,8 @@ def prelucrare_wirelist_faza1(array_prelucrare):
 
 def prelucrare_wirelist_faza2(arr_module_file2, listas):
     # "Selectie fisiere wirelist"
+    with open(os.path.abspath(os.curdir) + "/MAN/Input/Others/Combinatii sectiuni.txt", newline='') as csvfile:
+        combinatii_sec = list(csv.reader(csvfile, delimiter=';'))
     lista_selectie = (["SATTEL LHD", "8011"], ["SATTEL RHD", "8013"], ["CHASSIS LHD", "8012"], ["CHASSIS RHD", "8014"],
                       ["TGLM LHD", "8023"], ["TGLM RHD", "8024"], ["4AXEL LHD", "8025"], ["4AXEL RHD", "8026"],
                       ["4AXEL MIL LHD", "8000"], ["4AXEL MIL RHD", "8001"], ["CHASSIS MIL RHD", "8030"],
@@ -287,40 +289,129 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
             array_scriere_sheet3[x].append("Error")
         else:
             array_scriere_sheet3[x].append("OK")
+
     "eroare cross section"
-    cross_section = {}
-    for i in range(1, len(array_scriere_sheet2)):
-        if array_scriere_sheet2[i][9] not in cross_section:
-            cross_section[array_scriere_sheet2[i][9]] = float(array_scriere_sheet2[i][5])
+    cross_sections_left = {}
+    for item in array_scriere_sheet2[1:]:
+        weld_point_name = item[6]
+        wire_cross = item[5]
+        matched = False
+        for key, value in cross_sections_left.items():
+            if key == weld_point_name:
+                cross_sections_left[key].append(wire_cross)
+                matched = True
+                break
+        if not matched:
+            if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
+                key = weld_point_name
+                cross_sections_left[key] = [wire_cross]
+
+    cross_sections_right = {}
+    for item in array_scriere_sheet3[1:]:
+        weld_point_name = item[6]
+        wire_cross = item[5]
+        matched = False
+        for key, value in cross_sections_right.items():
+            if key == weld_point_name:
+                cross_sections_right[key].append(wire_cross)
+                matched = True
+                break
+        if not matched:
+            if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
+                key = weld_point_name
+                cross_sections_right[key] = [wire_cross]
+
+    for line in array_scriere_sheet2[1:]:
+        if line[6] in cross_sections_left:
+            # Calculate the sum of values for the current key
+            total_sum = sum(float(value) for value in cross_sections_left[line[6]])
+            # Check if the sum is less than or equal to 48
+            if total_sum <= 48:
+                line.append('OK')
+            else:
+                line.append('NOT OK')
         else:
-            cross_section[array_scriere_sheet2[i][9]] += float(array_scriere_sheet2[i][5])
-    for x in range(1, len(array_scriere_sheet2)):
-        if cross_section[array_scriere_sheet2[x][9]] > 48:
-            array_scriere_sheet2[x].append("Error")
+            line.append('OK')
+
+    for line in array_scriere_sheet3[1:]:
+        if line[6] in cross_sections_right:
+            # Calculate the sum of values for the current key
+            total_sum = sum(float(value) for value in cross_sections_right[line[6]])
+            # Check if the sum is less than or equal to 48
+            if total_sum <= 48:
+                line.append('OK')
+            else:
+                line.append('NOT OK')
         else:
-            array_scriere_sheet2[x].append("OK")
-    cross_section2 = {}
-    for i in range(1, len(array_scriere_sheet3)):
-        if array_scriere_sheet3[i][9] not in cross_section2:
-            cross_section2[array_scriere_sheet3[i][9]] = float(array_scriere_sheet3[i][5])
-        else:
-            cross_section2[array_scriere_sheet3[i][9]] += float(array_scriere_sheet3[i][5])
-    for x in range(1, len(array_scriere_sheet3)):
-        if cross_section2[array_scriere_sheet3[x][9]] > 48:
-            array_scriere_sheet3[x].append("Error")
-        else:
-            array_scriere_sheet3[x].append("OK")
+            line.append('OK')
+
     "erorare combinatii"
-    for i in range(1, len(array_scriere_sheet2)):
-        if array_scriere_sheet2[i][10] > 2:
-            array_scriere_sheet2[i].append(pivotare(array_scriere_sheet2, array_scriere_sheet2[i][9]))
+    def pcc(cheie, data_list, data_dict):
+        # Iterate through the list of lists
+        for item in data_list:
+            # Split the string into values
+            values = item[0].split('x')
+            # Extract status
+            status = item[1]
+            # Check if the values are in the dictionary and have the corresponding status
+            if cheie in data_dict and all(str(value) in data_dict[cheie] for value in values):
+                # Return the status if the combination is found
+                print(cheie, item)
+                return status
+        # If no matching combination is found, return None
+        return "OK"
+
+
+    for line in array_scriere_sheet2[1:]:
+        if line[6] in cross_sections_left:
+            # Calculate the sum of values for the current key
+            total_sum = sum(float(value) for value in cross_sections_left[line[6]])
+            # Check if the sum is less than or equal to 48
+            # Convert values to float and check if any of them are smaller than 1
+            values = cross_sections_left.get(line[6], [])
+            any_value_smaller_than_one = any(float(value) < 1 for value in values)
+            if total_sum <= 5 and any(float(value) < 0.35 for value in values):
+                line.append("NOT OK")
+            elif 5 < total_sum <= 10 and any(float(value) < 0.5 for value in values):
+                line.append("NOT OK")
+            elif 10 < total_sum <= 15 and any(float(value) < 0.75 for value in values):
+                line.append("NOT OK")
+            elif 15 < total_sum <= 20 and any(float(value) < 1 for value in values):
+                line.append("NOT OK")
+            elif 20 < total_sum <= 30 and any(float(value) < 1.5 for value in values):
+                line.append("NOT OK")
+            elif 30 < total_sum <= 50 and any(float(value) < 2.5 for value in values):
+                line.append("NOT OK")
+            else:
+                line.append(pcc(line[6], combinatii_sec, cross_sections_left))
         else:
-            array_scriere_sheet2[i].append("OK")
-    for i in range(1, len(array_scriere_sheet3)):
-        if array_scriere_sheet3[i][10] > 2:
-            array_scriere_sheet3[i].append(pivotare(array_scriere_sheet3, array_scriere_sheet3[i][9]))
+            line.append('OK')
+
+    for line in array_scriere_sheet3[1:]:
+        if line[6] in cross_sections_right:
+            # Calculate the sum of values for the current key
+            total_sum = sum(float(value) for value in cross_sections_right[line[6]])
+            # Check if the sum is less than or equal to 48
+            # Convert values to float and check if any of them are smaller than 1
+            values = cross_sections_right.get(line[6], [])
+            any_value_smaller_than_one = any(float(value) < 1 for value in values)
+            if total_sum <= 5 and any(float(value) < 0.35 for value in values):
+                line.append("NOT OK")
+            elif 5 < total_sum <= 10 and any(float(value) < 0.5 for value in values):
+                line.append("NOT OK")
+            elif 10 < total_sum <= 15 and any(float(value) < 0.75 for value in values):
+                line.append("NOT OK")
+            elif 15 < total_sum <= 20 and any(float(value) < 1 for value in values):
+                line.append("NOT OK")
+            elif 20 < total_sum <= 30 and any(float(value) < 1.5 for value in values):
+                line.append("NOT OK")
+            elif 30 < total_sum <= 50 and any(float(value) < 2.5 for value in values):
+                line.append("NOT OK")
+            else:
+                line.append(pcc(line[6], combinatii_sec, cross_sections_right))
         else:
-            array_scriere_sheet3[i].append("OK")
+            line.append('OK')
+
     # adaugareSonderltg
     for i in range(1, len(array_scriere_sheet2)):
         for x in range(1, len(array_wires_1)):
