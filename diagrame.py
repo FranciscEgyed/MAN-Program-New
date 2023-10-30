@@ -23,6 +23,7 @@ def comparatiediagrame():
                                       title="Selectati directorul cu diagramele noi:")
     start = time.time()
     file_counter = 0
+
     file_progres = 0
     for file_all in os.listdir(dir_new):
         if file_all.endswith(".xlsx"):

@@ -502,13 +502,13 @@ def copiere_erori(sheet1, sheet2, sheet3, sheet4):
     arr_count = []
     for x in range(11, 14):
         for i in range(1, len(sheet2)):
-            if sheet2[i][x] == "Error":
+            if sheet2[i][x] == "Error" or sheet2[i][x] == "NOT OK":
                 array_scriere_sheet5.append(
                     [sheet2[i][0], sheet2[i][1], sheet2[i][2], sheet2[i][3], sheet2[i][4], sheet2[i][5],
                      sheet2[i][6], sheet2[i][7], sheet2[i][8], sheet2[i][9], sheet2[i][10]])
     for x in range(11, 14):
         for i in range(1, len(sheet3)):
-            if sheet3[i][x] == "Error":
+            if sheet3[i][x] == "Error" or sheet3[i][x] == "NOT OK":
                 array_scriere_sheet5.append(
                     [sheet3[i][0], sheet3[i][1], sheet3[i][2], sheet3[i][3], sheet3[i][4], sheet3[i][5],
                      sheet3[i][6], sheet3[i][7], sheet3[i][8], sheet3[i][9], sheet3[i][10]])
