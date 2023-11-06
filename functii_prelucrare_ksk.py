@@ -66,7 +66,6 @@ def prelucrare_wirelist_faza1(array_prelucrare):
                     arr_module_file[i].extend([arr_module_active[x][0].replace("PM", "81").replace("VM", "81"),
                                                arr_module_active[x][1], arr_module_active[x][2],
                                                arr_module_active[x][3]])
-
     for i in range(1, len(arr_module_file)):
         if len(arr_module_file[i]) == 2:
             arr_module_file[i].extend(["XXXX", "XXXX", "XXXX", "XXXX"])
@@ -85,7 +84,9 @@ def prelucrare_wirelist_faza1(array_prelucrare):
             lista_module_extrageret.append(arr_module_file[i][5])
     ignore_values = ["XXXX"]
     lista_module_extrageret = [x for x in lista_module_extrageret if x not in ignore_values]
+
     lista_module_extrageret = Counter(lista_module_extrageret).most_common(2)
+
     if len(lista_module_extrageret) < 2:
         messagebox.showinfo("Eroare configuratie!",
                             "Pentru " + str(arr_module_file[1][0]) + " nu gasesc informatii despre module " +
@@ -291,35 +292,44 @@ def prelucrare_wirelist_faza2(arr_module_file2, listas):
             array_scriere_sheet3[x].append("OK")
 
     "eroare cross section"
+    "eroare cross section"
     cross_sections_left = {}
+    used_wires_left = []
     for item in array_scriere_sheet2[1:]:
+        wire_name = item[2]
         weld_point_name = item[6]
         wire_cross = item[5]
-        matched = False
-        for key, value in cross_sections_left.items():
-            if key == weld_point_name:
-                cross_sections_left[key].append(wire_cross)
-                matched = True
-                break
-        if not matched:
-            if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
-                key = weld_point_name
-                cross_sections_left[key] = [wire_cross]
+        if wire_name not in used_wires_left:
+            matched = False
+            for key, value in cross_sections_left.items():
+                if key == weld_point_name:
+                    cross_sections_left[key].append(wire_cross)
+                    matched = True
+                    break
+            if not matched:
+                if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
+                    key = weld_point_name
+                    cross_sections_left[key] = [wire_cross]
+            used_wires_left.append(wire_name)
 
     cross_sections_right = {}
+    used_wires_right = []
     for item in array_scriere_sheet3[1:]:
+        wire_name = item[2]
         weld_point_name = item[6]
         wire_cross = item[5]
-        matched = False
-        for key, value in cross_sections_right.items():
-            if key == weld_point_name:
-                cross_sections_right[key].append(wire_cross)
-                matched = True
-                break
-        if not matched:
-            if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
-                key = weld_point_name
-                cross_sections_right[key] = [wire_cross]
+        if wire_name not in used_wires_right:
+            matched = False
+            for key, value in cross_sections_right.items():
+                if key == weld_point_name:
+                    cross_sections_right[key].append(wire_cross)
+                    matched = True
+                    break
+            if not matched:
+                if weld_point_name.startswith(('X9', 'X10', 'X11', 'X12', 'SP')):
+                    key = weld_point_name
+                    cross_sections_right[key] = [wire_cross]
+            used_wires_right.append(wire_name)
 
     for line in array_scriere_sheet2[1:]:
         if line[6] in cross_sections_left:
@@ -500,13 +510,13 @@ def copiere_erori(sheet1, sheet2, sheet3, sheet4):
     array_scriere_sheet5 = [["Harness", 'Module', 'Ltg-Nr.', 'Leitung', 'Farbe', 'Quer.', 'Kurzname', 'Pin', 'Lange',
                              'Kurzname/Pin', 'K/P Count', "Duplicate"]]
     arr_count = []
-    for x in range(11, 14):
+    for x in range(11, 15):
         for i in range(1, len(sheet2)):
             if sheet2[i][x] == "Error" or sheet2[i][x] == "NOT OK":
                 array_scriere_sheet5.append(
                     [sheet2[i][0], sheet2[i][1], sheet2[i][2], sheet2[i][3], sheet2[i][4], sheet2[i][5],
                      sheet2[i][6], sheet2[i][7], sheet2[i][8], sheet2[i][9], sheet2[i][10]])
-    for x in range(11, 14):
+    for x in range(11, 15):
         for i in range(1, len(sheet3)):
             if sheet3[i][x] == "Error" or sheet3[i][x] == "NOT OK":
                 array_scriere_sheet5.append(
